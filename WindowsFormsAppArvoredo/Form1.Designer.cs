@@ -1,4 +1,6 @@
-﻿namespace WindowsFormsAppArvoredo
+﻿using System;
+
+namespace WindowsFormsAppArvoredo
 {
     partial class Form1
     {
@@ -39,11 +41,11 @@
             // 
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Gagalin", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.label1.Location = new System.Drawing.Point(347, 198);
+            this.label1.Location = new System.Drawing.Point(291, 187);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(307, 72);
+            this.label1.Size = new System.Drawing.Size(389, 69);
             this.label1.TabIndex = 0;
             this.label1.Text = "ARVOREDO ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -53,7 +55,7 @@
             this.Btn_Login.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Login.FlatAppearance.BorderSize = 0;
             this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Login.Font = new System.Drawing.Font("Gagalin", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Login.Font = new System.Drawing.Font("Microsoft Sans Serif", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_Login.Location = new System.Drawing.Point(242, 317);
             this.Btn_Login.Name = "Btn_Login";
             this.Btn_Login.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -62,14 +64,13 @@
             this.Btn_Login.Text = "Login";
             this.Btn_Login.UseCompatibleTextRendering = true;
             this.Btn_Login.UseVisualStyleBackColor = false;
-            this.Btn_Login.Click += new System.EventHandler(this.Btn_Login_Click);
             // 
             // Btn_Config
             // 
             this.Btn_Config.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Config.FlatAppearance.BorderSize = 0;
             this.Btn_Config.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Config.Font = new System.Drawing.Font("Gagalin", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Config.Font = new System.Drawing.Font("Microsoft Sans Serif", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_Config.Location = new System.Drawing.Point(242, 427);
             this.Btn_Config.Name = "Btn_Config";
             this.Btn_Config.Size = new System.Drawing.Size(489, 85);
@@ -94,21 +95,23 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(1011, 617);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.Btn_Config);
             this.Controls.Add(this.Btn_Login);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
+
 
         #endregion
 
@@ -116,6 +119,9 @@
         private System.Windows.Forms.Button Btn_Login;
         private System.Windows.Forms.Button Btn_Config;
         private System.Windows.Forms.PictureBox pictureBox1;
+
+
     }
+
 }
 

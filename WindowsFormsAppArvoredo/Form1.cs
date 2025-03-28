@@ -46,15 +46,24 @@ namespace WindowsFormsAppArvoredo
             SetBackColorDegrade(sender, e);
         }
 
+        private void CentralizarControles()
+        {
+            label1.Left = (this.ClientSize.Width - label1.Width) / 2;
+            pictureBox1.Left = (this.ClientSize.Width - pictureBox1.Width) / 2;
+            Btn_Login.Left = (this.ClientSize.Width - Btn_Login.Width) / 2;
+            Btn_Config.Left = (this.ClientSize.Width - Btn_Config.Width) / 2;
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            CentralizarControles();
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             Btn_Login.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Login.Width, Btn_Login.Height, 100, 100));
             Btn_Config.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Config.Width, Btn_Config.Height, 100, 100));
+
         }
 
-        private void Btn_Login_Click(object sender, EventArgs e)
-        {
-            
-        }
     }
 }
