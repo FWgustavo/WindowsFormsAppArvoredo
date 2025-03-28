@@ -41,11 +41,11 @@ namespace WindowsFormsAppArvoredo
             // 
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Gagalin", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.label1.Location = new System.Drawing.Point(291, 187);
+            this.label1.Location = new System.Drawing.Point(337, 187);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(389, 69);
+            this.label1.Size = new System.Drawing.Size(307, 72);
             this.label1.TabIndex = 0;
             this.label1.Text = "ARVOREDO ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -55,11 +55,11 @@ namespace WindowsFormsAppArvoredo
             this.Btn_Login.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Login.FlatAppearance.BorderSize = 0;
             this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Login.Font = new System.Drawing.Font("Microsoft Sans Serif", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Btn_Login.Location = new System.Drawing.Point(242, 317);
+            this.Btn_Login.Font = new System.Drawing.Font("Gagalin", 35.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Login.Location = new System.Drawing.Point(242, 316);
             this.Btn_Login.Name = "Btn_Login";
             this.Btn_Login.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Btn_Login.Size = new System.Drawing.Size(489, 86);
+            this.Btn_Login.Size = new System.Drawing.Size(489, 73);
             this.Btn_Login.TabIndex = 1;
             this.Btn_Login.Text = "Login";
             this.Btn_Login.UseCompatibleTextRendering = true;
@@ -70,10 +70,10 @@ namespace WindowsFormsAppArvoredo
             this.Btn_Config.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Config.FlatAppearance.BorderSize = 0;
             this.Btn_Config.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Config.Font = new System.Drawing.Font("Microsoft Sans Serif", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Btn_Config.Location = new System.Drawing.Point(242, 427);
+            this.Btn_Config.Font = new System.Drawing.Font("Gagalin", 35.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Config.Location = new System.Drawing.Point(242, 408);
             this.Btn_Config.Name = "Btn_Config";
-            this.Btn_Config.Size = new System.Drawing.Size(489, 85);
+            this.Btn_Config.Size = new System.Drawing.Size(489, 72);
             this.Btn_Config.TabIndex = 2;
             this.Btn_Config.Text = "Configuração";
             this.Btn_Config.UseCompatibleTextRendering = true;
