@@ -73,6 +73,7 @@ namespace WindowsFormsAppArvoredo
             pictureBox1.Left = (this.ClientSize.Width - pictureBox1.Width) / 2;
             Btn_Login.Left = (this.ClientSize.Width - Btn_Login.Width) / 2;
             Btn_Config.Left = (this.ClientSize.Width - Btn_Config.Width) / 2;
+            pictureBox2.Left = (this.ClientSize.Width - pictureBox2.Width) / 2;
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -86,5 +87,9 @@ namespace WindowsFormsAppArvoredo
 
         }
 
+        private void Btn_Login_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
