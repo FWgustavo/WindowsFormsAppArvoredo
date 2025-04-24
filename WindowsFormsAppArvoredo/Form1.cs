@@ -89,7 +89,8 @@ namespace WindowsFormsAppArvoredo
 
         private void Btn_Login_Click(object sender, EventArgs e)
         {
-
+            FormLogin login = new FormLogin();
+            login.ShowDialog();
         }
     }
 }
