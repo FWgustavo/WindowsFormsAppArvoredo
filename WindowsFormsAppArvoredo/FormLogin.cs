@@ -80,7 +80,8 @@ namespace WindowsFormsAppArvoredo
 
         private void FormLogin_Load(object sender, EventArgs e)
         {
-
+            btnEntrar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEntrar.Width, btnEntrar.Height, 100, 100));
+            btnVoltar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnVoltar.Width, btnVoltar.Height, 100, 100));
         }
         private void btnVoltar_Click(object sender, EventArgs e)
         {

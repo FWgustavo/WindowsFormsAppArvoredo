@@ -41,19 +41,21 @@ namespace WindowsFormsAppArvoredo
             // 
             // label1
             // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Gagalin", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.label1.Location = new System.Drawing.Point(467, 294);
+            this.label1.Location = new System.Drawing.Point(452, 297);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(310, 75);
+            this.label1.Size = new System.Drawing.Size(307, 72);
             this.label1.TabIndex = 0;
             this.label1.Text = "ARVOREDO ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // Btn_Login
             // 
+            this.Btn_Login.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.Btn_Login.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Login.FlatAppearance.BorderSize = 0;
             this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -71,6 +73,7 @@ namespace WindowsFormsAppArvoredo
             // 
             // Btn_Config
             // 
+            this.Btn_Config.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.Btn_Config.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Config.FlatAppearance.BorderSize = 0;
             this.Btn_Config.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -86,17 +89,19 @@ namespace WindowsFormsAppArvoredo
             // 
             // pictureBox2
             // 
+            this.pictureBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::WindowsFormsAppArvoredo.Properties.Resources.marcio1;
             this.pictureBox2.Location = new System.Drawing.Point(389, 770);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(430, 100);
+            this.pictureBox2.Size = new System.Drawing.Size(426, 99);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::WindowsFormsAppArvoredo.Properties.Resources.logo1;
             this.pictureBox1.Location = new System.Drawing.Point(504, 44);
