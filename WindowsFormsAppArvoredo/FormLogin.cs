@@ -82,6 +82,8 @@ namespace WindowsFormsAppArvoredo
         {
             btnEntrar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEntrar.Width, btnEntrar.Height, 100, 100));
             btnVoltar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnVoltar.Width, btnVoltar.Height, 100, 100));
+            Txt_Usuario.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Usuario.Width, Txt_Usuario.Height, 20, 20));
+            Txt_Senha.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Senha.Width, Txt_Senha.Height, 20, 20));
         }
         private void btnVoltar_Click(object sender, EventArgs e)
         {

@@ -36,8 +36,8 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnEntrar = new System.Windows.Forms.Button();
             this.btnVoltar = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.Txt_Usuario = new ZBobb.AlphaBlendTextBox();
+            this.Txt_Senha = new ZBobb.AlphaBlendTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -79,7 +79,7 @@
             this.pictureBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox3.Image = global::WindowsFormsAppArvoredo.Properties.Resources.imgLogin2;
-            this.pictureBox3.Location = new System.Drawing.Point(27, 418);
+            this.pictureBox3.Location = new System.Drawing.Point(27, 425);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(92, 85);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -91,7 +91,7 @@
             this.pictureBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::WindowsFormsAppArvoredo.Properties.Resources.imgLogin;
-            this.pictureBox2.Location = new System.Drawing.Point(27, 235);
+            this.pictureBox2.Location = new System.Drawing.Point(27, 242);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(92, 85);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -139,26 +139,27 @@
             this.btnVoltar.UseVisualStyleBackColor = true;
             this.btnVoltar.Click += new System.EventHandler(this.btnVoltar_Click);
             // 
-            // textBox1
+            // Txt_Usuario
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.textBox1.Location = new System.Drawing.Point(126, 271);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(287, 42);
-            this.textBox1.TabIndex = 5;
+            this.Txt_Usuario.BackAlpha = 10;
+            this.Txt_Usuario.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.Txt_Usuario.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Txt_Usuario.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Txt_Usuario.Location = new System.Drawing.Point(125, 278);
+            this.Txt_Usuario.Name = "Txt_Usuario";
+            this.Txt_Usuario.Size = new System.Drawing.Size(333, 42);
+            this.Txt_Usuario.TabIndex = 6;
             // 
-            // textBox2
+            // Txt_Senha
             // 
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.textBox2.Location = new System.Drawing.Point(125, 454);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(288, 42);
-            this.textBox2.TabIndex = 5;
+            this.Txt_Senha.BackAlpha = 10;
+            this.Txt_Senha.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.Txt_Senha.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Txt_Senha.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Txt_Senha.Location = new System.Drawing.Point(125, 461);
+            this.Txt_Senha.Name = "Txt_Senha";
+            this.Txt_Senha.Size = new System.Drawing.Size(333, 42);
+            this.Txt_Senha.TabIndex = 6;
             // 
             // FormLogin
             // 
@@ -166,8 +167,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(649, 890);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.Txt_Senha);
+            this.Controls.Add(this.Txt_Usuario);
             this.Controls.Add(this.btnVoltar);
             this.Controls.Add(this.btnEntrar);
             this.Controls.Add(this.panel2);
@@ -199,7 +200,7 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnEntrar;
         private System.Windows.Forms.Button btnVoltar;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private ZBobb.AlphaBlendTextBox Txt_Usuario;
+        private ZBobb.AlphaBlendTextBox Txt_Senha;
     }
 }
