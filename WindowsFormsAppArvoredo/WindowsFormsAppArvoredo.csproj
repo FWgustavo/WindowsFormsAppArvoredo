@@ -167,5 +167,8 @@
   <ItemGroup>
     <None Include="Resources\imgLogin2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\bd\arvoredo.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
