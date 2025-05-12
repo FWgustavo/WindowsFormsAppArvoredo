@@ -28,6 +28,12 @@ namespace WindowsFormsAppArvoredo
         public Form1()
         {
             InitializeComponent();
+
+            this.SetStyle(ControlStyles.ResizeRedraw, true);
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+
+            this.Text = "Sistema Arvoredo";
         }
 
         private void SetBackColorDegrade(object sender, PaintEventArgs e)
@@ -89,6 +95,7 @@ namespace WindowsFormsAppArvoredo
 
         private void Btn_Login_Click(object sender, EventArgs e)
         {
+            this.Hide();
             FormLogin login = new FormLogin();
             login.ShowDialog();
         }

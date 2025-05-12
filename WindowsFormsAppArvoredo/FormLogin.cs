@@ -117,6 +117,17 @@ namespace WindowsFormsAppArvoredo
             btnVoltar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnVoltar.Width, btnVoltar.Height, 100, 100));
             Txt_Usuario.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Usuario.Width, Txt_Usuario.Height, 20, 20));
             Txt_Senha.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Senha.Width, Txt_Senha.Height, 20, 20));
+
+            Txt_Senha.PasswordChar = '•';
+
+            Txt_Senha.KeyPress += (s, args) =>
+            {
+                if (args.KeyChar == (char)Keys.Enter) 
+                { 
+                    btnEntrar_Click(sender, e);
+                    args.Handled = true;
+                }
+            };
         }
         private void btnVoltar_Click(object sender, EventArgs e)
         {
@@ -125,6 +136,8 @@ namespace WindowsFormsAppArvoredo
 
         private void btnEntrar_Click(object sender, EventArgs e)
         {
+            
+        
             string usuario = Txt_Usuario.Text.Trim();
             string senha = Txt_Senha.Text.Trim();
 
@@ -151,9 +164,16 @@ namespace WindowsFormsAppArvoredo
                     MessageBox.Show($"Bem-vindo ao Sistema Arvoredo, {nomeUsuario}!",
                         "Login realizado com sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // Fecha o formulário de login (DialogResult.OK indica sucesso)
+                    // Oculta o formulário de login (não fecha completamente)
+                    this.Hide();
+
+                    // Cria e exibe a tela principal do sistema
+                    TelaArvoredo telaArvoredo = new TelaArvoredo();
+                    telaArvoredo.FormClosed += (s, args) => this.Close(); // Fecha o form de login quando a tela principal for fechada
+                    telaArvoredo.Show();
+
+                    
                     this.DialogResult = DialogResult.OK;
-                    this.Close();
                 }
                 else
                 {
