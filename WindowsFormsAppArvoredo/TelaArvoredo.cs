@@ -25,8 +25,7 @@ namespace WindowsFormsAppArvoredo
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
-            // Define a tela para abrir maximizada
-            this.WindowState = FormWindowState.Maximized;
+
 
             
             this.Text = "Sistema Arvoredo";

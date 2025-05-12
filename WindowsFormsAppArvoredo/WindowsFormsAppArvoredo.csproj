@@ -178,6 +178,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\bd\arvoredo.sql" />
+    <Content Include="Resources\olho.png" />
+    <None Include="Resources\senha-do-olho.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

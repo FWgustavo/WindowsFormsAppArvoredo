@@ -71,6 +71,8 @@ namespace WindowsFormsAppArvoredo
             // Aplica as bordas arredondadas
             this.FormBorderStyle = FormBorderStyle.None;
             this.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+
+            this.Text = "Login Arvoredo";
         }
 
         private void SetBackColorDegrade(object sender, PaintEventArgs e)
@@ -131,6 +133,11 @@ namespace WindowsFormsAppArvoredo
         }
         private void btnVoltar_Click(object sender, EventArgs e)
         {
+            Form1 formPrincipal = Application.OpenForms.OfType<Form1>().FirstOrDefault();
+
+                formPrincipal = new Form1();
+                formPrincipal.Show();
+            
             this.Close();
         }
 
@@ -238,6 +245,24 @@ namespace WindowsFormsAppArvoredo
             catch (Exception ex)
             {
                 throw new Exception("Erro ao verificar credenciais: " + ex.Message);
+            }
+        }
+
+        private void pictureBoxMostrarSenha_Click(object sender, EventArgs e)
+        {
+            if (Txt_Senha.PasswordChar == '•')
+            {
+                // Mostra a senha
+                Txt_Senha.PasswordChar = '\0';
+                // Muda para o ícone de olho aberto
+                ((PictureBox)sender).Image = Properties.Resources.senha_do_olho;
+            }
+            else
+            {
+                // Oculta a senha
+                Txt_Senha.PasswordChar = '•';
+                // Muda para o ícone de olho fechado
+                ((PictureBox)sender).Image = Properties.Resources.senha_do_olho;
             }
         }
     }
