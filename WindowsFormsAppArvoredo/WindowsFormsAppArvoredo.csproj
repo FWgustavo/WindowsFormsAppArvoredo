@@ -178,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\bd\arvoredo.sql" />
+    <None Include="Resources\logo2.png" />
     <Content Include="Resources\olho.png" />
     <None Include="Resources\senha-do-olho.png" />
   </ItemGroup>
