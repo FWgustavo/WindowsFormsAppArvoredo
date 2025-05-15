@@ -44,11 +44,11 @@ namespace WindowsFormsAppArvoredo
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Gagalin", 45F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Gagalin", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.label1.Location = new System.Drawing.Point(452, 297);
+            this.label1.Location = new System.Drawing.Point(456, 175);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(307, 72);
+            this.label1.Size = new System.Drawing.Size(246, 58);
             this.label1.TabIndex = 0;
             this.label1.Text = "ARVOREDO ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -59,12 +59,12 @@ namespace WindowsFormsAppArvoredo
             this.Btn_Login.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Login.FlatAppearance.BorderSize = 0;
             this.Btn_Login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Login.Font = new System.Drawing.Font("Gagalin", 35.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Login.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_Login.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.Btn_Login.Location = new System.Drawing.Point(365, 491);
+            this.Btn_Login.Location = new System.Drawing.Point(367, 268);
             this.Btn_Login.Name = "Btn_Login";
             this.Btn_Login.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Btn_Login.Size = new System.Drawing.Size(500, 90);
+            this.Btn_Login.Size = new System.Drawing.Size(398, 75);
             this.Btn_Login.TabIndex = 1;
             this.Btn_Login.Text = "Login";
             this.Btn_Login.UseCompatibleTextRendering = true;
@@ -77,11 +77,11 @@ namespace WindowsFormsAppArvoredo
             this.Btn_Config.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.Btn_Config.FlatAppearance.BorderSize = 0;
             this.Btn_Config.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Btn_Config.Font = new System.Drawing.Font("Gagalin", 35.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Btn_Config.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Btn_Config.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.Btn_Config.Location = new System.Drawing.Point(365, 615);
+            this.Btn_Config.Location = new System.Drawing.Point(367, 375);
             this.Btn_Config.Name = "Btn_Config";
-            this.Btn_Config.Size = new System.Drawing.Size(500, 90);
+            this.Btn_Config.Size = new System.Drawing.Size(398, 72);
             this.Btn_Config.TabIndex = 2;
             this.Btn_Config.Text = "Configurações";
             this.Btn_Config.UseCompatibleTextRendering = true;
@@ -92,21 +92,20 @@ namespace WindowsFormsAppArvoredo
             this.pictureBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::WindowsFormsAppArvoredo.Properties.Resources.marcio1;
-            this.pictureBox2.Location = new System.Drawing.Point(389, 770);
+            this.pictureBox2.Location = new System.Drawing.Point(396, 545);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(426, 99);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox2.Size = new System.Drawing.Size(346, 78);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::WindowsFormsAppArvoredo.Properties.Resources.logo1;
-            this.pictureBox1.Location = new System.Drawing.Point(504, 44);
+            this.pictureBox1.Location = new System.Drawing.Point(498, 12);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(210, 250);
+            this.pictureBox1.Size = new System.Drawing.Size(153, 160);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
@@ -117,7 +116,7 @@ namespace WindowsFormsAppArvoredo
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(1180, 890);
+            this.ClientSize = new System.Drawing.Size(1084, 661);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.Btn_Config);
