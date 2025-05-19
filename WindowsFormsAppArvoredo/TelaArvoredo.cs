@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +14,16 @@ namespace WindowsFormsAppArvoredo
 {
     public partial class TelaArvoredo : Form
     {
+        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn
+        (
+           int nLeft,
+           int nTop,
+           int nRight,
+           int nBottom,
+           int nWidthEllipse,
+           int nHeightEllipse
+        );
         public TelaArvoredo()
         {
             InitializeComponent();
@@ -60,5 +71,12 @@ namespace WindowsFormsAppArvoredo
             SetBackColorDegrade(sender, e);
         }
 
+        private void TelaArvoredo_Load(object sender, EventArgs e)
+        {
+            btnEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEstoque.Width, btnEstoque.Height, 50, 100));
+            btnOrcamento.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnOrcamento.Width, btnOrcamento.Height, 50, 100));
+            btnPedidos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnPedidos.Width, btnPedidos.Height, 50, 100));
+            btnTitulos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnTitulos.Width, btnTitulos.Height, 50, 100));
+        }
     }
 }
