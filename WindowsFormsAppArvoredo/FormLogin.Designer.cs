@@ -52,7 +52,7 @@
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.label1.Location = new System.Drawing.Point(273, 131);
+            this.label1.Location = new System.Drawing.Point(273, 142);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(97, 42);
             this.label1.TabIndex = 1;
@@ -62,7 +62,7 @@
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.panel1.Location = new System.Drawing.Point(27, 291);
+            this.panel1.Location = new System.Drawing.Point(27, 302);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(594, 1);
             this.panel1.TabIndex = 3;
@@ -71,7 +71,7 @@
             // 
             this.panel2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.panel2.Location = new System.Drawing.Point(27, 441);
+            this.panel2.Location = new System.Drawing.Point(27, 452);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(594, 1);
             this.panel2.TabIndex = 3;
@@ -83,7 +83,7 @@
             this.btnEntrar.FlatAppearance.BorderSize = 0;
             this.btnEntrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEntrar.Font = new System.Drawing.Font("Gagalin", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEntrar.Location = new System.Drawing.Point(94, 476);
+            this.btnEntrar.Location = new System.Drawing.Point(94, 487);
             this.btnEntrar.Name = "btnEntrar";
             this.btnEntrar.Size = new System.Drawing.Size(417, 65);
             this.btnEntrar.TabIndex = 4;
@@ -98,7 +98,7 @@
             this.btnVoltar.FlatAppearance.BorderSize = 0;
             this.btnVoltar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVoltar.Font = new System.Drawing.Font("Gagalin", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnVoltar.Location = new System.Drawing.Point(12, 598);
+            this.btnVoltar.Location = new System.Drawing.Point(12, 609);
             this.btnVoltar.Name = "btnVoltar";
             this.btnVoltar.Size = new System.Drawing.Size(128, 51);
             this.btnVoltar.TabIndex = 4;
@@ -145,7 +145,7 @@
             this.pictureBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox3.Image = global::WindowsFormsAppArvoredo.Properties.Resources.imgLogin2;
-            this.pictureBox3.Location = new System.Drawing.Point(27, 357);
+            this.pictureBox3.Location = new System.Drawing.Point(27, 368);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(92, 85);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -157,7 +157,7 @@
             this.pictureBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::WindowsFormsAppArvoredo.Properties.Resources.imgLogin;
-            this.pictureBox2.Location = new System.Drawing.Point(27, 207);
+            this.pictureBox2.Location = new System.Drawing.Point(27, 218);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(92, 85);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -169,7 +169,7 @@
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::WindowsFormsAppArvoredo.Properties.Resources.logo1;
-            this.pictureBox1.Location = new System.Drawing.Point(265, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(265, 23);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(119, 116);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -181,7 +181,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(649, 661);
+            this.ClientSize = new System.Drawing.Size(649, 682);
             this.Controls.Add(this.pictureBoxMostrarSenha);
             this.Controls.Add(this.Txt_Senha);
             this.Controls.Add(this.Txt_Usuario);

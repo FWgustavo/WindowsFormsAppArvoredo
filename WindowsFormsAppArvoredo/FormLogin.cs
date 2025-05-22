@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace WindowsFormsAppArvoredo
         public static class Conexao
         {
             // String de conexão com o banco de dados MySQL
-            public static string CaminhoConexao = "Server=localhost;Database=Arvoredo;Uid=root;Pwd=Gms30052007.;";
+            public static string CaminhoConexao = "Server=localhost;Database=arvoredo;Uid=root;Pwd=etecjau;";
 
             // Método para obter uma conexão com o banco de dados
             public static MySqlConnection ObterConexao()
@@ -144,57 +145,8 @@ namespace WindowsFormsAppArvoredo
         private void btnEntrar_Click(object sender, EventArgs e)
         {
             
-        
-            string usuario = Txt_Usuario.Text.Trim();
-            string senha = Txt_Senha.Text.Trim();
-
-            // Verifica se os campos estão preenchidos
-            if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(senha))
-            {
-                MessageBox.Show("Por favor, preencha todos os campos.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            try
-            {
-                // Verifica as credenciais
-                if (VerificarCredenciais(usuario, senha, out int idUsuario, out string nomeUsuario, out int nivelAcesso))
-                {
-                    // Armazena informações do usuário logado
-                    UsuarioLogado.ID = idUsuario;
-                    UsuarioLogado.Login = usuario;
-                    UsuarioLogado.Nome = nomeUsuario;
-                    UsuarioLogado.NivelAcesso = nivelAcesso;
-
-                    // Exibe mensagem de boas-vindas
-                    MessageBox.Show($"Bem-vindo ao Sistema Arvoredo, {nomeUsuario}!",
-                        "Login realizado com sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Oculta o formulário de login (não fecha completamente)
-                    this.Hide();
-
-                    // Cria e exibe a tela principal do sistema
-                    TelaArvoredo telaArvoredo = new TelaArvoredo();
-                    telaArvoredo.FormClosed += (s, args) => this.Close(); // Fecha o form de login quando a tela principal for fechada
-                    telaArvoredo.Show();
-
-                    
-                    this.DialogResult = DialogResult.OK;
-                }
-                else
-                {
-                    MessageBox.Show("Usuário ou senha incorretos.", "Erro de autenticação",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Txt_Senha.Clear();
-                    Txt_Senha.Focus();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao realizar login: " + ex.Message,
-                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            TelaArvoredo login = new TelaArvoredo();
+            login.ShowDialog();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)

@@ -38,9 +38,15 @@
             this.btnTitulos = new System.Windows.Forms.Button();
             this.panelLogo = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.panelDegrade = new System.Windows.Forms.Panel();
+            this.btnSair = new System.Windows.Forms.Button();
+            this.btnCaixa = new System.Windows.Forms.Button();
+            this.btnCadastro = new System.Windows.Forms.Button();
+            this.btnHistorico = new System.Windows.Forms.Button();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panelDegrade.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMenu
@@ -68,7 +74,7 @@
             this.btnEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEstoque.Font = new System.Drawing.Font("Gagalin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnEstoque.Location = new System.Drawing.Point(0, 497);
+            this.btnEstoque.Location = new System.Drawing.Point(0, 542);
             this.btnEstoque.Name = "btnEstoque";
             this.btnEstoque.Size = new System.Drawing.Size(300, 84);
             this.btnEstoque.TabIndex = 4;
@@ -79,9 +85,9 @@
             // 
             this.panelEspacamento3.BackColor = System.Drawing.Color.Transparent;
             this.panelEspacamento3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelEspacamento3.Location = new System.Drawing.Point(0, 482);
+            this.panelEspacamento3.Location = new System.Drawing.Point(0, 512);
             this.panelEspacamento3.Name = "panelEspacamento3";
-            this.panelEspacamento3.Size = new System.Drawing.Size(300, 15);
+            this.panelEspacamento3.Size = new System.Drawing.Size(300, 30);
             this.panelEspacamento3.TabIndex = 7;
             // 
             // btnOrcamento
@@ -92,7 +98,7 @@
             this.btnOrcamento.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOrcamento.Font = new System.Drawing.Font("Gagalin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnOrcamento.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnOrcamento.Location = new System.Drawing.Point(0, 398);
+            this.btnOrcamento.Location = new System.Drawing.Point(0, 428);
             this.btnOrcamento.Name = "btnOrcamento";
             this.btnOrcamento.Size = new System.Drawing.Size(300, 84);
             this.btnOrcamento.TabIndex = 3;
@@ -103,9 +109,9 @@
             // 
             this.panelEspacamento2.BackColor = System.Drawing.Color.Transparent;
             this.panelEspacamento2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelEspacamento2.Location = new System.Drawing.Point(0, 383);
+            this.panelEspacamento2.Location = new System.Drawing.Point(0, 398);
             this.panelEspacamento2.Name = "panelEspacamento2";
-            this.panelEspacamento2.Size = new System.Drawing.Size(300, 15);
+            this.panelEspacamento2.Size = new System.Drawing.Size(300, 30);
             this.panelEspacamento2.TabIndex = 6;
             // 
             // btnPedidos
@@ -116,7 +122,7 @@
             this.btnPedidos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPedidos.Font = new System.Drawing.Font("Gagalin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPedidos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnPedidos.Location = new System.Drawing.Point(0, 299);
+            this.btnPedidos.Location = new System.Drawing.Point(0, 314);
             this.btnPedidos.Name = "btnPedidos";
             this.btnPedidos.Size = new System.Drawing.Size(300, 84);
             this.btnPedidos.TabIndex = 2;
@@ -129,7 +135,7 @@
             this.panelEspacamento1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelEspacamento1.Location = new System.Drawing.Point(0, 284);
             this.panelEspacamento1.Name = "panelEspacamento1";
-            this.panelEspacamento1.Size = new System.Drawing.Size(300, 15);
+            this.panelEspacamento1.Size = new System.Drawing.Size(300, 30);
             this.panelEspacamento1.TabIndex = 5;
             // 
             // btnTitulos
@@ -168,11 +174,81 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
+            // panelDegrade
+            // 
+            this.panelDegrade.BackColor = System.Drawing.Color.Transparent;
+            this.panelDegrade.Controls.Add(this.btnSair);
+            this.panelDegrade.Controls.Add(this.btnCaixa);
+            this.panelDegrade.Controls.Add(this.btnCadastro);
+            this.panelDegrade.Controls.Add(this.btnHistorico);
+            this.panelDegrade.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelDegrade.Location = new System.Drawing.Point(300, 0);
+            this.panelDegrade.Name = "panelDegrade";
+            this.panelDegrade.Size = new System.Drawing.Size(784, 64);
+            this.panelDegrade.TabIndex = 1;
+            // 
+            // btnSair
+            // 
+            this.btnSair.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
+            this.btnSair.FlatAppearance.BorderSize = 0;
+            this.btnSair.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSair.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSair.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.btnSair.Location = new System.Drawing.Point(559, 12);
+            this.btnSair.Name = "btnSair";
+            this.btnSair.Size = new System.Drawing.Size(136, 34);
+            this.btnSair.TabIndex = 0;
+            this.btnSair.Text = "Sair";
+            this.btnSair.UseVisualStyleBackColor = false;
+            // 
+            // btnCaixa
+            // 
+            this.btnCaixa.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
+            this.btnCaixa.FlatAppearance.BorderSize = 0;
+            this.btnCaixa.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCaixa.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCaixa.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.btnCaixa.Location = new System.Drawing.Point(386, 12);
+            this.btnCaixa.Name = "btnCaixa";
+            this.btnCaixa.Size = new System.Drawing.Size(136, 34);
+            this.btnCaixa.TabIndex = 0;
+            this.btnCaixa.Text = "Caixa";
+            this.btnCaixa.UseVisualStyleBackColor = false;
+            // 
+            // btnCadastro
+            // 
+            this.btnCadastro.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
+            this.btnCadastro.FlatAppearance.BorderSize = 0;
+            this.btnCadastro.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCadastro.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCadastro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.btnCadastro.Location = new System.Drawing.Point(217, 12);
+            this.btnCadastro.Name = "btnCadastro";
+            this.btnCadastro.Size = new System.Drawing.Size(136, 34);
+            this.btnCadastro.TabIndex = 0;
+            this.btnCadastro.Text = "Cadastro";
+            this.btnCadastro.UseVisualStyleBackColor = false;
+            // 
+            // btnHistorico
+            // 
+            this.btnHistorico.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
+            this.btnHistorico.FlatAppearance.BorderSize = 0;
+            this.btnHistorico.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHistorico.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHistorico.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.btnHistorico.Location = new System.Drawing.Point(45, 12);
+            this.btnHistorico.Name = "btnHistorico";
+            this.btnHistorico.Size = new System.Drawing.Size(136, 34);
+            this.btnHistorico.TabIndex = 0;
+            this.btnHistorico.Text = "Histórico";
+            this.btnHistorico.UseVisualStyleBackColor = false;
+            // 
             // TelaArvoredo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1084, 661);
+            this.Controls.Add(this.panelDegrade);
             this.Controls.Add(this.panelMenu);
             this.Name = "TelaArvoredo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -181,6 +257,7 @@
             this.panelMenu.ResumeLayout(false);
             this.panelLogo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panelDegrade.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -197,5 +274,10 @@
         private System.Windows.Forms.Panel panelEspacamento1;
         private System.Windows.Forms.Button btnTitulos;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel panelDegrade;
+        private System.Windows.Forms.Button btnSair;
+        private System.Windows.Forms.Button btnCaixa;
+        private System.Windows.Forms.Button btnCadastro;
+        private System.Windows.Forms.Button btnHistorico;
     }
 }

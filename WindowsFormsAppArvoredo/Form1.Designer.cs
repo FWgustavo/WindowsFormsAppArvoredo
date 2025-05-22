@@ -52,6 +52,7 @@ namespace WindowsFormsAppArvoredo
             this.label1.TabIndex = 0;
             this.label1.Text = "ARVOREDO ";
             this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // Btn_Login
             // 
@@ -101,6 +102,7 @@ namespace WindowsFormsAppArvoredo
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::WindowsFormsAppArvoredo.Properties.Resources.logo1;
             this.pictureBox1.Location = new System.Drawing.Point(498, 12);
@@ -109,6 +111,7 @@ namespace WindowsFormsAppArvoredo
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // Form1
             // 
