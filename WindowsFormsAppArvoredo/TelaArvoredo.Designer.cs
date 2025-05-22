@@ -43,6 +43,8 @@
             this.btnCaixa = new System.Windows.Forms.Button();
             this.btnCadastro = new System.Windows.Forms.Button();
             this.btnHistorico = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -184,7 +186,7 @@
             this.panelDegrade.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelDegrade.Location = new System.Drawing.Point(300, 0);
             this.panelDegrade.Name = "panelDegrade";
-            this.panelDegrade.Size = new System.Drawing.Size(784, 64);
+            this.panelDegrade.Size = new System.Drawing.Size(784, 70);
             this.panelDegrade.TabIndex = 1;
             // 
             // btnSair
@@ -194,9 +196,9 @@
             this.btnSair.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSair.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSair.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnSair.Location = new System.Drawing.Point(559, 12);
+            this.btnSair.Location = new System.Drawing.Point(557, 21);
             this.btnSair.Name = "btnSair";
-            this.btnSair.Size = new System.Drawing.Size(136, 34);
+            this.btnSair.Size = new System.Drawing.Size(170, 34);
             this.btnSair.TabIndex = 0;
             this.btnSair.Text = "Sair";
             this.btnSair.UseVisualStyleBackColor = false;
@@ -208,9 +210,9 @@
             this.btnCaixa.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCaixa.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCaixa.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnCaixa.Location = new System.Drawing.Point(386, 12);
+            this.btnCaixa.Location = new System.Drawing.Point(381, 21);
             this.btnCaixa.Name = "btnCaixa";
-            this.btnCaixa.Size = new System.Drawing.Size(136, 34);
+            this.btnCaixa.Size = new System.Drawing.Size(170, 34);
             this.btnCaixa.TabIndex = 0;
             this.btnCaixa.Text = "Caixa";
             this.btnCaixa.UseVisualStyleBackColor = false;
@@ -222,9 +224,9 @@
             this.btnCadastro.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCadastro.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCadastro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnCadastro.Location = new System.Drawing.Point(217, 12);
+            this.btnCadastro.Location = new System.Drawing.Point(216, 21);
             this.btnCadastro.Name = "btnCadastro";
-            this.btnCadastro.Size = new System.Drawing.Size(136, 34);
+            this.btnCadastro.Size = new System.Drawing.Size(159, 34);
             this.btnCadastro.TabIndex = 0;
             this.btnCadastro.Text = "Cadastro";
             this.btnCadastro.UseVisualStyleBackColor = false;
@@ -236,18 +238,38 @@
             this.btnHistorico.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHistorico.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnHistorico.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnHistorico.Location = new System.Drawing.Point(45, 12);
+            this.btnHistorico.Location = new System.Drawing.Point(45, 21);
             this.btnHistorico.Name = "btnHistorico";
-            this.btnHistorico.Size = new System.Drawing.Size(136, 34);
+            this.btnHistorico.Size = new System.Drawing.Size(165, 34);
             this.btnHistorico.TabIndex = 0;
             this.btnHistorico.Text = "Histórico";
             this.btnHistorico.UseVisualStyleBackColor = false;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.panel1.Location = new System.Drawing.Point(297, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(3, 661);
+            this.panel1.TabIndex = 2;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.panel2.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(300, 70);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(784, 3);
+            this.panel2.TabIndex = 3;
             // 
             // TelaArvoredo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1084, 661);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelDegrade);
             this.Controls.Add(this.panelMenu);
             this.Name = "TelaArvoredo";
@@ -279,5 +301,7 @@
         private System.Windows.Forms.Button btnCaixa;
         private System.Windows.Forms.Button btnCadastro;
         private System.Windows.Forms.Button btnHistorico;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }
