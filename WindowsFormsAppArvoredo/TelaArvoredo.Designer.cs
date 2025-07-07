@@ -45,10 +45,13 @@
             this.btnHistorico = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panelOrcamento = new System.Windows.Forms.Panel();
+            this.btnNewOrc = new System.Windows.Forms.Button();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panelDegrade.SuspendLayout();
+            this.panelOrcamento.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMenu
@@ -263,11 +266,30 @@
             this.panel2.Size = new System.Drawing.Size(784, 3);
             this.panel2.TabIndex = 3;
             // 
+            // panelOrcamento
+            // 
+            this.panelOrcamento.Controls.Add(this.btnNewOrc);
+            this.panelOrcamento.Location = new System.Drawing.Point(301, 74);
+            this.panelOrcamento.Name = "panelOrcamento";
+            this.panelOrcamento.Size = new System.Drawing.Size(783, 587);
+            this.panelOrcamento.TabIndex = 4;
+            // 
+            // btnNewOrc
+            // 
+            this.btnNewOrc.Font = new System.Drawing.Font("Gagalin", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNewOrc.Location = new System.Drawing.Point(22, 23);
+            this.btnNewOrc.Name = "btnNewOrc";
+            this.btnNewOrc.Size = new System.Drawing.Size(113, 23);
+            this.btnNewOrc.TabIndex = 0;
+            this.btnNewOrc.Text = "Novo Orçamento";
+            this.btnNewOrc.UseVisualStyleBackColor = true;
+            // 
             // TelaArvoredo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1084, 661);
+            this.Controls.Add(this.panelOrcamento);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelDegrade);
@@ -280,6 +302,7 @@
             this.panelLogo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panelDegrade.ResumeLayout(false);
+            this.panelOrcamento.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -303,5 +326,7 @@
         private System.Windows.Forms.Button btnHistorico;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panelOrcamento;
+        private System.Windows.Forms.Button btnNewOrc;
     }
 }
