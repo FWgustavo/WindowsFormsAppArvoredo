@@ -268,6 +268,7 @@
             // 
             // panelOrcamento
             // 
+            this.panelOrcamento.BackColor = System.Drawing.Color.Transparent;
             this.panelOrcamento.Controls.Add(this.btnNewOrc);
             this.panelOrcamento.Location = new System.Drawing.Point(301, 74);
             this.panelOrcamento.Name = "panelOrcamento";
