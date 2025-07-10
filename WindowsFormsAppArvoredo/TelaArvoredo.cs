@@ -111,9 +111,188 @@ namespace WindowsFormsAppArvoredo
             btnCaixa.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCaixa.Width, btnCadastro.Height, 15, 15));
             btnHistorico.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnHistorico.Width, btnCadastro.Height, 15, 15));
             btnSair.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSair.Width, btnCadastro.Height, 15, 15));
+            btnNewOrc.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNewOrc.Width, btnNewOrc.Height, 10, 10));
+            ConfigurarListViewOrcamentos();
+            listViewOrcamentos.MouseClick += listViewOrcamentos_MouseClick;
 
             // Força o redesenho do panelDegrade
             panelDegrade.Invalidate();
+        }
+
+        public class Orcamento
+        {
+            public int Id { get; set; }
+            public string Cliente { get; set; }
+            public DateTime DataCriacao { get; set; }
+            public decimal Valor { get; set; }
+            public string Status { get; set; }
+        }
+
+        private List<Orcamento> orcamentos = new List<Orcamento>();
+
+        // Método para configurar a ListView e carregar dados de exemplo
+        private void ConfigurarListViewOrcamentos()
+        {
+            // Configurar colunas da ListView
+            listViewOrcamentos.Columns.Clear();
+            listViewOrcamentos.Columns.Add("Orçamento", 120);
+            listViewOrcamentos.Columns.Add("Cliente", 200);
+            listViewOrcamentos.Columns.Add("Data", 100);
+            listViewOrcamentos.Columns.Add("Valor", 100);
+            listViewOrcamentos.Columns.Add("Status", 100);
+            listViewOrcamentos.Columns.Add("Ações", 100);
+
+            // Configurar aparência personalizada
+            listViewOrcamentos.OwnerDraw = true;
+            listViewOrcamentos.DrawItem += ListViewOrcamentos_DrawItem;
+            listViewOrcamentos.DrawSubItem += ListViewOrcamentos_DrawSubItem;
+            listViewOrcamentos.DrawColumnHeader += ListViewOrcamentos_DrawColumnHeader;
+
+            // Carregar dados de exemplo
+            CarregarDadosExemplo();
+        }
+
+        private void CarregarDadosExemplo()
+        {
+            orcamentos.Clear();
+
+            // Adicionar orçamentos de exemplo
+            orcamentos.Add(new Orcamento { Id = 1, Cliente = "Nilda", DataCriacao = DateTime.Now.AddDays(-5), Valor = 1500.00m, Status = "Pendente" });
+            orcamentos.Add(new Orcamento { Id = 2, Cliente = "Fernando", DataCriacao = DateTime.Now.AddDays(-3), Valor = 2300.00m, Status = "Pendente" });
+            orcamentos.Add(new Orcamento { Id = 3, Cliente = "Bernardo", DataCriacao = DateTime.Now.AddDays(-1), Valor = 890.00m, Status = "Pendente" });
+            orcamentos.Add(new Orcamento { Id = 4, Cliente = "Jana", DataCriacao = DateTime.Now, Valor = 1200.00m, Status = "Pendente" });
+
+            AtualizarListViewOrcamentos();
+        }
+
+        private void AtualizarListViewOrcamentos()
+        {
+            listViewOrcamentos.Items.Clear();
+
+            foreach (var orcamento in orcamentos)
+            {
+                var item = new ListViewItem($"Orçamento N° {orcamento.Id}");
+                item.SubItems.Add($"Cliente: {orcamento.Cliente}");
+                item.SubItems.Add(orcamento.DataCriacao.ToString("dd/MM/yyyy"));
+                item.SubItems.Add(orcamento.Valor.ToString("C"));
+                item.SubItems.Add(orcamento.Status);
+                item.SubItems.Add("🗑️"); // Ícone de lixeira
+                item.Tag = orcamento; // Armazenar o objeto completo
+
+                listViewOrcamentos.Items.Add(item);
+            }
+        }
+        private void btnNewOrc_Click(object sender, EventArgs e)
+        {
+            // Aqui você pode abrir uma nova tela para criar orçamento
+            // Por enquanto, vamos apenas adicionar um orçamento de exemplo
+
+            var novoOrcamento = new Orcamento
+            {
+                Id = orcamentos.Count + 1,
+                Cliente = "Novo Cliente",
+                DataCriacao = DateTime.Now,
+                Valor = 0.00m,
+                Status = "Pendente"
+            };
+
+            orcamentos.Add(novoOrcamento);
+            AtualizarListViewOrcamentos();
+
+            MessageBox.Show("Novo orçamento criado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        // Personalizar o desenho dos cabeçalhos das colunas
+        private void ListViewOrcamentos_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+
+        // Personalizar o desenho dos itens
+        private void ListViewOrcamentos_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = false;
+
+            // Cor de fundo alternada
+            Color backgroundColor = e.ItemIndex % 2 == 0 ?
+                Color.FromArgb(239, 212, 172) :
+                Color.FromArgb(250, 230, 194);
+
+            // Destacar item selecionado
+            if (e.Item.Selected)
+            {
+                backgroundColor = Color.FromArgb(198, 143, 86);
+            }
+
+            using (SolidBrush brush = new SolidBrush(backgroundColor))
+            {
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            }
+
+            // Desenhar borda
+            using (Pen pen = new Pen(Color.FromArgb(57, 27, 1), 1))
+            {
+                e.Graphics.DrawRectangle(pen, e.Bounds);
+            }
+        }
+
+        // Personalizar o desenho dos subitens
+        private void ListViewOrcamentos_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            // Cor do texto
+            Color textColor = Color.FromArgb(57, 27, 1);
+
+            // Fonte
+            Font font = new Font("Gagalin", 9F, FontStyle.Regular);
+
+            // Formato do texto
+            StringFormat format = new StringFormat()
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Near
+            };
+
+            // Desenhar texto
+            using (SolidBrush brush = new SolidBrush(textColor))
+            {
+                e.Graphics.DrawString(e.SubItem.Text, font, brush, e.Bounds, format);
+            }
+
+            // Desenhar borda do subitem
+            using (Pen pen = new Pen(Color.FromArgb(57, 27, 1), 1))
+            {
+                e.Graphics.DrawRectangle(pen, e.Bounds);
+            }
+        }
+
+        // Evento de clique na ListView (para detectar clique no botão de deletar)
+        private void listViewOrcamentos_MouseClick(object sender, MouseEventArgs e)
+        {
+            ListViewHitTestInfo hitTest = listViewOrcamentos.HitTest(e.Location);
+
+            if (hitTest.Item != null && hitTest.SubItem != null)
+            {
+                // Verificar se clicou na coluna de ações (última coluna)
+                if (hitTest.Item.SubItems.IndexOf(hitTest.SubItem) == listViewOrcamentos.Columns.Count - 1)
+                {
+                    // Confirmar exclusão
+                    DialogResult result = MessageBox.Show(
+                        "Tem certeza que deseja excluir este orçamento?",
+                        "Confirmar Exclusão",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        // Remover orçamento da lista
+                        Orcamento orcamentoParaRemover = (Orcamento)hitTest.Item.Tag;
+                        orcamentos.Remove(orcamentoParaRemover);
+                        AtualizarListViewOrcamentos();
+
+                        MessageBox.Show("Orçamento excluído com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
         }
     }
 }

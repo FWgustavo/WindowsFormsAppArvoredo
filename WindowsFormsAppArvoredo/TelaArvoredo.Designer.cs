@@ -46,6 +46,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelOrcamento = new System.Windows.Forms.Panel();
+            this.listViewOrcamentos = new System.Windows.Forms.ListView();
+            this.lblOrcamentosPendentes = new System.Windows.Forms.Label();
             this.btnNewOrc = new System.Windows.Forms.Button();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
@@ -269,21 +271,57 @@
             // panelOrcamento
             // 
             this.panelOrcamento.BackColor = System.Drawing.Color.Transparent;
+            this.panelOrcamento.Controls.Add(this.listViewOrcamentos);
+            this.panelOrcamento.Controls.Add(this.lblOrcamentosPendentes);
             this.panelOrcamento.Controls.Add(this.btnNewOrc);
             this.panelOrcamento.Location = new System.Drawing.Point(301, 74);
             this.panelOrcamento.Name = "panelOrcamento";
             this.panelOrcamento.Size = new System.Drawing.Size(783, 587);
             this.panelOrcamento.TabIndex = 4;
             // 
+            // listViewOrcamentos
+            // 
+            this.listViewOrcamentos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
+            this.listViewOrcamentos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listViewOrcamentos.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listViewOrcamentos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.listViewOrcamentos.FullRowSelect = true;
+            this.listViewOrcamentos.GridLines = true;
+            this.listViewOrcamentos.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewOrcamentos.HideSelection = false;
+            this.listViewOrcamentos.Location = new System.Drawing.Point(22, 130);
+            this.listViewOrcamentos.MultiSelect = false;
+            this.listViewOrcamentos.Name = "listViewOrcamentos";
+            this.listViewOrcamentos.Size = new System.Drawing.Size(740, 400);
+            this.listViewOrcamentos.TabIndex = 2;
+            this.listViewOrcamentos.UseCompatibleStateImageBehavior = false;
+            this.listViewOrcamentos.View = System.Windows.Forms.View.Details;
+            // 
+            // lblOrcamentosPendentes
+            // 
+            this.lblOrcamentosPendentes.AutoSize = true;
+            this.lblOrcamentosPendentes.Font = new System.Drawing.Font("Gagalin", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOrcamentosPendentes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblOrcamentosPendentes.Location = new System.Drawing.Point(22, 80);
+            this.lblOrcamentosPendentes.Name = "lblOrcamentosPendentes";
+            this.lblOrcamentosPendentes.Size = new System.Drawing.Size(280, 30);
+            this.lblOrcamentosPendentes.TabIndex = 1;
+            this.lblOrcamentosPendentes.Text = "ORÇAMENTOS PENDENTES";
+            // 
             // btnNewOrc
             // 
-            this.btnNewOrc.Font = new System.Drawing.Font("Gagalin", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNewOrc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
+            this.btnNewOrc.FlatAppearance.BorderSize = 0;
+            this.btnNewOrc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNewOrc.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNewOrc.ForeColor = System.Drawing.Color.Black;
             this.btnNewOrc.Location = new System.Drawing.Point(22, 23);
             this.btnNewOrc.Name = "btnNewOrc";
-            this.btnNewOrc.Size = new System.Drawing.Size(113, 23);
+            this.btnNewOrc.Size = new System.Drawing.Size(130, 30);
             this.btnNewOrc.TabIndex = 0;
-            this.btnNewOrc.Text = "Novo Orçamento";
-            this.btnNewOrc.UseVisualStyleBackColor = true;
+            this.btnNewOrc.Text = "NOVO ORÇAMENTO";
+            this.btnNewOrc.UseVisualStyleBackColor = false;
+            this.btnNewOrc.Click += new System.EventHandler(this.btnNewOrc_Click);
             // 
             // TelaArvoredo
             // 
@@ -304,6 +342,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panelDegrade.ResumeLayout(false);
             this.panelOrcamento.ResumeLayout(false);
+            this.panelOrcamento.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -329,5 +368,7 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panelOrcamento;
         private System.Windows.Forms.Button btnNewOrc;
+        private System.Windows.Forms.ListView listViewOrcamentos;
+        private System.Windows.Forms.Label lblOrcamentosPendentes;
     }
 }
