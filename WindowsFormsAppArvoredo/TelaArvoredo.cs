@@ -103,6 +103,7 @@ namespace WindowsFormsAppArvoredo
 
         private void TelaArvoredo_Load(object sender, EventArgs e)
         {
+            // Configura o estilo dos botões
             btnEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEstoque.Width, btnEstoque.Height, 50, 100));
             btnOrcamento.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnOrcamento.Width, btnOrcamento.Height, 50, 100));
             btnPedidos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnPedidos.Width, btnPedidos.Height, 50, 100));
@@ -112,6 +113,9 @@ namespace WindowsFormsAppArvoredo
             btnHistorico.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnHistorico.Width, btnCadastro.Height, 15, 15));
             btnSair.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSair.Width, btnCadastro.Height, 15, 15));
             btnNewOrc.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNewOrc.Width, btnNewOrc.Height, 10, 10));
+            //
+            panelOrcamento.Visible = false;
+            btnOrcamento.Click += btnOrcamento_Click;
             ConfigurarListViewOrcamentos();
             listViewOrcamentos.MouseClick += listViewOrcamentos_MouseClick;
 
@@ -293,6 +297,76 @@ namespace WindowsFormsAppArvoredo
                     }
                 }
             }
+        }
+        private void btnOrcamento_Click(object sender, EventArgs e)
+        {
+            // Tornar o painel de orçamentos visível
+            panelOrcamento.Visible = true;
+            panelOrcamento.BringToFront();
+
+            // Opcional: Destacar o botão ativo
+            ResetarCoresBotoes();
+            btnOrcamento.BackColor = Color.FromArgb(198, 143, 86); // Cor mais escura para indicar seleção
+        }
+
+        // Método auxiliar para resetar as cores dos botões do menu (opcional)
+        private void ResetarCoresBotoes()
+        {
+            Color corPadrao = Color.FromArgb(239, 212, 172);
+
+            btnTitulos.BackColor = corPadrao;
+            btnPedidos.BackColor = corPadrao;
+            btnOrcamento.BackColor = corPadrao;
+            btnEstoque.BackColor = corPadrao;
+        }
+
+        // Se você quiser criar outros painéis para os outros botões, pode fazer assim:
+
+        private void btnTitulos_Click(object sender, EventArgs e)
+        {
+            // Esconder painel atual
+            panelOrcamento.Visible = false;
+
+            // Aqui você criaria e mostraria o painel de títulos
+            // panelTitulos.Visible = true;
+            // panelTitulos.BringToFront();
+
+            // Destacar botão ativo
+            ResetarCoresBotoes();
+            btnTitulos.BackColor = Color.FromArgb(198, 143, 86);
+        }
+
+        private void btnPedidos_Click(object sender, EventArgs e)
+        {
+            // Esconder painel atual
+            panelOrcamento.Visible = false;
+
+            // Aqui você criaria e mostraria o painel de pedidos
+            // panelPedidos.Visible = true;
+            // panelPedidos.BringToFront();
+
+            // Destacar botão ativo
+            ResetarCoresBotoes();
+            btnPedidos.BackColor = Color.FromArgb(198, 143, 86);
+        }
+
+        private void btnEstoque_Click(object sender, EventArgs e)
+        {
+            // Esconder painel atual
+            panelOrcamento.Visible = false;
+
+            // Aqui você criaria e mostraria o painel de estoque
+            // panelEstoque.Visible = true;
+            // panelEstoque.BringToFront();
+
+            // Destacar botão ativo
+            ResetarCoresBotoes();
+            btnEstoque.BackColor = Color.FromArgb(198, 143, 86);
+        }
+
+        private void btnSair_Click(object sender, EventArgs e)
+        {
+            Close(); // Fecha a aplicação
         }
     }
 }

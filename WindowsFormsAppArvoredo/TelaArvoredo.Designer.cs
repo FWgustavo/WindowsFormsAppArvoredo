@@ -111,6 +111,7 @@
             this.btnOrcamento.TabIndex = 3;
             this.btnOrcamento.Text = "Orçamentos";
             this.btnOrcamento.UseVisualStyleBackColor = false;
+            this.btnOrcamento.Click += new System.EventHandler(this.btnOrcamento_Click);
             // 
             // panelEspacamento2
             // 
@@ -207,6 +208,7 @@
             this.btnSair.TabIndex = 0;
             this.btnSair.Text = "Sair";
             this.btnSair.UseVisualStyleBackColor = false;
+            this.btnSair.Click += new System.EventHandler(this.btnSair_Click);
             // 
             // btnCaixa
             // 
@@ -304,7 +306,7 @@
             this.lblOrcamentosPendentes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblOrcamentosPendentes.Location = new System.Drawing.Point(22, 80);
             this.lblOrcamentosPendentes.Name = "lblOrcamentosPendentes";
-            this.lblOrcamentosPendentes.Size = new System.Drawing.Size(280, 30);
+            this.lblOrcamentosPendentes.Size = new System.Drawing.Size(252, 26);
             this.lblOrcamentosPendentes.TabIndex = 1;
             this.lblOrcamentosPendentes.Text = "ORÇAMENTOS PENDENTES";
             // 
@@ -328,6 +330,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1084, 661);
+            this.ControlBox = false;
             this.Controls.Add(this.panelOrcamento);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
