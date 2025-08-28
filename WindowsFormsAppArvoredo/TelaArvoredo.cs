@@ -188,8 +188,8 @@ namespace WindowsFormsAppArvoredo
         }
         private void btnNewOrc_Click(object sender, EventArgs e)
         {
-            // Aqui você pode abrir uma nova tela para criar orçamento
-            // Por enquanto, vamos apenas adicionar um orçamento de exemplo
+            TelaOrcamento telaorcamento = new TelaOrcamento();
+            telaorcamento.ShowDialog();
 
             var novoOrcamento = new Orcamento
             {

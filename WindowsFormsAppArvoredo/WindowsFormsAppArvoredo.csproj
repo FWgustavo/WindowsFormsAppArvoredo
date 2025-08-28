@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlphaBlendTextBox">
-      <HintPath>..\..\..\..\..\Downloads\AlphaBlendTextBox_demo (3)\AlphaBlendTextBox.dll</HintPath>
+      <HintPath>X:\AlphaBlendTextBox_demo (3)\AlphaBlendTextBox.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
       <HintPath>..\packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
@@ -121,6 +121,12 @@
     <Compile Include="TelaArvoredo.Designer.cs">
       <DependentUpon>TelaArvoredo.cs</DependentUpon>
     </Compile>
+    <Compile Include="TelaOrcamento.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TelaOrcamento.Designer.cs">
+      <DependentUpon>TelaOrcamento.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -139,6 +145,9 @@
     </Compile>
     <EmbeddedResource Include="TelaArvoredo.resx">
       <DependentUpon>TelaArvoredo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TelaOrcamento.resx">
+      <DependentUpon>TelaOrcamento.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -178,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\bd\arvoredo.sql" />
+    <None Include="Resources\telalogo.png" />
     <None Include="Resources\logo2.png" />
     <Content Include="Resources\olho.png" />
     <None Include="Resources\senha-do-olho.png" />

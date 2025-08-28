@@ -294,7 +294,7 @@
             this.listViewOrcamentos.Location = new System.Drawing.Point(22, 130);
             this.listViewOrcamentos.MultiSelect = false;
             this.listViewOrcamentos.Name = "listViewOrcamentos";
-            this.listViewOrcamentos.Size = new System.Drawing.Size(740, 400);
+            this.listViewOrcamentos.Size = new System.Drawing.Size(720, 400);
             this.listViewOrcamentos.TabIndex = 2;
             this.listViewOrcamentos.UseCompatibleStateImageBehavior = false;
             this.listViewOrcamentos.View = System.Windows.Forms.View.Details;

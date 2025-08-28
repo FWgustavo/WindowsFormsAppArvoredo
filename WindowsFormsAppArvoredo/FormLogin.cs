@@ -30,7 +30,7 @@ namespace WindowsFormsAppArvoredo
         public static class Conexao
         {
             // String de conexão com o banco de dados MySQL
-            public static string CaminhoConexao = "Server=localhost;Database=arvoredo;Uid=root;Pwd=Gms30052007.;";
+            public static string CaminhoConexao = "Server=localhost;Database=arvoredo;Uid=root;Pwd=etecjau;";
 
             // Método para obter uma conexão com o banco de dados
             public static MySqlConnection ObterConexao()
@@ -144,7 +144,7 @@ namespace WindowsFormsAppArvoredo
 
         private void btnEntrar_Click(object sender, EventArgs e)
         {
-            string usuario = Txt_Usuario.Text.Trim();
+            /* string usuario = Txt_Usuario.Text.Trim();
             string senha = Txt_Senha.Text.Trim();
 
             // Verifica se os campos estão preenchidos
@@ -193,7 +193,9 @@ namespace WindowsFormsAppArvoredo
             {
                 MessageBox.Show("Erro ao realizar login: " + ex.Message,
                     "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            } */
+            TelaArvoredo arvoredo = new TelaArvoredo();
+            arvoredo.ShowDialog();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
