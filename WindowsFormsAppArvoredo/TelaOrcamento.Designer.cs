@@ -73,7 +73,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(383, 25);
             this.label1.TabIndex = 1;
-            this.label1.Text = "ENDEREÇO: AV. Netinho Prado, 1025\n";
+            this.label1.Text = "ENDEREÇO: AV. Netinho Prado, 1025";
             // 
             // label2
             // 
@@ -111,9 +111,9 @@
             this.lbldata.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbldata.Location = new System.Drawing.Point(933, 31);
             this.lbldata.Name = "lbldata";
-            this.lbldata.Size = new System.Drawing.Size(70, 25);
+            this.lbldata.Size = new System.Drawing.Size(57, 25);
             this.lbldata.TabIndex = 5;
-            this.lbldata.Text = "label5";
+            this.lbldata.Text = "Data";
             // 
             // label5
             // 
@@ -275,7 +275,7 @@
             this.label14.AutoSize = true;
             this.label14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(491, 317);
+            this.label14.Location = new System.Drawing.Point(491, 285);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(135, 27);
             this.label14.TabIndex = 6;
@@ -286,7 +286,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1084, 661);
+            this.ClientSize = new System.Drawing.Size(1100, 780);
             this.Controls.Add(this.txtFantasia);
             this.Controls.Add(this.txtVendedor);
             this.Controls.Add(this.label13);
@@ -311,9 +311,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "TelaOrcamento";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TelaOrcamento";
+            this.Text = "Sistema Arvoredo - Orçamento";
             this.Load += new System.EventHandler(this.TelaOrcamento_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
