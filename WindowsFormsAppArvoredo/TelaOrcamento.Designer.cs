@@ -52,6 +52,8 @@
             this.label13 = new System.Windows.Forms.Label();
             this.txtFantasia = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
+            this.txtCidade = new System.Windows.Forms.Label();
+            this.txtUF = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -258,9 +260,9 @@
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.Location = new System.Drawing.Point(715, 269);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 20);
+            this.label13.Size = new System.Drawing.Size(69, 20);
             this.label13.TabIndex = 7;
-            this.label13.Text = "Fantasia:";
+            this.label13.Text = "Número:";
             // 
             // txtFantasia
             // 
@@ -281,12 +283,32 @@
             this.label14.TabIndex = 6;
             this.label14.Text = "PRODUTOS";
             // 
+            // txtCidade
+            // 
+            this.txtCidade.AutoSize = true;
+            this.txtCidade.Location = new System.Drawing.Point(500, 216);
+            this.txtCidade.Name = "txtCidade";
+            this.txtCidade.Size = new System.Drawing.Size(16, 13);
+            this.txtCidade.TabIndex = 9;
+            this.txtCidade.Text = "...";
+            // 
+            // txtUF
+            // 
+            this.txtUF.AutoSize = true;
+            this.txtUF.Location = new System.Drawing.Point(475, 242);
+            this.txtUF.Name = "txtUF";
+            this.txtUF.Size = new System.Drawing.Size(16, 13);
+            this.txtUF.TabIndex = 10;
+            this.txtUF.Text = "...";
+            // 
             // TelaOrcamento
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1100, 780);
+            this.Controls.Add(this.txtUF);
+            this.Controls.Add(this.txtCidade);
             this.Controls.Add(this.txtFantasia);
             this.Controls.Add(this.txtVendedor);
             this.Controls.Add(this.label13);
@@ -349,5 +371,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox txtFantasia;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label txtCidade;
+        private System.Windows.Forms.Label txtUF;
     }
 }

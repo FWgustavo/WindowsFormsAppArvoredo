@@ -22,6 +22,9 @@ namespace WindowsFormsAppArvoredo
         private Button btnExcluir;
         private Button btnSalvar;
         private Button btnConfirmar;
+        private Label lblCidade; // Label para exibir cidade
+        private Label lblUF; // Label para exibir UF
+        private bool isConsultandoCep = false; // Flag para evitar loops na formatação
 
         public TelaOrcamento()
         {
@@ -31,6 +34,21 @@ namespace WindowsFormsAppArvoredo
 
         private void AdicionarComponentesExtras()
         {
+            // Labels para Cidade e UF
+            lblCidade = new Label();
+            lblCidade.Text = "Cidade:";
+            lblCidade.Location = new Point(450, 213);
+            lblCidade.Size = new Size(60, 20);
+            lblCidade.Font = new Font("Microsoft Sans Serif", 10F);
+            this.Controls.Add(lblCidade);
+
+            lblUF = new Label();
+            lblUF.Text = "UF:";
+            lblUF.Location = new Point(450, 240);
+            lblUF.Size = new Size(30, 20);
+            lblUF.Font = new Font("Microsoft Sans Serif", 10F);
+            this.Controls.Add(lblUF);
+
             // Campo de pesquisa de produtos
             txtPesquisarProdutos = new TextBox();
             txtPesquisarProdutos.Location = new Point(200, 320);
@@ -235,7 +253,7 @@ namespace WindowsFormsAppArvoredo
                 }
             };
 
-            // Formatação CEP
+            // Formatação CEP com consulta automática
             txtCEP.KeyPress += (s, e) =>
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -244,17 +262,73 @@ namespace WindowsFormsAppArvoredo
                 }
             };
 
-            txtCEP.TextChanged += (s, e) =>
+            txtCEP.TextChanged += async (s, e) =>
             {
-                string text = txtCEP.Text.Replace("-", "");
-                if (text.Length > 5)
+                if (isConsultandoCep) return;
+
+                isConsultandoCep = true;
+
+                try
                 {
-                    text = text.Insert(5, "-");
-                    if (txtCEP.Text != text)
+                    string text = txtCEP.Text.Replace("-", "").Replace(" ", "").Trim();
+
+                    // Limita a 8 dígitos
+                    if (text.Length > 8)
                     {
-                        txtCEP.Text = text;
-                        txtCEP.SelectionStart = text.Length;
+                        text = text.Substring(0, 8);
                     }
+
+                    // Formatação visual do CEP
+                    string formattedText = text;
+                    if (text.Length > 5)
+                    {
+                        formattedText = text.Substring(0, 5) + "-" + text.Substring(5);
+                    }
+
+                    if (txtCEP.Text != formattedText)
+                    {
+                        int cursorPosition = txtCEP.SelectionStart;
+                        txtCEP.Text = formattedText;
+
+                        // Mantém a posição do cursor
+                        if (cursorPosition <= formattedText.Length)
+                        {
+                            txtCEP.SelectionStart = cursorPosition;
+                        }
+                        else
+                        {
+                            txtCEP.SelectionStart = formattedText.Length;
+                        }
+                    }
+
+                    // Consulta automática quando CEP estiver completo (8 dígitos)
+                    if (text.Length == 8 && text.All(char.IsDigit))
+                    {
+                        // Pequeno delay para evitar consultas excessivas
+                        await Task.Delay(300);
+
+                        // Verifica se o texto ainda é o mesmo após o delay
+                        if (txtCEP.Text.Replace("-", "").Replace(" ", "").Trim() == text)
+                        {
+                            await ConsultarEnderecoAsync(text);
+                        }
+                    }
+                    else if (text.Length < 8)
+                    {
+                        // Reset das labels quando CEP incompleto
+                        lblCidade.Text = "Cidade:";
+                        lblUF.Text = "UF:";
+                        lblCidade.ForeColor = Color.Black;
+                        lblUF.ForeColor = Color.Black;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Erro na formatação do CEP: {ex.Message}");
+                }
+                finally
+                {
+                    isConsultandoCep = false;
                 }
             };
 
@@ -283,6 +357,93 @@ namespace WindowsFormsAppArvoredo
                     }
                 }
             };
+        }
+
+        /// <summary>
+        /// Consulta o endereço através do CEP usando a API ViaCEP
+        /// </summary>
+        /// <param name="cep">CEP para consulta</param>
+        private async Task ConsultarEnderecoAsync(string cep)
+        {
+            try
+    {
+        // Valida CEP
+        if (string.IsNullOrWhiteSpace(cep) || cep.Length != 8 || !cep.All(char.IsDigit))
+        {
+            lblCidade.Text = "Cidade: CEP inválido";
+            lblUF.Text = "UF: --";
+            lblCidade.ForeColor = Color.Red;
+            lblUF.ForeColor = Color.Red;
+            return;
+        }
+
+        this.Cursor = Cursors.WaitCursor;
+        lblCidade.Text = "Cidade: Consultando...";
+        lblUF.Text = "UF: ...";
+
+        EnderecoViaCep endereco = await ViaCepService.ConsultarCepComFallbackAsync(cep);
+
+        if (endereco != null && !endereco.erro)
+        {
+            txtEndereco.Text = endereco.logradouro ?? "";
+            txtBairro.Text = endereco.bairro ?? "";
+            txtCidade.Text = endereco.localidade ?? "";
+            txtUF.Text = endereco.uf ?? "";
+
+            lblCidade.Text = $"Cidade: {endereco.localidade ?? "N/A"}";
+            lblUF.Text = $"UF: {endereco.uf ?? "N/A"}";
+
+            if (!string.IsNullOrEmpty(endereco.logradouro))
+            {
+                await Task.Delay(500);
+                txtVendedor.Focus();
+            }
+
+            lblCidade.ForeColor = Color.Green;
+            lblUF.ForeColor = Color.Green;
+        }
+        else
+        {
+            lblCidade.Text = "Cidade: CEP não encontrado";
+            lblUF.Text = "UF: --";
+            lblCidade.ForeColor = Color.Red;
+            lblUF.ForeColor = Color.Red;
+            txtEndereco.Focus();
+        }
+    }
+    catch (Exception ex)
+    {
+        lblCidade.Text = "Cidade: Erro na consulta";
+        lblUF.Text = "UF: --";
+        lblCidade.ForeColor = Color.Red;
+        lblUF.ForeColor = Color.Red;
+
+        System.Diagnostics.Debug.WriteLine($"Erro ao consultar CEP: {ex.Message}");
+    }
+    finally
+    {
+        this.Cursor = Cursors.Default;
+
+        Timer timer = new Timer();
+        timer.Interval = 3000;
+        timer.Tick += (s, e) =>
+        {
+            lblCidade.ForeColor = Color.Black;
+            lblUF.ForeColor = Color.Black;
+            timer.Stop();
+            timer.Dispose();
+        };
+        timer.Start();
+    }
+        }
+
+        /// <summary>
+        /// Limpa os campos de endereço
+        /// </summary>
+        private void LimparCamposEndereco()
+        {
+            txtEndereco.Clear();
+            txtBairro.Clear();
         }
 
         private void TxtPesquisarProdutos_Enter(object sender, EventArgs e)
@@ -434,6 +595,10 @@ namespace WindowsFormsAppArvoredo
             txtAcrescimos.Clear();
             txtTotalVista.Clear();
             txtSemJuros.Clear();
+
+            // Limpar labels de cidade e UF
+            lblCidade.Text = "Cidade:";
+            lblUF.Text = "UF:";
 
             // Limpar grid
             dgvProdutos.Rows.Clear();

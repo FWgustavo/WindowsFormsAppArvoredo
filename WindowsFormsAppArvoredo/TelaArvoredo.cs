@@ -588,35 +588,35 @@ namespace WindowsFormsAppArvoredo
 
         private void btnNovoProduto_Click(object sender, EventArgs e)
         {
-            // Aqui você abriria um formulário para adicionar novo produto
-            // Por enquanto, vamos adicionar um produto de exemplo
-            var novoProduto = new ProdutoEstoque
-            {
-                Id = produtosEstoque.Count + 1,
-                Nome = "Novo Produto",
-                Tipo = "Eucalipto",
-                QuantidadeDisponivel = 10,
-                QuantidadeMinima = 5,
-                PrecoUnitario = 25.00m,
-                UltimaAtualizacao = DateTime.Now,
-                Unidade = "m"
-            };
+            FormNovoProduto formNovo = new FormNovoProduto();
 
-            produtosEstoque.Add(novoProduto);
-            AtualizarListViewEstoque();
-            MessageBox.Show("Novo produto adicionado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (formNovo.ShowDialog() == DialogResult.OK)
+            {
+                Produto novoProduto = formNovo.ProdutoCriado;
+
+                var item = new ListViewItem(novoProduto.Sequencia.ToString());
+                item.SubItems.Add(novoProduto.Descricao);
+                item.SubItems.Add(novoProduto.Unidade);
+                item.SubItems.Add(novoProduto.Quantidade.ToString());
+                item.SubItems.Add(novoProduto.ValorUnitario.ToString("C"));
+                item.SubItems.Add(novoProduto.ValorTotal.ToString("C"));
+
+                listViewEstoque.Items.Add(item);
+            }
         }
 
         private void btnAtualizarEstoque_Click(object sender, EventArgs e)
         {
-            // Recarregar os dados do estoque
-            AtualizarListViewEstoque();
-            MessageBox.Show("Estoque atualizado!", "Atualização", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Abre o form com a lista de produtos
+            using (FormListaProdutos formLista = new FormListaProdutos())
+            {
+                formLista.ShowDialog();
+            }
         }
 
         private void btnRelatorioEstoque_Click(object sender, EventArgs e)
         {
-            // Gerar relatório de estoque
+            // Gera relatório detalhado e abre no FormRelatorio
             int produtosBaixoEstoque = produtosEstoque.Count(p => p.EstoqueAbaixoMinimo);
             decimal valorTotalEstoque = produtosEstoque.Sum(p => p.QuantidadeDisponivel * p.PrecoUnitario);
 
@@ -631,7 +631,10 @@ namespace WindowsFormsAppArvoredo
                 relatorio += $"• {produto.Nome} - Disponível: {produto.QuantidadeDisponivel} {produto.Unidade} (Mín: {produto.QuantidadeMinima})\n";
             }
 
-            MessageBox.Show(relatorio, "Relatório de Estoque", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (FormRelatorio formRel = new FormRelatorio(relatorio, "Relatório de Estoque"))
+            {
+                formRel.ShowDialog();
+            }
         }
         private void btnOrcamento_Click(object sender, EventArgs e)
         {
