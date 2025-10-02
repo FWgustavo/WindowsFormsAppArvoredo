@@ -1,19 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace WindowsFormsAppArvoredo
 {
     public partial class FormListaProdutos : Form
     {
-        public FormListaProdutos()
+        private List<TelaArvoredo.ProdutoEstoque> _produtos;
+
+        public FormListaProdutos(List<TelaArvoredo.ProdutoEstoque> produtos)
         {
             InitializeComponent();
+            _produtos = produtos ?? new List<TelaArvoredo.ProdutoEstoque>();
+            CarregarProdutos();
+        }
+
+        private void CarregarProdutos()
+        {
+            dgvProdutos.Rows.Clear();
+
+            foreach (var p in _produtos)
+            {
+                dgvProdutos.Rows.Add(
+                    p.Id,
+                    p.Nome,
+                    p.Tipo,
+                    p.QuantidadeDisponivel,
+                    p.QuantidadeMinima,
+                    p.Unidade,
+                    p.PrecoUnitario.ToString("C"), // formato moeda
+                    p.UltimaAtualizacao.ToString("dd/MM/yyyy") // formato data
+                );
+            }
         }
 
         private void btnNovo_Click(object sender, EventArgs e)
         {
-            // TODO: abrir tela de cadastro de novo produto
-            MessageBox.Show("Novo produto");
+            MessageBox.Show("Novo produto (abrir form de cadastro).");
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
@@ -24,8 +47,8 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
-            // TODO: abrir form de edição com dados do produto selecionado
-            MessageBox.Show("Editar produto selecionado");
+            var id = dgvProdutos.CurrentRow.Cells["Id"].Value.ToString();
+            MessageBox.Show($"Editar produto ID {id} (abrir form de edição).");
         }
 
         private void btnExcluir_Click(object sender, EventArgs e)
@@ -36,15 +59,22 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
-            var confirm = MessageBox.Show("Deseja realmente excluir este produto?",
+            var nome = dgvProdutos.CurrentRow.Cells["Nome"].Value.ToString();
+
+            var confirm = MessageBox.Show($"Deseja realmente excluir '{nome}'?",
                                           "Confirmação",
                                           MessageBoxButtons.YesNo,
                                           MessageBoxIcon.Question);
 
             if (confirm == DialogResult.Yes)
             {
-                // TODO: excluir produto selecionado
-                MessageBox.Show("Produto excluído (simulação)");
+                // Aqui você remove da lista de produtos
+                var id = Convert.ToInt32(dgvProdutos.CurrentRow.Cells["Id"].Value);
+                _produtos.RemoveAll(p => p.Id == id);
+
+                CarregarProdutos();
+
+                MessageBox.Show("Produto excluído com sucesso!");
             }
         }
 
