@@ -273,16 +273,29 @@ namespace WindowsFormsAppArvoredo
 
         private void btnNewOrc_Click(object sender, EventArgs e)
         {
-            var novoOrcamento = new Orcamento
+            using (var telaOrcamento = new TelaOrcamento(produtos))
             {
-                Id = orcamentos.Count + 1,
-                Cliente = "Novo Cliente",
-                DataEmissao = DateTime.Now
-            };
+                if (telaOrcamento.ShowDialog() == DialogResult.OK && telaOrcamento.OrcamentoConfirmado)
+                {
+                    // Adicionar o orçamento à lista
+                    var novoOrcamento = telaOrcamento.OrcamentoCriado;
+                    novoOrcamento.Id = orcamentos.Count + 1;
+                    orcamentos.Add(novoOrcamento);
 
-            orcamentos.Add(novoOrcamento);
-            AtualizarListViewOrcamentos();
-            MessageBox.Show("Novo orçamento criado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Atualizar a ListView
+                    AtualizarListViewOrcamentos();
+
+                    // Mostrar mensagem de sucesso
+                    MessageBox.Show(
+                        $"Orçamento #{novoOrcamento.Id} adicionado com sucesso!\n\n" +
+                        $"Cliente: {novoOrcamento.Cliente}\n" +
+                        $"Total: {novoOrcamento.TotalGeral:C}\n" +
+                        $"Itens: {novoOrcamento.QuantidadeItens}",
+                        "Orçamento Criado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+            }
         }
 
         #endregion

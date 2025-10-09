@@ -150,6 +150,7 @@
     <Compile Include="FormRelatorio.Designer.cs">
       <DependentUpon>FormRelatorio.cs</DependentUpon>
     </Compile>
+    <Compile Include="Orcamento.cs" />
     <Compile Include="Produto.cs" />
     <Compile Include="ProdutoEstoque.cs" />
     <Compile Include="Program.cs" />

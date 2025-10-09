@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace WindowsFormsAppArvoredo
 {
     public class Produto
     {
-        public int Sequencia { get; set; }
+        public int Sequencia { get; set; }            // id / índice
         public string Descricao { get; set; }
         public string Tipo { get; set; }
         public string Unidade { get; set; }
@@ -44,15 +46,19 @@ namespace WindowsFormsAppArvoredo
         public List<Produto> Produtos { get; set; }
         public decimal Desconto { get; set; }
         public decimal Acrescimo { get; set; }
-
         public decimal TotalProdutos
         {
-            get { return Produtos?.Sum(p => p.ValorTotal) ?? 0; }
+            get
+            {
+                return Produtos?.Sum(p => p.ValorTotal) ?? 0;
+            }
         }
-
         public decimal TotalGeral
         {
-            get { return TotalProdutos - Desconto + Acrescimo; }
+            get
+            {
+                return TotalProdutos - Desconto + Acrescimo;
+            }
         }
 
         public Orcamento()
@@ -87,6 +93,7 @@ namespace WindowsFormsAppArvoredo
             if (produto != null)
             {
                 Produtos.Remove(produto);
+                // Reordenar sequências
                 for (int i = 0; i < Produtos.Count; i++)
                 {
                     Produtos[i].Sequencia = i + 1;
