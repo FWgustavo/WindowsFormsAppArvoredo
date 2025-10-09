@@ -616,8 +616,19 @@ namespace WindowsFormsAppArvoredo
 
         private void BtnImprimir_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Funcionalidade de impressão a ser implementada!", "Imprimir",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Funcionalidade de impressão implementada!", "Imprimir",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao imprimir: " + ex.Message);
+            }
         }
 
         private void BtnExcluir_Click(object sender, EventArgs e)
@@ -644,16 +655,145 @@ namespace WindowsFormsAppArvoredo
 
         private void BtnConfirmar_Click(object sender, EventArgs e)
         {
-            if (ValidarCampos())
+            // 1. VALIDAR CAMPOS OBRIGATÓRIOS
+            if (string.IsNullOrWhiteSpace(txtCliente.Text))
             {
-                DialogResult result = MessageBox.Show("Confirmar orçamento?",
-                    "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                MessageBox.Show("Campo Cliente é obrigatório!", "Validação",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCliente.Focus();
+                return;
+            }
 
-                if (result == DialogResult.Yes)
+            if (string.IsNullOrWhiteSpace(txtCPF.Text))
+            {
+                MessageBox.Show("Campo CPF/CNPJ é obrigatório!", "Validação",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCPF.Focus();
+                return;
+            }
+
+            // 2. VALIDAR SE HÁ PRODUTOS
+            if (dgvProdutos.Rows.Count == 0)
+            {
+                MessageBox.Show("Adicione pelo menos um produto ao orçamento!", "Validação",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPesquisarProdutos.Focus();
+                return;
+            }
+
+            // 3. CONFIRMAR COM O USUÁRIO
+            DialogResult resultado = MessageBox.Show(
+                "Deseja confirmar este orçamento?\n\n" +
+                $"Cliente: {txtCliente.Text}\n" +
+                $"Produtos: {dgvProdutos.Rows.Count}\n" +
+                $"Total: {txtTotalVista.Text}",
+                "Confirmar Orçamento",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (resultado != DialogResult.Yes)
+            {
+                return; // Usuário cancelou
+            }
+
+            try
+            {
+                // 4. CRIAR O OBJETO ORCAMENTO
+                OrcamentoCriado = new Orcamento();
+
+                // 5. PREENCHER DADOS DO CLIENTE
+                OrcamentoCriado.Cliente = txtCliente.Text.Trim();
+                OrcamentoCriado.Endereco = txtEndereco.Text.Trim();
+                OrcamentoCriado.CEP = txtCEP.Text.Trim();
+                OrcamentoCriado.Bairro = txtBairro.Text.Trim();
+                OrcamentoCriado.Cidade = txtCidade.Text.Trim();
+                OrcamentoCriado.UF = txtUF.Text.Trim();
+                OrcamentoCriado.CPF_CNPJ = txtCPF.Text.Trim();
+                OrcamentoCriado.Telefone = txtTEL.Text.Trim();
+                OrcamentoCriado.Vendedor = txtVendedor.Text.Trim();
+                OrcamentoCriado.DataEmissao = DateTime.Now;
+                OrcamentoCriado.Status = "Pendente";
+
+                // 6. ADICIONAR PRODUTOS DO DATAGRIDVIEW
+                decimal subTotal = 0;
+                int sequencia = 1;
+
+                foreach (DataGridViewRow row in dgvProdutos.Rows)
                 {
-                    MessageBox.Show("Orçamento confirmado!", "Confirmar",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (row.Cells["DESCRICAO"].Value == null)
+                        continue;
+
+                    // Criar item do orçamento
+                    var item = new ItemOrcamento
+                    {
+                        Sequencia = sequencia++,
+                        Descricao = row.Cells["DESCRICAO"].Value?.ToString() ?? "",
+                        Unidade = row.Cells["UNI"].Value?.ToString() ?? "",
+                    };
+
+                    // Converter quantidade
+                    string qtdStr = row.Cells["QTD"].Value?.ToString()?.Replace(".", ",") ?? "0";
+                    if (decimal.TryParse(qtdStr, out decimal qtd))
+                        item.Quantidade = qtd;
+                    else
+                        item.Quantidade = 0;
+
+                    // Converter valor unitário
+                    string vlrUniStr = row.Cells["VLR_UNI"].Value?.ToString()?.Replace(".", ",") ?? "0";
+                    if (decimal.TryParse(vlrUniStr, out decimal vlrUni))
+                        item.ValorUnitario = vlrUni;
+                    else
+                        item.ValorUnitario = 0;
+
+                    // Calcular valor total do item
+                    item.RecalcularTotal();
+
+                    // Guardar referência ao produto original (se houver)
+                    item.ProdutoOrigem = row.Tag as Produto;
+
+                    // Adicionar à lista de itens
+                    OrcamentoCriado.Itens.Add(item);
+                    subTotal += item.ValorTotal;
                 }
+
+                // 7. CALCULAR TOTAIS
+                OrcamentoCriado.SubTotal = subTotal;
+
+                // Converter desconto
+                string descontoStr = txtDescontos.Text.Replace(".", ",").Replace("R$", "").Trim();
+                if (decimal.TryParse(descontoStr, out decimal desconto))
+                    OrcamentoCriado.Desconto = desconto;
+                else
+                    OrcamentoCriado.Desconto = 0;
+
+                // Converter acréscimo
+                string acrescimoStr = txtAcrescimos.Text.Replace(".", ",").Replace("R$", "").Trim();
+                if (decimal.TryParse(acrescimoStr, out decimal acrescimo))
+                    OrcamentoCriado.Acrescimo = acrescimo;
+                else
+                    OrcamentoCriado.Acrescimo = 0;
+
+                // Calcular total geral
+                OrcamentoCriado.TotalGeral = subTotal - OrcamentoCriado.Desconto + OrcamentoCriado.Acrescimo;
+
+                // 8. MARCAR COMO CONFIRMADO
+                OrcamentoConfirmado = true;
+
+                // 9. ⭐ FECHAR A TELA - MÉTODO GARANTIDO ⭐
+                this.DialogResult = DialogResult.OK;
+                this.Close(); // Força o fechamento
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Erro ao criar orçamento:\n\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                // Resetar em caso de erro
+                OrcamentoCriado = null;
+                OrcamentoConfirmado = false;
             }
         }
 
