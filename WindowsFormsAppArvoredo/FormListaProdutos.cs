@@ -6,12 +6,12 @@ namespace WindowsFormsAppArvoredo
 {
     public partial class FormListaProdutos : Form
     {
-        private List<TelaArvoredo.ProdutoEstoque> _produtos;
+        private List<Produto> _produtos;
 
-        public FormListaProdutos(List<TelaArvoredo.ProdutoEstoque> produtos)
+        public FormListaProdutos(List<Produto> produtos)
         {
             InitializeComponent();
-            _produtos = produtos ?? new List<TelaArvoredo.ProdutoEstoque>();
+            _produtos = produtos ?? new List<Produto>();
             CarregarProdutos();
         }
 
@@ -22,21 +22,16 @@ namespace WindowsFormsAppArvoredo
             foreach (var p in _produtos)
             {
                 dgvProdutos.Rows.Add(
-                    p.Id,
-                    p.Nome,
+                    p.Sequencia,
+                    p.Descricao,
                     p.Tipo,
-                    p.QuantidadeDisponivel,
+                    p.Quantidade,
                     p.QuantidadeMinima,
                     p.Unidade,
-                    p.PrecoUnitario.ToString("C"), // formato moeda
-                    p.UltimaAtualizacao.ToString("dd/MM/yyyy") // formato data
+                    p.ValorUnitario.ToString("C"),
+                    p.UltimaAtualizacao.ToString("dd/MM/yyyy")
                 );
             }
-        }
-
-        private void btnNovo_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Novo produto (abrir form de cadastro).");
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
@@ -47,8 +42,17 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
-            var id = dgvProdutos.CurrentRow.Cells["Id"].Value.ToString();
-            MessageBox.Show($"Editar produto ID {id} (abrir form de edição).");
+            int id = Convert.ToInt32(dgvProdutos.CurrentRow.Cells[0].Value);
+            var produto = _produtos.Find(x => x.Sequencia == id);
+
+            if (produto != null)
+            {
+                using (var form = new FormNovoProduto(produto))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                        CarregarProdutos();
+                }
+            }
         }
 
         private void btnExcluir_Click(object sender, EventArgs e)
@@ -59,21 +63,19 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
-            var nome = dgvProdutos.CurrentRow.Cells["Nome"].Value.ToString();
+            int id = Convert.ToInt32(dgvProdutos.CurrentRow.Cells[0].Value);
+            var produto = _produtos.Find(x => x.Sequencia == id);
+            if (produto == null) return;
 
-            var confirm = MessageBox.Show($"Deseja realmente excluir '{nome}'?",
-                                          "Confirmação",
-                                          MessageBoxButtons.YesNo,
-                                          MessageBoxIcon.Question);
-
+            var confirm = MessageBox.Show($"Deseja realmente excluir '{produto.Descricao}'?", "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                // Aqui você remove da lista de produtos
-                var id = Convert.ToInt32(dgvProdutos.CurrentRow.Cells["Id"].Value);
-                _produtos.RemoveAll(p => p.Id == id);
+                _produtos.Remove(produto);
+                // reindex
+                for (int i = 0; i < _produtos.Count; i++)
+                    _produtos[i].Sequencia = i + 1;
 
                 CarregarProdutos();
-
                 MessageBox.Show("Produto excluído com sucesso!");
             }
         }

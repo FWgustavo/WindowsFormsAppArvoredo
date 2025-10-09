@@ -34,11 +34,14 @@ namespace WindowsFormsAppArvoredo
             this.Paint += new PaintEventHandler(Form1_Paint);
 
             // Configurações do painel de degrade (double-buffer)
-            this.panelDegrade.BackColor = Color.Transparent;
-            typeof(Panel).InvokeMember("DoubleBuffered",
-                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                null, panelDegrade, new object[] { true });
-            this.panelDegrade.Paint += new PaintEventHandler(PanelDegrade_Paint);
+            if (panelDegrade != null)
+            {
+                panelDegrade.BackColor = Color.Transparent;
+                typeof(Panel).InvokeMember("DoubleBuffered",
+                    BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null, panelDegrade, new object[] { true });
+                panelDegrade.Paint += new PaintEventHandler(PanelDegrade_Paint);
+            }
 
             // Otimizações de rendering
             this.SetStyle(ControlStyles.ResizeRedraw, true);
@@ -111,17 +114,30 @@ namespace WindowsFormsAppArvoredo
             public string Status { get; set; }
         }
 
-        public class ProdutoEstoque
+        // Modelo único para produtos/estoque (unificado)
+        public class Produto
         {
             public int Id { get; set; }
+            public int Sequencia { get; set; } // índice mostrado, quando aplicável
             public string Nome { get; set; }
+            public string Descricao { get; set; }
             public string Tipo { get; set; } // Eucalipto, Peroba, ...
-            public int QuantidadeDisponivel { get; set; }
+            public int Quantidade { get; set; } // usado em algumas listas como "Quantidade"
+            public int QuantidadeDisponivel
+            {
+                get { return Quantidade; } // compatibilidade
+                set { Quantidade = value; }
+            }
             public int QuantidadeMinima { get; set; }
-            public decimal PrecoUnitario { get; set; }
+            public decimal PrecoUnitario { get; set; } // valor por unidade
+            public decimal ValorUnitario
+            {
+                get { return PrecoUnitario; } // compatibilidade com possíveis usos
+                set { PrecoUnitario = value; }
+            }
             public DateTime UltimaAtualizacao { get; set; }
             public string Unidade { get; set; } // m, unidade, etc.
-            public bool EstoqueAbaixoMinimo => QuantidadeDisponivel <= QuantidadeMinima;
+            public bool EstoqueAbaixoMinimo => Quantidade <= QuantidadeMinima;
         }
 
         #endregion
@@ -129,7 +145,7 @@ namespace WindowsFormsAppArvoredo
         #region Dados em memória
 
         private List<Orcamento> orcamentos = new List<Orcamento>();
-        private List<ProdutoEstoque> produtosEstoque = new List<ProdutoEstoque>();
+        private List<Produto> produtos = new List<Produto>();
 
         #endregion
 
@@ -138,15 +154,24 @@ namespace WindowsFormsAppArvoredo
             // Aplica arredondamento nos botões (UI já existe no Designer)
             try
             {
-                btnEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEstoque.Width, btnEstoque.Height, 50, 100));
-                btnOrcamento.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnOrcamento.Width, btnOrcamento.Height, 50, 100));
-                btnPedidos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnPedidos.Width, btnPedidos.Height, 50, 100));
-                btnTitulos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnTitulos.Width, btnTitulos.Height, 50, 100));
-                btnCadastro.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCadastro.Width, btnCadastro.Height, 15, 15));
-                btnCaixa.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCaixa.Width, btnCaixa.Height, 15, 15));
-                btnHistorico.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnHistorico.Width, btnHistorico.Height, 15, 15));
-                btnSair.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSair.Width, btnSair.Height, 15, 15));
-                btnNewOrc.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNewOrc.Width, btnNewOrc.Height, 10, 10));
+                if (btnEstoque != null)
+                    btnEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEstoque.Width, btnEstoque.Height, 50, 100));
+                if (btnOrcamento != null)
+                    btnOrcamento.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnOrcamento.Width, btnOrcamento.Height, 50, 100));
+                if (btnPedidos != null)
+                    btnPedidos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnPedidos.Width, btnPedidos.Height, 50, 100));
+                if (btnTitulos != null)
+                    btnTitulos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnTitulos.Width, btnTitulos.Height, 50, 100));
+                if (btnCadastro != null)
+                    btnCadastro.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCadastro.Width, btnCadastro.Height, 15, 15));
+                if (btnCaixa != null)
+                    btnCaixa.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCaixa.Width, btnCaixa.Height, 15, 15));
+                if (btnHistorico != null)
+                    btnHistorico.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnHistorico.Width, btnHistorico.Height, 15, 15));
+                if (btnSair != null)
+                    btnSair.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSair.Width, btnSair.Height, 15, 15));
+                if (btnNewOrc != null)
+                    btnNewOrc.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNewOrc.Width, btnNewOrc.Height, 10, 10));
             }
             catch
             {
@@ -154,46 +179,72 @@ namespace WindowsFormsAppArvoredo
             }
 
             // Inicializa painéis e ListViews (somente lógica — visual está no Designer)
-            panelOrcamento.Visible = true;   // Inicia mostrando orçamentos
-            panelEstoque.Visible = false;    // Estoque oculto até o clique
+            if (panelOrcamento != null) panelOrcamento.Visible = true;   // Inicia mostrando orçamentos
+            if (panelEstoque != null) panelEstoque.Visible = false;    // Estoque oculto até o clique
 
             // Configuração e dados
             ConfigurarListViewOrcamentos();
             ConfigurarEstoque();
 
             // Eventos (se não estiverem ligados no Designer)
-            btnOrcamento.Click -= btnOrcamento_Click;
-            btnOrcamento.Click += btnOrcamento_Click;
+            if (btnOrcamento != null)
+            {
+                btnOrcamento.Click -= btnOrcamento_Click;
+                btnOrcamento.Click += btnOrcamento_Click;
+            }
 
-            btnEstoque.Click -= btnEstoque_Click;
-            btnEstoque.Click += btnEstoque_Click;
+            if (btnEstoque != null)
+            {
+                btnEstoque.Click -= btnEstoque_Click;
+                btnEstoque.Click += btnEstoque_Click;
+            }
 
-            btnNewOrc.Click -= btnNewOrc_Click;
-            btnNewOrc.Click += btnNewOrc_Click;
+            if (btnNewOrc != null)
+            {
+                btnNewOrc.Click -= btnNewOrc_Click;
+                btnNewOrc.Click += btnNewOrc_Click;
+            }
 
-            btnNovoProduto.Click -= btnNovoProduto_Click;
-            btnNovoProduto.Click += btnNovoProduto_Click;
+            if (btnNovoProduto != null)
+            {
+                btnNovoProduto.Click -= btnNovoProduto_Click;
+                btnNovoProduto.Click += btnNovoProduto_Click;
+            }
 
-            btnAtualizarEstoque.Click -= btnAtualizarEstoque_Click;
-            btnAtualizarEstoque.Click += btnAtualizarEstoque_Click;
+            if (btnAtualizarEstoque != null)
+            {
+                btnAtualizarEstoque.Click -= btnAtualizarEstoque_Click;
+                btnAtualizarEstoque.Click += btnAtualizarEstoque_Click;
+            }
 
-            btnRelatorioEstoque.Click -= btnRelatorioEstoque_Click;
-            btnRelatorioEstoque.Click += btnRelatorioEstoque_Click;
+            if (btnRelatorioEstoque != null)
+            {
+                btnRelatorioEstoque.Click -= btnRelatorioEstoque_Click;
+                btnRelatorioEstoque.Click += btnRelatorioEstoque_Click;
+            }
 
-            listViewOrcamentos.MouseClick -= listViewOrcamentos_MouseClick;
-            listViewOrcamentos.MouseClick += listViewOrcamentos_MouseClick;
+            if (listViewOrcamentos != null)
+            {
+                listViewOrcamentos.MouseClick -= listViewOrcamentos_MouseClick;
+                listViewOrcamentos.MouseClick += listViewOrcamentos_MouseClick;
+            }
 
-            listViewEstoque.MouseClick -= listViewEstoque_MouseClick;
-            listViewEstoque.MouseClick += listViewEstoque_MouseClick;
+            if (listViewEstoque != null)
+            {
+                listViewEstoque.MouseClick -= listViewEstoque_MouseClick;
+                listViewEstoque.MouseClick += listViewEstoque_MouseClick;
+            }
 
             // Força o redesenho do panelDegrade
-            panelDegrade.Invalidate();
+            panelDegrade?.Invalidate();
         }
 
         #region Orçamentos (já integrados ao Designer)
 
         private void ConfigurarListViewOrcamentos()
         {
+            if (listViewOrcamentos == null) return;
+
             listViewOrcamentos.Columns.Clear();
             listViewOrcamentos.Columns.Add("Orçamento", 120);
             listViewOrcamentos.Columns.Add("Cliente", 200);
@@ -212,24 +263,29 @@ namespace WindowsFormsAppArvoredo
 
         private void CarregarDadosExemplo()
         {
-            orcamentos.Clear();
+            produtos.Clear();
 
-            orcamentos.Add(new Orcamento { Id = 1, Cliente = "Nilda", DataCriacao = DateTime.Now.AddDays(-5), Valor = 1500.00m, Status = "Pendente" });
-            orcamentos.Add(new Orcamento { Id = 2, Cliente = "Fernando", DataCriacao = DateTime.Now.AddDays(-3), Valor = 2300.00m, Status = "Pendente" });
-            orcamentos.Add(new Orcamento { Id = 3, Cliente = "Bernardo", DataCriacao = DateTime.Now.AddDays(-1), Valor = 890.00m, Status = "Pendente" });
-            orcamentos.Add(new Orcamento { Id = 4, Cliente = "Jana", DataCriacao = DateTime.Now, Valor = 1200.00m, Status = "Pendente" });
+            // Exemplo de produtos (usando classe Produto unificada)
+            produtos.Add(new Produto { Sequencia = 1, Nome = "Tábua Eucalipto 2x10", Tipo = "Eucalipto", Quantidade = 45, QuantidadeMinima = 20, PrecoUnitario = 35.50m, UltimaAtualizacao = DateTime.Now.AddDays(-2), Unidade = "m" });
+            produtos.Add(new Produto { Sequencia = 2, Nome = "Viga Peroba 6x12", Tipo = "Peroba", Quantidade = 15, QuantidadeMinima = 25, PrecoUnitario = 125.00m, UltimaAtualizacao = DateTime.Now.AddDays(-1), Unidade = "m" });
+            produtos.Add(new Produto { Sequencia = 3, Nome = "Ripão Câmbara 5x7", Tipo = "Câmbara", Quantidade = 32, QuantidadeMinima = 15, PrecoUnitario = 28.75m, UltimaAtualizacao = DateTime.Now.AddDays(-3), Unidade = "m" });
+            produtos.Add(new Produto { Sequencia = 4, Nome = "Caibro Pinnus 5x6", Tipo = "Pinnus", Quantidade = 67, QuantidadeMinima = 30, PrecoUnitario = 18.90m, UltimaAtualizacao = DateTime.Now, Unidade = "m" });
+            produtos.Add(new Produto { Sequencia = 5, Nome = "Testeira 2x20", Tipo = "Testeira", Quantidade = 8, QuantidadeMinima = 12, PrecoUnitario = 42.30m, UltimaAtualizacao = DateTime.Now.AddDays(-4), Unidade = "m" });
+            produtos.Add(new Produto { Sequencia = 6, Nome = "Prancha Eucalipto 3x30", Tipo = "Eucalipto", Quantidade = 22, QuantidadeMinima = 10, PrecoUnitario = 65.80m, UltimaAtualizacao = DateTime.Now.AddDays(-1), Unidade = "m" });
 
-            AtualizarListViewOrcamentos();
+            AtualizarListaEstoque();
         }
 
         private void AtualizarListViewOrcamentos()
         {
+            if (listViewOrcamentos == null) return;
+
             listViewOrcamentos.Items.Clear();
 
             foreach (var orcamento in orcamentos)
             {
                 var item = new ListViewItem($"Orçamento N° {orcamento.Id}");
-                item.SubItems.Add($"Cliente: {orcamento.Cliente}");
+                item.SubItems.Add($"{orcamento.Cliente}");
                 item.SubItems.Add(orcamento.DataCriacao.ToString("dd/MM/yyyy"));
                 item.SubItems.Add(orcamento.Valor.ToString("C"));
                 item.SubItems.Add(orcamento.Status);
@@ -326,6 +382,8 @@ namespace WindowsFormsAppArvoredo
 
         private void ConfigurarEstoque()
         {
+            if (listViewEstoque == null) return;
+
             listViewEstoque.Columns.Clear();
             listViewEstoque.Columns.Add("Produto", 150);
             listViewEstoque.Columns.Add("Tipo", 120);
@@ -347,111 +405,117 @@ namespace WindowsFormsAppArvoredo
 
         private void CarregarDadosEstoqueExemplo()
         {
-            produtosEstoque.Clear();
+            produtos.Clear();
 
-            produtosEstoque.Add(new ProdutoEstoque
+            produtos.Add(new Produto
             {
                 Id = 1,
                 Nome = "Tábua Eucalipto 2x10",
                 Tipo = "Eucalipto",
-                QuantidadeDisponivel = 45,
+                Quantidade = 45,
                 QuantidadeMinima = 20,
                 PrecoUnitario = 35.50m,
                 UltimaAtualizacao = DateTime.Now.AddDays(-2),
                 Unidade = "m"
             });
 
-            produtosEstoque.Add(new ProdutoEstoque
+            produtos.Add(new Produto
             {
                 Id = 2,
                 Nome = "Viga Peroba 6x12",
                 Tipo = "Peroba",
-                QuantidadeDisponivel = 15,
+                Quantidade = 15,
                 QuantidadeMinima = 25,
                 PrecoUnitario = 125.00m,
                 UltimaAtualizacao = DateTime.Now.AddDays(-1),
                 Unidade = "m"
             });
 
-            produtosEstoque.Add(new ProdutoEstoque
+            produtos.Add(new Produto
             {
                 Id = 3,
                 Nome = "Ripão Câmbara 5x7",
                 Tipo = "Câmbara",
-                QuantidadeDisponivel = 32,
+                Quantidade = 32,
                 QuantidadeMinima = 15,
                 PrecoUnitario = 28.75m,
                 UltimaAtualizacao = DateTime.Now.AddDays(-3),
                 Unidade = "m"
             });
 
-            produtosEstoque.Add(new ProdutoEstoque
+            produtos.Add(new Produto
             {
                 Id = 4,
                 Nome = "Caibro Pinnus 5x6",
                 Tipo = "Pinnus",
-                QuantidadeDisponivel = 67,
+                Quantidade = 67,
                 QuantidadeMinima = 30,
                 PrecoUnitario = 18.90m,
                 UltimaAtualizacao = DateTime.Now,
                 Unidade = "m"
             });
 
-            produtosEstoque.Add(new ProdutoEstoque
+            produtos.Add(new Produto
             {
                 Id = 5,
                 Nome = "Testeira 2x20",
                 Tipo = "Testeira",
-                QuantidadeDisponivel = 8,
+                Quantidade = 8,
                 QuantidadeMinima = 12,
                 PrecoUnitario = 42.30m,
                 UltimaAtualizacao = DateTime.Now.AddDays(-4),
                 Unidade = "m"
             });
 
-            produtosEstoque.Add(new ProdutoEstoque
+            produtos.Add(new Produto
             {
                 Id = 6,
                 Nome = "Prancha Eucalipto 3x30",
                 Tipo = "Eucalipto",
-                QuantidadeDisponivel = 22,
+                Quantidade = 22,
                 QuantidadeMinima = 10,
                 PrecoUnitario = 65.80m,
                 UltimaAtualizacao = DateTime.Now.AddDays(-1),
                 Unidade = "m"
             });
 
-            AtualizarListViewEstoque();
+            AtualizarListaEstoque();
         }
 
-        private void AtualizarListViewEstoque()
+        private void AtualizarListaEstoque()
         {
+            if (listViewEstoque == null) return;
+
             listViewEstoque.Items.Clear();
+            int countBaixo = 0;
 
-            foreach (var produto in produtosEstoque)
+            foreach (var p in produtos)
             {
-                var item = new ListViewItem(produto.Nome);
-                item.SubItems.Add(produto.Tipo);
-                item.SubItems.Add(produto.QuantidadeDisponivel.ToString());
-                item.SubItems.Add(produto.QuantidadeMinima.ToString());
-                item.SubItems.Add(produto.Unidade);
-                item.SubItems.Add(produto.PrecoUnitario.ToString("C"));
-                item.SubItems.Add(produto.UltimaAtualizacao.ToString("dd/MM/yyyy"));
+                var item = new ListViewItem(p.Nome ?? p.Descricao ?? "Produto sem nome");
+                item.SubItems.Add(p.Tipo);
+                item.SubItems.Add(p.Quantidade.ToString());
+                item.SubItems.Add(p.QuantidadeMinima.ToString());
+                item.SubItems.Add(p.Unidade);
+                item.SubItems.Add(p.PrecoUnitario.ToString("C"));
+                item.SubItems.Add(p.UltimaAtualizacao.ToString("dd/MM/yyyy"));
 
-                string status = produto.EstoqueAbaixoMinimo ? "⚠️ BAIXO" : "✅ OK";
+                string status = p.Quantidade <= p.QuantidadeMinima ? "⚠️ BAIXO" : "✅ OK";
                 item.SubItems.Add(status);
 
-                item.SubItems.Add("✏️ 🗑️");
-                item.Tag = produto;
+                item.SubItems.Add("✏️ 🗑️"); // coluna Ações (ícone/texto)
+                item.Tag = p;
 
-                if (produto.EstoqueAbaixoMinimo)
-                    item.BackColor = Color.FromArgb(255, 200, 200);
+                if (p.Quantidade <= p.QuantidadeMinima)
+                {
+                    item.BackColor = System.Drawing.Color.FromArgb(255, 220, 220);
+                    countBaixo++;
+                }
 
                 listViewEstoque.Items.Add(item);
             }
 
-            // Atualiza label de produtos com estoque baixo
-            lblProdutosBaixoEstoque.Text = $"⚠️ Produtos com estoque baixo: {produtosEstoque.Count(p => p.EstoqueAbaixoMinimo)}";
+            if (lblProdutosBaixoEstoque != null)
+                lblProdutosBaixoEstoque.Text = $"⚠️ Produtos com estoque baixo: {countBaixo}";
         }
 
         private void ListViewEstoque_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
@@ -467,7 +531,7 @@ namespace WindowsFormsAppArvoredo
                 Color.FromArgb(239, 212, 172) :
                 Color.FromArgb(250, 230, 194);
 
-            ProdutoEstoque produto = (ProdutoEstoque)e.Item.Tag;
+            var produto = e.Item.Tag as Produto;
             if (produto != null && produto.EstoqueAbaixoMinimo)
                 backgroundColor = Color.FromArgb(255, 220, 220);
 
@@ -487,7 +551,7 @@ namespace WindowsFormsAppArvoredo
 
             if (e.ColumnIndex == 7) // coluna Status
             {
-                ProdutoEstoque produto = (ProdutoEstoque)e.Item.Tag;
+                var produto = e.Item.Tag as Produto;
                 if (produto != null && produto.EstoqueAbaixoMinimo)
                     textColor = Color.Red;
                 else
@@ -514,18 +578,19 @@ namespace WindowsFormsAppArvoredo
             var hit = listViewEstoque.HitTest(e.Location);
             if (hit.Item != null && hit.SubItem != null)
             {
-                if (hit.Item.SubItems.IndexOf(hit.SubItem) == listViewEstoque.Columns.Count - 1)
+                // Se clicou na coluna "Ações" (é a última coluna)
+                int idxAcoes = listViewEstoque.Columns.Count - 1;
+                if (hit.Item.SubItems.IndexOf(hit.SubItem) == idxAcoes)
                 {
-                    ProdutoEstoque produto = (ProdutoEstoque)hit.Item.Tag;
+                    var produto = hit.Item.Tag as Produto;
 
                     ContextMenuStrip menu = new ContextMenuStrip();
-
                     ToolStripMenuItem editarItem = new ToolStripMenuItem("✏️ Editar Produto");
-                    editarItem.Click += (s, args) => EditarProduto(produto);
+                    editarItem.Click += (s, ev) => EditarProduto(produto);
                     menu.Items.Add(editarItem);
 
                     ToolStripMenuItem excluirItem = new ToolStripMenuItem("🗑️ Excluir Produto");
-                    excluirItem.Click += (s, args) => ExcluirProduto(produto);
+                    excluirItem.Click += (s, ev) => ExcluirProduto(produto);
                     menu.Items.Add(excluirItem);
 
                     menu.Show(listViewEstoque, e.Location);
@@ -533,72 +598,77 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private void EditarProduto(ProdutoEstoque produto)
+        private void EditarProduto(Produto produto)
         {
-            MessageBox.Show($"Editar produto: {produto.Nome}", "Editar Produto", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            // Aqui você pode abrir um form de edição real e, ao salvar, chamar AtualizarListViewEstoque()
+            if (produto == null) return;
+
+            // produto já vem pelo Tag; abre o form em modo edição (passa a referência)
+            using (var form = new FormNovoProduto(produto))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    // já atualizamos o mesmo objeto por referência dentro do form
+                    AtualizarListaEstoque();
+                    MessageBox.Show("Produto atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
-        private void ExcluirProduto(ProdutoEstoque produto)
+        private void ExcluirProduto(Produto produto)
         {
-            var result = MessageBox.Show($"Tem certeza que deseja excluir o produto '{produto.Nome}'?", "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (produto == null) return;
+
+            var result = MessageBox.Show($"Tem certeza que deseja excluir o produto '{(produto.Nome ?? produto.Descricao ?? produto.Id.ToString())}'?", "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                produtosEstoque.Remove(produto);
-                AtualizarListViewEstoque();
-                MessageBox.Show("Produto excluído com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                produtos.Remove(produto);
+                // reindexa sequencias
+                for (int i = 0; i < produtos.Count; i++)
+                    produtos[i].Sequencia = i + 1;
+
+                AtualizarListaEstoque();
+                MessageBox.Show("Produto excluído.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void btnNovoProduto_Click(object sender, EventArgs e)
         {
-            using (FormNovoProduto formNovo = new FormNovoProduto())
+            using (var form = new FormNovoProduto())
             {
-                if (formNovo.ShowDialog() == DialogResult.OK)
+                if (form.ShowDialog() == DialogResult.OK)
                 {
-                    // Produto é um tipo definido no seu FormNovoProduto (você já enviou esse form)
-                    Produto novoProduto = formNovo.ProdutoCriado;
-
-                    produtosEstoque.Add(new ProdutoEstoque
-                    {
-                        Id = produtosEstoque.Count + 1,
-                        Nome = novoProduto.Descricao,
-                        Tipo = "Novo",
-                        QuantidadeDisponivel = (int)novoProduto.Quantidade,
-                        QuantidadeMinima = 5,
-                        PrecoUnitario = novoProduto.ValorUnitario,
-                        UltimaAtualizacao = DateTime.Now,
-                        Unidade = novoProduto.Unidade
-                    });
-
-                    AtualizarListViewEstoque();
+                    var novo = form.ProdutoCriado;
+                    novo.Sequencia = produtos.Count + 1;
+                    novo.UltimaAtualizacao = DateTime.Now;
+                    produtos.Add(novo);
+                    AtualizarListaEstoque();
                 }
             }
         }
 
         private void btnAtualizarEstoque_Click(object sender, EventArgs e)
         {
-            using (FormListaProdutos formLista = new FormListaProdutos(produtosEstoque))
-    {
-        formLista.ShowDialog();
-        AtualizarListViewEstoque(); // recarrega a ListView depois de fechar
-    }
+            using (FormListaProdutos formLista = new FormListaProdutos(produtos))
+            {
+                formLista.ShowDialog();
+                AtualizarListaEstoque(); // recarrega a ListView depois de fechar
+            }
         }
 
         private void btnRelatorioEstoque_Click(object sender, EventArgs e)
         {
-            int produtosBaixoEstoque = produtosEstoque.Count(p => p.EstoqueAbaixoMinimo);
-            decimal valorTotalEstoque = produtosEstoque.Sum(p => p.QuantidadeDisponivel * p.PrecoUnitario);
+            int produtosBaixoEstoque = produtos.Count(p => p.EstoqueAbaixoMinimo);
+            decimal valorTotalEstoque = produtos.Sum(p => p.Quantidade * p.PrecoUnitario);
 
             string relatorio = $"RELATÓRIO DE ESTOQUE\n\n" +
-                              $"Total de produtos: {produtosEstoque.Count}\n" +
+                              $"Total de produtos: {produtos.Count}\n" +
                               $"Produtos com estoque baixo: {produtosBaixoEstoque}\n" +
                               $"Valor total do estoque: {valorTotalEstoque:C}\n\n" +
                               "PRODUTOS COM ESTOQUE BAIXO:\n";
 
-            foreach (var produto in produtosEstoque.Where(p => p.EstoqueAbaixoMinimo))
+            foreach (var produto in produtos.Where(p => p.EstoqueAbaixoMinimo))
             {
-                relatorio += $"• {produto.Nome} - Disponível: {produto.QuantidadeDisponivel} {produto.Unidade} (Mín: {produto.QuantidadeMinima})\n";
+                relatorio += $"• {produto.Nome ?? produto.Descricao} - Disponível: {produto.Quantidade} {produto.Unidade} (Mín: {produto.QuantidadeMinima})\n";
             }
 
             using (FormRelatorio formRel = new FormRelatorio(relatorio, "Relatório de Estoque"))
@@ -613,24 +683,30 @@ namespace WindowsFormsAppArvoredo
 
         private void btnOrcamento_Click(object sender, EventArgs e)
         {
-            panelEstoque.Visible = false;
-            panelOrcamento.Visible = true;
-            panelOrcamento.BringToFront();
+            if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelOrcamento != null)
+            {
+                panelOrcamento.Visible = true;
+                panelOrcamento.BringToFront();
+            }
 
             ResetarCoresBotoes();
-            btnOrcamento.BackColor = Color.FromArgb(206, 186, 157);
+            if (btnOrcamento != null) btnOrcamento.BackColor = Color.FromArgb(206, 186, 157);
         }
 
         private void btnEstoque_Click(object sender, EventArgs e)
         {
-            panelOrcamento.Visible = false;
-            panelEstoque.Visible = true;
-            panelEstoque.BringToFront();
+            if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelEstoque != null)
+            {
+                panelEstoque.Visible = true;
+                panelEstoque.BringToFront();
+            }
 
             ResetarCoresBotoes();
-            btnEstoque.BackColor = Color.FromArgb(206, 186, 157);
+            if (btnEstoque != null) btnEstoque.BackColor = Color.FromArgb(206, 186, 157);
 
-            AtualizarListViewEstoque();
+            AtualizarListaEstoque();
         }
 
         private void ResetarCoresBotoes()
@@ -639,10 +715,10 @@ namespace WindowsFormsAppArvoredo
 
             try
             {
-                btnTitulos.BackColor = corPadrao;
-                btnPedidos.BackColor = corPadrao;
-                btnOrcamento.BackColor = corPadrao;
-                btnEstoque.BackColor = corPadrao;
+                if (btnTitulos != null) btnTitulos.BackColor = corPadrao;
+                if (btnPedidos != null) btnPedidos.BackColor = corPadrao;
+                if (btnOrcamento != null) btnOrcamento.BackColor = corPadrao;
+                if (btnEstoque != null) btnEstoque.BackColor = corPadrao;
             }
             catch
             {
