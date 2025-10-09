@@ -8,26 +8,30 @@ namespace WindowsFormsAppArvoredo
         public Produto ProdutoCriado { get; private set; }
         private bool _modoEdicao = false;
 
-        // Construtor padrão → novo produto
         public FormNovoProduto()
         {
             InitializeComponent();
             _modoEdicao = false;
+            this.Text = "Novo Produto";
         }
 
-        // Construtor para edição → recebe um Produto existente
         public FormNovoProduto(Produto produtoExistente) : this()
         {
             if (produtoExistente != null)
             {
                 _modoEdicao = true;
                 ProdutoCriado = produtoExistente;
+                this.Text = "Editar Produto";
 
-                // Preenche controles
                 txtNome.Text = produtoExistente.Descricao;
                 txtTipo.Text = produtoExistente.Tipo ?? string.Empty;
-                numQuantidade.Value = produtoExistente.Quantidade >= numQuantidade.Minimum && produtoExistente.Quantidade <= numQuantidade.Maximum
-                                      ? produtoExistente.Quantidade : numQuantidade.Minimum;
+
+                decimal qtd = produtoExistente.Quantidade;
+                if (qtd >= numQuantidade.Minimum && qtd <= numQuantidade.Maximum)
+                    numQuantidade.Value = qtd;
+                else
+                    numQuantidade.Value = numQuantidade.Minimum;
+
                 numQuantidadeMinima.Value = produtoExistente.QuantidadeMinima;
                 txtUnidade.Text = produtoExistente.Unidade ?? string.Empty;
                 numPreco.Value = produtoExistente.ValorUnitario;
@@ -36,26 +40,29 @@ namespace WindowsFormsAppArvoredo
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
-            // Validações básicas
             if (string.IsNullOrWhiteSpace(txtNome.Text))
             {
                 MessageBox.Show("Informe a descrição do produto.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNome.Focus();
                 return;
             }
+
             if (string.IsNullOrWhiteSpace(txtUnidade.Text))
             {
                 MessageBox.Show("Informe a unidade do produto.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtUnidade.Focus();
                 return;
             }
+
             if (numPreco.Value <= 0)
             {
                 MessageBox.Show("Valor unitário deve ser maior que zero.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                numPreco.Focus();
                 return;
             }
 
             if (_modoEdicao && ProdutoCriado != null)
             {
-                // Atualiza produto existente (referência)
                 ProdutoCriado.Descricao = txtNome.Text.Trim();
                 ProdutoCriado.Tipo = txtTipo.Text.Trim();
                 ProdutoCriado.Quantidade = numQuantidade.Value;
@@ -66,10 +73,9 @@ namespace WindowsFormsAppArvoredo
             }
             else
             {
-                // Cria novo
                 ProdutoCriado = new Produto
                 {
-                    Sequencia = 0, // será definido ao adicionar na lista
+                    Sequencia = 0,
                     Descricao = txtNome.Text.Trim(),
                     Tipo = txtTipo.Text.Trim(),
                     Quantidade = numQuantidade.Value,
