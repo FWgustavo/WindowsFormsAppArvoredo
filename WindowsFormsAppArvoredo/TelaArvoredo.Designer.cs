@@ -46,24 +46,25 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelOrcamento = new System.Windows.Forms.Panel();
+            this.panelEstoque = new System.Windows.Forms.Panel();
+            this.lblProdutosBaixoEstoque = new System.Windows.Forms.Label();
+            this.listViewEstoque = new System.Windows.Forms.ListView();
+            this.lblControleEstoque = new System.Windows.Forms.Label();
+            this.btnRelatorioEstoque = new System.Windows.Forms.Button();
+            this.btnAtualizarEstoque = new System.Windows.Forms.Button();
+            this.btnNovoProduto = new System.Windows.Forms.Button();
             this.listViewOrcamentos = new System.Windows.Forms.ListView();
             this.lblOrcamentosPendentes = new System.Windows.Forms.Label();
             this.btnNewOrc = new System.Windows.Forms.Button();
-            this.panelEstoque = new System.Windows.Forms.Panel();
+            this.panelPedidos = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panelDegrade.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.panelOrcamento.SuspendLayout();
-            this.panelEstoque = new System.Windows.Forms.Panel();
-            this.listViewEstoque = new System.Windows.Forms.ListView();
-            this.lblControleEstoque = new System.Windows.Forms.Label();
-            this.btnNovoProduto = new System.Windows.Forms.Button();
-            this.btnAtualizarEstoque = new System.Windows.Forms.Button();
-            this.btnRelatorioEstoque = new System.Windows.Forms.Button();
-            this.lblProdutosBaixoEstoque = new System.Windows.Forms.Label();
-            this.SuspendLayout();
             this.panelEstoque.SuspendLayout();
+            this.SuspendLayout();
             // 
             // panelMenu
             // 
@@ -272,6 +273,7 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.panel2.Controls.Add(this.panelPedidos);
             this.panel2.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(300, 70);
@@ -282,7 +284,6 @@
             // panelOrcamento
             // 
             this.panelOrcamento.BackColor = System.Drawing.Color.Transparent;
-            this.panelOrcamento.Controls.Add(this.panelEstoque);
             this.panelOrcamento.Controls.Add(this.listViewOrcamentos);
             this.panelOrcamento.Controls.Add(this.lblOrcamentosPendentes);
             this.panelOrcamento.Controls.Add(this.btnNewOrc);
@@ -290,6 +291,103 @@
             this.panelOrcamento.Name = "panelOrcamento";
             this.panelOrcamento.Size = new System.Drawing.Size(783, 587);
             this.panelOrcamento.TabIndex = 4;
+            // 
+            // panelEstoque
+            // 
+            this.panelEstoque.BackColor = System.Drawing.Color.Transparent;
+            this.panelEstoque.Controls.Add(this.lblProdutosBaixoEstoque);
+            this.panelEstoque.Controls.Add(this.listViewEstoque);
+            this.panelEstoque.Controls.Add(this.lblControleEstoque);
+            this.panelEstoque.Controls.Add(this.btnRelatorioEstoque);
+            this.panelEstoque.Controls.Add(this.btnAtualizarEstoque);
+            this.panelEstoque.Controls.Add(this.btnNovoProduto);
+            this.panelEstoque.ForeColor = System.Drawing.Color.Transparent;
+            this.panelEstoque.Location = new System.Drawing.Point(301, 74);
+            this.panelEstoque.Name = "panelEstoque";
+            this.panelEstoque.Size = new System.Drawing.Size(783, 587);
+            this.panelEstoque.TabIndex = 5;
+            // 
+            // lblProdutosBaixoEstoque
+            // 
+            this.lblProdutosBaixoEstoque.AutoSize = true;
+            this.lblProdutosBaixoEstoque.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProdutosBaixoEstoque.ForeColor = System.Drawing.Color.Red;
+            this.lblProdutosBaixoEstoque.Location = new System.Drawing.Point(480, 80);
+            this.lblProdutosBaixoEstoque.Name = "lblProdutosBaixoEstoque";
+            this.lblProdutosBaixoEstoque.Size = new System.Drawing.Size(219, 17);
+            this.lblProdutosBaixoEstoque.TabIndex = 8;
+            this.lblProdutosBaixoEstoque.Text = "⚠️ Produtos com estoque baixo: 0";
+            // 
+            // listViewEstoque
+            // 
+            this.listViewEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
+            this.listViewEstoque.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listViewEstoque.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listViewEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.listViewEstoque.FullRowSelect = true;
+            this.listViewEstoque.GridLines = true;
+            this.listViewEstoque.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewEstoque.HideSelection = false;
+            this.listViewEstoque.Location = new System.Drawing.Point(22, 130);
+            this.listViewEstoque.MultiSelect = false;
+            this.listViewEstoque.Name = "listViewEstoque";
+            this.listViewEstoque.Size = new System.Drawing.Size(720, 400);
+            this.listViewEstoque.TabIndex = 6;
+            this.listViewEstoque.UseCompatibleStateImageBehavior = false;
+            this.listViewEstoque.View = System.Windows.Forms.View.Details;
+            // 
+            // lblControleEstoque
+            // 
+            this.lblControleEstoque.AutoSize = true;
+            this.lblControleEstoque.Font = new System.Drawing.Font("Gagalin", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblControleEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblControleEstoque.Location = new System.Drawing.Point(22, 80);
+            this.lblControleEstoque.Name = "lblControleEstoque";
+            this.lblControleEstoque.Size = new System.Drawing.Size(231, 26);
+            this.lblControleEstoque.TabIndex = 5;
+            this.lblControleEstoque.Text = "CONTROLE DE ESTOQUE";
+            // 
+            // btnRelatorioEstoque
+            // 
+            this.btnRelatorioEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(218)))), ((int)(((byte)(185)))));
+            this.btnRelatorioEstoque.FlatAppearance.BorderSize = 0;
+            this.btnRelatorioEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRelatorioEstoque.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRelatorioEstoque.ForeColor = System.Drawing.Color.Black;
+            this.btnRelatorioEstoque.Location = new System.Drawing.Point(288, 23);
+            this.btnRelatorioEstoque.Name = "btnRelatorioEstoque";
+            this.btnRelatorioEstoque.Size = new System.Drawing.Size(120, 30);
+            this.btnRelatorioEstoque.TabIndex = 7;
+            this.btnRelatorioEstoque.Text = "RELATÓRIO";
+            this.btnRelatorioEstoque.UseVisualStyleBackColor = false;
+            // 
+            // btnAtualizarEstoque
+            // 
+            this.btnAtualizarEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(173)))), ((int)(((byte)(216)))), ((int)(((byte)(230)))));
+            this.btnAtualizarEstoque.FlatAppearance.BorderSize = 0;
+            this.btnAtualizarEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAtualizarEstoque.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAtualizarEstoque.ForeColor = System.Drawing.Color.Black;
+            this.btnAtualizarEstoque.Location = new System.Drawing.Point(155, 23);
+            this.btnAtualizarEstoque.Name = "btnAtualizarEstoque";
+            this.btnAtualizarEstoque.Size = new System.Drawing.Size(120, 30);
+            this.btnAtualizarEstoque.TabIndex = 4;
+            this.btnAtualizarEstoque.Text = "ATUALIZAR";
+            this.btnAtualizarEstoque.UseVisualStyleBackColor = false;
+            // 
+            // btnNovoProduto
+            // 
+            this.btnNovoProduto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
+            this.btnNovoProduto.FlatAppearance.BorderSize = 0;
+            this.btnNovoProduto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNovoProduto.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNovoProduto.ForeColor = System.Drawing.Color.Black;
+            this.btnNovoProduto.Location = new System.Drawing.Point(22, 23);
+            this.btnNovoProduto.Name = "btnNovoProduto";
+            this.btnNovoProduto.Size = new System.Drawing.Size(120, 30);
+            this.btnNovoProduto.TabIndex = 3;
+            this.btnNovoProduto.Text = "NOVO PRODUTO";
+            this.btnNovoProduto.UseVisualStyleBackColor = false;
             // 
             // listViewOrcamentos
             // 
@@ -335,13 +433,12 @@
             this.btnNewOrc.UseVisualStyleBackColor = false;
             this.btnNewOrc.Click += new System.EventHandler(this.btnNewOrc_Click);
             // 
-            // panelEstoque
+            // panelPedidos
             // 
-            this.panelEstoque.ForeColor = System.Drawing.Color.Transparent;
-            this.panelEstoque.Location = new System.Drawing.Point(0, 2);
-            this.panelEstoque.Name = "panelEstoque";
-            this.panelEstoque.Size = new System.Drawing.Size(780, 582);
-            this.panelEstoque.TabIndex = 3;
+            this.panelPedidos.Location = new System.Drawing.Point(0, 3);
+            this.panelPedidos.Name = "panelPedidos";
+            this.panelPedidos.Size = new System.Drawing.Size(784, 588);
+            this.panelPedidos.TabIndex = 3;
             // 
             // TelaArvoredo
             // 
@@ -354,6 +451,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelDegrade);
             this.Controls.Add(this.panelMenu);
+            this.Controls.Add(this.panelEstoque);
             this.Name = "TelaArvoredo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TelaArvoredo";
@@ -362,100 +460,13 @@
             this.panelLogo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panelDegrade.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.panelOrcamento.ResumeLayout(false);
             this.panelOrcamento.PerformLayout();
             this.panelEstoque.ResumeLayout(false);
             this.panelEstoque.PerformLayout();
             this.ResumeLayout(false);
-            // Configuração do panelEstoque
-            this.panelEstoque.BackColor = System.Drawing.Color.Transparent;
-            this.panelEstoque.Controls.Add(this.lblProdutosBaixoEstoque);
-            this.panelEstoque.Controls.Add(this.listViewEstoque);
-            this.panelEstoque.Controls.Add(this.lblControleEstoque);
-            this.panelEstoque.Controls.Add(this.btnRelatorioEstoque);
-            this.panelEstoque.Controls.Add(this.btnAtualizarEstoque);
-            this.panelEstoque.Controls.Add(this.btnNovoProduto);
-            this.panelEstoque.Location = new System.Drawing.Point(301, 74);
-            this.panelEstoque.Name = "panelEstoque";
-            this.panelEstoque.Size = new System.Drawing.Size(783, 587);
-            this.panelEstoque.TabIndex = 5;
 
-            // Configuração da listViewEstoque
-            this.listViewEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
-            this.listViewEstoque.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listViewEstoque.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listViewEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.listViewEstoque.FullRowSelect = true;
-            this.listViewEstoque.GridLines = true;
-            this.listViewEstoque.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewEstoque.HideSelection = false;
-            this.listViewEstoque.Location = new System.Drawing.Point(22, 130);
-            this.listViewEstoque.MultiSelect = false;
-            this.listViewEstoque.Name = "listViewEstoque";
-            this.listViewEstoque.Size = new System.Drawing.Size(720, 400);
-            this.listViewEstoque.TabIndex = 6;
-            this.listViewEstoque.UseCompatibleStateImageBehavior = false;
-            this.listViewEstoque.View = System.Windows.Forms.View.Details;
-
-            // Configuração do lblControleEstoque
-            this.lblControleEstoque.AutoSize = true;
-            this.lblControleEstoque.Font = new System.Drawing.Font("Gagalin", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblControleEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.lblControleEstoque.Location = new System.Drawing.Point(22, 80);
-            this.lblControleEstoque.Name = "lblControleEstoque";
-            this.lblControleEstoque.Size = new System.Drawing.Size(198, 26);
-            this.lblControleEstoque.TabIndex = 5;
-            this.lblControleEstoque.Text = "CONTROLE DE ESTOQUE";
-
-            // Configuração do btnNovoProduto
-            this.btnNovoProduto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
-            this.btnNovoProduto.FlatAppearance.BorderSize = 0;
-            this.btnNovoProduto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNovoProduto.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNovoProduto.ForeColor = System.Drawing.Color.Black;
-            this.btnNovoProduto.Location = new System.Drawing.Point(22, 23);
-            this.btnNovoProduto.Name = "btnNovoProduto";
-            this.btnNovoProduto.Size = new System.Drawing.Size(120, 30);
-            this.btnNovoProduto.TabIndex = 3;
-            this.btnNovoProduto.Text = "NOVO PRODUTO";
-            this.btnNovoProduto.UseVisualStyleBackColor = false;
-
-            // Configuração do btnAtualizarEstoque
-            this.btnAtualizarEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(173)))), ((int)(((byte)(216)))), ((int)(((byte)(230)))));
-            this.btnAtualizarEstoque.FlatAppearance.BorderSize = 0;
-            this.btnAtualizarEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAtualizarEstoque.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAtualizarEstoque.ForeColor = System.Drawing.Color.Black;
-            this.btnAtualizarEstoque.Location = new System.Drawing.Point(155, 23);
-            this.btnAtualizarEstoque.Name = "btnAtualizarEstoque";
-            this.btnAtualizarEstoque.Size = new System.Drawing.Size(120, 30);
-            this.btnAtualizarEstoque.TabIndex = 4;
-            this.btnAtualizarEstoque.Text = "ATUALIZAR";
-            this.btnAtualizarEstoque.UseVisualStyleBackColor = false;
-
-            // Configuração do btnRelatorioEstoque
-            this.btnRelatorioEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(218)))), ((int)(((byte)(185)))));
-            this.btnRelatorioEstoque.FlatAppearance.BorderSize = 0;
-            this.btnRelatorioEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRelatorioEstoque.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRelatorioEstoque.ForeColor = System.Drawing.Color.Black;
-            this.btnRelatorioEstoque.Location = new System.Drawing.Point(288, 23);
-            this.btnRelatorioEstoque.Name = "btnRelatorioEstoque";
-            this.btnRelatorioEstoque.Size = new System.Drawing.Size(120, 30);
-            this.btnRelatorioEstoque.TabIndex = 7;
-            this.btnRelatorioEstoque.Text = "RELATÓRIO";
-            this.btnRelatorioEstoque.UseVisualStyleBackColor = false;
-
-            // Configuração do lblProdutosBaixoEstoque
-            this.lblProdutosBaixoEstoque.AutoSize = true;
-            this.lblProdutosBaixoEstoque.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProdutosBaixoEstoque.ForeColor = System.Drawing.Color.Red;
-            this.lblProdutosBaixoEstoque.Location = new System.Drawing.Point(480, 80);
-            this.lblProdutosBaixoEstoque.Name = "lblProdutosBaixoEstoque";
-            this.lblProdutosBaixoEstoque.Size = new System.Drawing.Size(200, 16);
-            this.lblProdutosBaixoEstoque.TabIndex = 8;
-            this.lblProdutosBaixoEstoque.Text = "⚠️ Produtos com estoque baixo: 0";
-            this.Controls.Add(this.panelEstoque);
         }
 
         #endregion
@@ -488,5 +499,6 @@
         private System.Windows.Forms.Button btnAtualizarEstoque;
         private System.Windows.Forms.Button btnRelatorioEstoque;
         private System.Windows.Forms.Label lblProdutosBaixoEstoque;
+        private System.Windows.Forms.Panel panelPedidos;
     }
 }
