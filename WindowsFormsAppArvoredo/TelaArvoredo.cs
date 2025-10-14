@@ -18,6 +18,7 @@ namespace WindowsFormsAppArvoredo
 
         private List<Orcamento> orcamentos = new List<Orcamento>();
         private List<Produto> produtos = new List<Produto>();
+        private List<Orcamento> pedidos = new List<Orcamento>();
 
         public TelaArvoredo()
         {
@@ -46,9 +47,11 @@ namespace WindowsFormsAppArvoredo
 
             if (panelOrcamento != null) panelOrcamento.Visible = true;
             if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelPedidos != null) panelPedidos.Visible = false;
 
             ConfigurarListViewOrcamentos();
             ConfigurarEstoque();
+            ConfigurarPedidos();
             CarregarDadosExemplo();
 
             VincularEventos();
@@ -93,6 +96,11 @@ namespace WindowsFormsAppArvoredo
                 btnEstoque.Click -= btnEstoque_Click;
                 btnEstoque.Click += btnEstoque_Click;
             }
+            if (btnPedidos != null)
+            {
+                btnPedidos.Click -= btnPedidos_Click;
+                btnPedidos.Click += btnPedidos_Click;
+            }
             if (btnNewOrc != null)
             {
                 btnNewOrc.Click -= btnNewOrc_Click;
@@ -117,6 +125,8 @@ namespace WindowsFormsAppArvoredo
             {
                 listViewOrcamentos.MouseClick -= listViewOrcamentos_MouseClick;
                 listViewOrcamentos.MouseClick += listViewOrcamentos_MouseClick;
+                listViewOrcamentos.DoubleClick -= listViewOrcamentos_DoubleClick;
+                listViewOrcamentos.DoubleClick += listViewOrcamentos_DoubleClick;
             }
             if (listViewEstoque != null)
             {
@@ -172,6 +182,100 @@ namespace WindowsFormsAppArvoredo
 
         #endregion
 
+        #region Pedidos
+
+        private void ConfigurarPedidos()
+        {
+            if (panelPedidos == null) return;
+
+            panelPedidos.BackColor = Color.Transparent;
+            panelPedidos.AutoScroll = true;
+            panelPedidos.Padding = new Padding(20);
+        }
+
+        private void AtualizarPanelPedidos()
+        {
+            if (panelPedidos == null) return;
+
+            panelPedidos.Controls.Clear();
+
+            int yPosition = 20;
+            int cardNumber = 1;
+
+            foreach (var pedido in pedidos)
+            {
+                Panel cardPedido = new Panel();
+                cardPedido.Location = new Point(20, yPosition);
+                cardPedido.Size = new Size(720, 180);
+                cardPedido.BackColor = Color.FromArgb(239, 212, 172);
+                cardPedido.BorderStyle = BorderStyle.FixedSingle;
+
+                Label lblTitulo = new Label();
+                lblTitulo.Text = "PEDIDOS";
+                lblTitulo.Location = new Point(10, 10);
+                lblTitulo.Size = new Size(700, 25);
+                lblTitulo.Font = new Font("Gagalin", 14F, FontStyle.Bold);
+                lblTitulo.ForeColor = Color.FromArgb(57, 27, 1);
+                lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+                cardPedido.Controls.Add(lblTitulo);
+
+                Label lblNumeroCliente = new Label();
+                lblNumeroCliente.Text = $"N°{cardNumber}                    CLIENTE: {pedido.Cliente.ToUpper()}";
+                lblNumeroCliente.Location = new Point(15, 45);
+                lblNumeroCliente.Size = new Size(690, 20);
+                lblNumeroCliente.Font = new Font("Gagalin", 10F, FontStyle.Bold);
+                lblNumeroCliente.ForeColor = Color.FromArgb(57, 27, 1);
+                cardPedido.Controls.Add(lblNumeroCliente);
+
+                int produtoY = 75;
+                foreach (var item in pedido.Itens)
+                {
+                    Label lblProduto = new Label();
+                    lblProduto.Text = $"{item.Descricao} {item.Quantidade} {item.Unidade}";
+                    lblProduto.Location = new Point(15, produtoY);
+                    lblProduto.Size = new Size(690, 18);
+                    lblProduto.Font = new Font("Gagalin", 9F, FontStyle.Regular);
+                    lblProduto.ForeColor = Color.FromArgb(57, 27, 1);
+                    cardPedido.Controls.Add(lblProduto);
+
+                    produtoY += 20;
+
+                    if (produtoY > 145)
+                    {
+                        if (pedido.Itens.Count > 4)
+                        {
+                            Label lblMais = new Label();
+                            lblMais.Text = $"... e mais {pedido.Itens.Count - 4} produto(s)";
+                            lblMais.Location = new Point(15, produtoY);
+                            lblMais.Size = new Size(690, 18);
+                            lblMais.Font = new Font("Gagalin", 8F, FontStyle.Italic);
+                            lblMais.ForeColor = Color.Gray;
+                            cardPedido.Controls.Add(lblMais);
+                        }
+                        break;
+                    }
+                }
+
+                panelPedidos.Controls.Add(cardPedido);
+                yPosition += 200;
+                cardNumber++;
+            }
+
+            if (pedidos.Count == 0)
+            {
+                Label lblVazio = new Label();
+                lblVazio.Text = "Nenhum pedido confirmado ainda.\n\nCrie um orçamento e confirme para aparecer aqui.";
+                lblVazio.Location = new Point(50, 100);
+                lblVazio.Size = new Size(680, 100);
+                lblVazio.Font = new Font("Gagalin", 12F, FontStyle.Regular);
+                lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
+                lblVazio.TextAlign = ContentAlignment.MiddleCenter;
+                panelPedidos.Controls.Add(lblVazio);
+            }
+        }
+
+        #endregion
+
         #region Orçamentos
 
         private void ConfigurarListViewOrcamentos()
@@ -216,7 +320,7 @@ namespace WindowsFormsAppArvoredo
                 item.SubItems.Add($"{orcamento.Cliente}");
                 item.SubItems.Add(orcamento.DataEmissao.ToString("dd/MM/yyyy"));
                 item.SubItems.Add(orcamento.TotalGeral.ToString("C"));
-                item.SubItems.Add("Pendente");
+                item.SubItems.Add(orcamento.Status);
                 item.SubItems.Add("🗑️");
                 item.Tag = orcamento;
                 listViewOrcamentos.Items.Add(item);
@@ -271,29 +375,140 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
+        private void listViewOrcamentos_DoubleClick(object sender, EventArgs e)
+        {
+            if (listViewOrcamentos.SelectedItems.Count == 0) return;
+
+            var item = listViewOrcamentos.SelectedItems[0];
+            var orcamentoSelecionado = item.Tag as Orcamento;
+
+            if (orcamentoSelecionado != null)
+            {
+                AbrirOrcamentoParaEdicao(orcamentoSelecionado);
+            }
+        }
+
+        private void AbrirOrcamentoParaEdicao(Orcamento orcamento)
+        {
+            using (var telaOrcamento = new TelaOrcamento(produtos, orcamento))
+            {
+                var resultado = telaOrcamento.ShowDialog();
+
+                if (resultado == DialogResult.OK)
+                {
+                    if (telaOrcamento.OrcamentoConfirmado)
+                    {
+                        // Orçamento foi confirmado - mover para pedidos
+                        orcamentos.Remove(orcamento);
+
+                        var pedido = telaOrcamento.OrcamentoCriado;
+                        pedido.Id = pedidos.Count + 1;
+                        pedido.Status = "Confirmado";
+                        pedidos.Add(pedido);
+
+                        AtualizarListViewOrcamentos();
+                        AtualizarPanelPedidos();
+
+                        MessageBox.Show(
+                            $"Pedido #{pedido.Id} confirmado com sucesso!\n\n" +
+                            $"Cliente: {pedido.Cliente}\n" +
+                            $"Total: {pedido.TotalGeral:C}",
+                            "Pedido Confirmado",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    else if (telaOrcamento.OrcamentoSalvo)
+                    {
+                        // Orçamento foi atualizado
+                        var orcamentoAtualizado = telaOrcamento.OrcamentoCriado;
+
+                        int index = orcamentos.IndexOf(orcamento);
+                        if (index >= 0)
+                        {
+                            orcamentoAtualizado.Id = orcamento.Id;
+                            orcamentos[index] = orcamentoAtualizado;
+                        }
+
+                        AtualizarListViewOrcamentos();
+
+                        MessageBox.Show(
+                            "Orçamento atualizado com sucesso!",
+                            "Orçamento Salvo",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                }
+            }
+        }
+
         private void btnNewOrc_Click(object sender, EventArgs e)
         {
             using (var telaOrcamento = new TelaOrcamento(produtos))
             {
-                if (telaOrcamento.ShowDialog() == DialogResult.OK && telaOrcamento.OrcamentoConfirmado)
+                var resultado = telaOrcamento.ShowDialog();
+
+                // DEBUG: Ver o resultado
+                System.Diagnostics.Debug.WriteLine($"DialogResult: {resultado}");
+                System.Diagnostics.Debug.WriteLine($"OrcamentoCriado é null? {telaOrcamento.OrcamentoCriado == null}");
+                System.Diagnostics.Debug.WriteLine($"OrcamentoConfirmado: {telaOrcamento.OrcamentoConfirmado}");
+                System.Diagnostics.Debug.WriteLine($"OrcamentoSalvo: {telaOrcamento.OrcamentoSalvo}");
+
+                // Verificar se o DialogResult é OK e se há um orçamento criado
+                if (resultado == DialogResult.OK && telaOrcamento.OrcamentoCriado != null)
                 {
-                    // Adicionar o orçamento à lista
-                    var novoOrcamento = telaOrcamento.OrcamentoCriado;
-                    novoOrcamento.Id = orcamentos.Count + 1;
-                    orcamentos.Add(novoOrcamento);
+                    if (telaOrcamento.OrcamentoConfirmado)
+                    {
+                        // CONFIRMADO - Adicionar à lista de PEDIDOS
+                        var novoPedido = telaOrcamento.OrcamentoCriado;
+                        novoPedido.Id = pedidos.Count + 1;
+                        novoPedido.Status = "Confirmado";
+                        pedidos.Add(novoPedido);
 
-                    // Atualizar a ListView
-                    AtualizarListViewOrcamentos();
+                        System.Diagnostics.Debug.WriteLine($"Pedido adicionado. Total de pedidos: {pedidos.Count}");
 
-                    // Mostrar mensagem de sucesso
-                    MessageBox.Show(
-                        $"Orçamento #{novoOrcamento.Id} adicionado com sucesso!\n\n" +
-                        $"Cliente: {novoOrcamento.Cliente}\n" +
-                        $"Total: {novoOrcamento.TotalGeral:C}\n" +
-                        $"Itens: {novoOrcamento.QuantidadeItens}",
-                        "Orçamento Criado",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        AtualizarPanelPedidos();
+
+                        MessageBox.Show(
+                            $"Pedido #{novoPedido.Id} criado com sucesso!\n\n" +
+                            $"Cliente: {novoPedido.Cliente}\n" +
+                            $"Total: {novoPedido.TotalGeral:C}\n" +
+                            $"Itens: {novoPedido.QuantidadeItens}",
+                            "Pedido Confirmado",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    else if (telaOrcamento.OrcamentoSalvo)
+                    {
+                        // SALVO - Adicionar à lista de ORÇAMENTOS
+                        var novoOrcamento = telaOrcamento.OrcamentoCriado;
+                        novoOrcamento.Id = orcamentos.Count + 1;
+                        novoOrcamento.Status = "Pendente";
+                        orcamentos.Add(novoOrcamento);
+
+                        System.Diagnostics.Debug.WriteLine($"Orçamento adicionado. Total de orçamentos: {orcamentos.Count}");
+
+                        // Atualizar o ListView
+                        AtualizarListViewOrcamentos();
+
+                        System.Diagnostics.Debug.WriteLine($"ListView atualizado. Itens no ListView: {listViewOrcamentos.Items.Count}");
+
+                        MessageBox.Show(
+                            $"Orçamento #{novoOrcamento.Id} salvo com sucesso!\n\n" +
+                            $"Cliente: {novoOrcamento.Cliente}\n" +
+                            $"Total: {novoOrcamento.TotalGeral:C}\n" +
+                            $"Itens: {novoOrcamento.QuantidadeItens}",
+                            "Orçamento Salvo",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("ATENÇÃO: DialogResult = OK mas nenhuma flag está ativa!");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Condição não atendida. DialogResult: {resultado}, OrcamentoCriado: {telaOrcamento.OrcamentoCriado != null}");
                 }
             }
         }
@@ -509,6 +724,7 @@ namespace WindowsFormsAppArvoredo
         private void btnOrcamento_Click(object sender, EventArgs e)
         {
             if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelOrcamento != null)
             {
                 panelOrcamento.Visible = true;
@@ -518,9 +734,24 @@ namespace WindowsFormsAppArvoredo
             if (btnOrcamento != null) btnOrcamento.BackColor = Color.FromArgb(206, 186, 157);
         }
 
+        private void btnPedidos_Click(object sender, EventArgs e)
+        {
+            if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelPedidos != null)
+            {
+                panelPedidos.Visible = true;
+                panelPedidos.BringToFront();
+                AtualizarPanelPedidos();
+            }
+            ResetarCoresBotoes();
+            if (btnPedidos != null) btnPedidos.BackColor = Color.FromArgb(206, 186, 157);
+        }
+
         private void btnEstoque_Click(object sender, EventArgs e)
         {
             if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelEstoque != null)
             {
                 panelEstoque.Visible = true;

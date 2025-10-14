@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -26,26 +23,43 @@ namespace WindowsFormsAppArvoredo
         private Label lblUF;
         private bool isConsultandoCep = false;
 
-        // Lista de produtos do estoque
         private List<Produto> produtosEstoque;
         private ListBox listBoxSugestoes;
         private int sequenciaProduto = 1;
 
-        // Propriedades para o orçamento criado
+        // Propriedades para o orçamento
         public Orcamento OrcamentoCriado { get; private set; }
         public bool OrcamentoConfirmado { get; private set; }
+        public bool OrcamentoSalvo { get; private set; }
 
+        private Orcamento orcamentoEmEdicao;
+        private bool modoEdicao = false;
+
+        // Construtor para novo orçamento
         public TelaOrcamento(List<Produto> estoque = null)
         {
             InitializeComponent();
             produtosEstoque = estoque ?? new List<Produto>();
             OrcamentoConfirmado = false;
+            OrcamentoSalvo = false;
+            modoEdicao = false;
+            AdicionarComponentesExtras();
+        }
+
+        // Construtor para editar orçamento existente
+        public TelaOrcamento(List<Produto> estoque, Orcamento orcamento)
+        {
+            InitializeComponent();
+            produtosEstoque = estoque ?? new List<Produto>();
+            orcamentoEmEdicao = orcamento;
+            modoEdicao = true;
+            OrcamentoConfirmado = false;
+            OrcamentoSalvo = false;
             AdicionarComponentesExtras();
         }
 
         private void AdicionarComponentesExtras()
         {
-            // Labels para Cidade e UF
             lblCidade = new Label();
             lblCidade.Text = "Cidade:";
             lblCidade.Location = new Point(450, 213);
@@ -60,7 +74,6 @@ namespace WindowsFormsAppArvoredo
             lblUF.Font = new Font("Microsoft Sans Serif", 10F);
             this.Controls.Add(lblUF);
 
-            // Campo de pesquisa de produtos
             txtPesquisarProdutos = new TextBox();
             txtPesquisarProdutos.Location = new Point(200, 320);
             txtPesquisarProdutos.Size = new Size(500, 26);
@@ -73,7 +86,6 @@ namespace WindowsFormsAppArvoredo
             txtPesquisarProdutos.KeyDown += TxtPesquisarProdutos_KeyDown;
             this.Controls.Add(txtPesquisarProdutos);
 
-            // ListBox para sugestões de produtos
             listBoxSugestoes = new ListBox();
             listBoxSugestoes.Location = new Point(200, 346);
             listBoxSugestoes.Size = new Size(500, 100);
@@ -84,7 +96,6 @@ namespace WindowsFormsAppArvoredo
             this.Controls.Add(listBoxSugestoes);
             listBoxSugestoes.BringToFront();
 
-            // DataGridView para produtos
             dgvProdutos = new DataGridView();
             dgvProdutos.Location = new Point(50, 360);
             dgvProdutos.Size = new Size(980, 200);
@@ -94,7 +105,6 @@ namespace WindowsFormsAppArvoredo
             dgvProdutos.MultiSelect = false;
             dgvProdutos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            // Configurar colunas
             dgvProdutos.Columns.Add("SEQ", "SEQ");
             dgvProdutos.Columns.Add("DESCRICAO", "DESCRIÇÃO");
             dgvProdutos.Columns.Add("UNI", "UNI.");
@@ -102,23 +112,20 @@ namespace WindowsFormsAppArvoredo
             dgvProdutos.Columns.Add("VLR_UNI", "VLR. UNI.");
             dgvProdutos.Columns.Add("VLR_TOTAL", "VLR. TOTAL");
 
-            // Tornar colunas editáveis
             dgvProdutos.Columns["QTD"].ReadOnly = false;
             dgvProdutos.Columns["VLR_UNI"].ReadOnly = false;
 
-            // Ajustar largura das colunas
             dgvProdutos.Columns["SEQ"].Width = 60;
             dgvProdutos.Columns["UNI"].Width = 80;
             dgvProdutos.Columns["QTD"].Width = 80;
             dgvProdutos.Columns["VLR_UNI"].Width = 100;
             dgvProdutos.Columns["VLR_TOTAL"].Width = 120;
 
-            // Evento para recalcular quando editar quantidade ou valor
             dgvProdutos.CellEndEdit += DgvProdutos_CellEndEdit;
+            dgvProdutos.KeyDown += DgvProdutos_KeyDown;
 
             this.Controls.Add(dgvProdutos);
 
-            // Seção de totais
             Label lblTotais = new Label();
             lblTotais.Text = "TOTAIS";
             lblTotais.Location = new Point(500, 580);
@@ -128,7 +135,6 @@ namespace WindowsFormsAppArvoredo
             lblTotais.TextAlign = ContentAlignment.MiddleCenter;
             this.Controls.Add(lblTotais);
 
-            // Campos de totais
             Label lbl4xSemJuros = new Label();
             lbl4xSemJuros.Text = "4X SEM JUROS:";
             lbl4xSemJuros.Location = new Point(100, 620);
@@ -186,7 +192,6 @@ namespace WindowsFormsAppArvoredo
             txtTotalVista.BackColor = Color.LightGray;
             this.Controls.Add(txtTotalVista);
 
-            // Botões
             btnImprimir = new Button();
             btnImprimir.Text = "IMPRIMIR";
             btnImprimir.Location = new Point(200, 690);
@@ -239,9 +244,84 @@ namespace WindowsFormsAppArvoredo
             string data = dataAtual.ToString("dd/MM/yyyy");
             lbldata.Text = data;
             ConfigurarFormatacaoCampos();
+
+            // Se está em modo edição, carregar dados do orçamento
+            if (modoEdicao && orcamentoEmEdicao != null)
+            {
+                CarregarOrcamento(orcamentoEmEdicao);
+            }
         }
 
-        // PESQUISA E ADIÇÃO DE PRODUTOS
+        private void CarregarOrcamento(Orcamento orcamento)
+        {
+            txtCliente.Text = orcamento.Cliente;
+            txtEndereco.Text = orcamento.Endereco;
+            txtCEP.Text = orcamento.CEP;
+            txtBairro.Text = orcamento.Bairro;
+            txtCidade.Text = orcamento.Cidade;
+            txtUF.Text = orcamento.UF;
+            txtCPF.Text = orcamento.CPF_CNPJ;
+            txtTEL.Text = orcamento.Telefone;
+            txtVendedor.Text = orcamento.Vendedor;
+
+            lblCidade.Text = $"Cidade: {orcamento.Cidade}";
+            lblUF.Text = $"UF: {orcamento.UF}";
+            lblCidade.ForeColor = Color.Green;
+            lblUF.ForeColor = Color.Green;
+
+            // Carregar produtos
+            dgvProdutos.Rows.Clear();
+            sequenciaProduto = 1;
+
+            foreach (var item in orcamento.Itens)
+            {
+                int rowIndex = dgvProdutos.Rows.Add();
+                DataGridViewRow row = dgvProdutos.Rows[rowIndex];
+
+                row.Cells["SEQ"].Value = sequenciaProduto++;
+                row.Cells["DESCRICAO"].Value = item.Descricao;
+                row.Cells["UNI"].Value = item.Unidade;
+                row.Cells["QTD"].Value = item.Quantidade.ToString();
+                row.Cells["VLR_UNI"].Value = item.ValorUnitario.ToString("F2");
+                row.Cells["VLR_TOTAL"].Value = item.ValorTotal.ToString("F2");
+
+                row.Tag = item.ProdutoOrigem;
+            }
+
+            // Carregar totais
+            txtDescontos.Text = orcamento.Desconto.ToString("F2");
+            txtAcrescimos.Text = orcamento.Acrescimo.ToString("F2");
+
+            CalcularTotal(null, null);
+        }
+
+        private void DgvProdutos_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && dgvProdutos.SelectedRows.Count > 0)
+            {
+                var result = MessageBox.Show("Deseja remover este produto?", "Confirmar",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    foreach (DataGridViewRow row in dgvProdutos.SelectedRows)
+                    {
+                        dgvProdutos.Rows.Remove(row);
+                    }
+
+                    // Renumerar sequências
+                    int seq = 1;
+                    foreach (DataGridViewRow row in dgvProdutos.Rows)
+                    {
+                        row.Cells["SEQ"].Value = seq++;
+                    }
+                    sequenciaProduto = seq;
+
+                    CalcularTotal(null, null);
+                }
+            }
+        }
+
         private void TxtPesquisarProdutos_Enter(object sender, EventArgs e)
         {
             if (txtPesquisarProdutos.Text == "PESQUISAR PRODUTOS")
@@ -253,7 +333,6 @@ namespace WindowsFormsAppArvoredo
 
         private void TxtPesquisarProdutos_Leave(object sender, EventArgs e)
         {
-            // Delay para permitir clique no ListBox
             Timer timer = new Timer();
             timer.Interval = 200;
             timer.Tick += (s, ev) =>
@@ -347,14 +426,12 @@ namespace WindowsFormsAppArvoredo
 
             var produtoSelecionado = produtosFiltrados[listBoxSugestoes.SelectedIndex];
 
-            // Verificar se já existe no grid
             bool produtoJaAdicionado = false;
             foreach (DataGridViewRow row in dgvProdutos.Rows)
             {
                 if (row.Cells["DESCRICAO"].Value != null &&
                     row.Cells["DESCRICAO"].Value.ToString() == produtoSelecionado.Descricao)
                 {
-                    // Incrementar quantidade
                     if (decimal.TryParse(row.Cells["QTD"].Value?.ToString() ?? "0", out decimal qtdAtual))
                     {
                         row.Cells["QTD"].Value = (qtdAtual + 1).ToString();
@@ -367,7 +444,6 @@ namespace WindowsFormsAppArvoredo
 
             if (!produtoJaAdicionado)
             {
-                // Adicionar nova linha
                 int rowIndex = dgvProdutos.Rows.Add();
                 DataGridViewRow row = dgvProdutos.Rows[rowIndex];
 
@@ -381,7 +457,6 @@ namespace WindowsFormsAppArvoredo
                 row.Tag = produtoSelecionado;
             }
 
-            // Limpar pesquisa
             txtPesquisarProdutos.Text = "";
             listBoxSugestoes.Visible = false;
             txtPesquisarProdutos.Focus();
@@ -404,8 +479,8 @@ namespace WindowsFormsAppArvoredo
 
         private void RecalcularLinhaProduto(DataGridViewRow row)
         {
-            if (decimal.TryParse(row.Cells["QTD"].Value?.ToString() ?? "0", out decimal qtd) &&
-                decimal.TryParse(row.Cells["VLR_UNI"].Value?.ToString() ?? "0", out decimal vlrUni))
+            if (decimal.TryParse(row.Cells["QTD"].Value?.ToString()?.Replace(".", ",") ?? "0", out decimal qtd) &&
+                decimal.TryParse(row.Cells["VLR_UNI"].Value?.ToString()?.Replace(".", ",") ?? "0", out decimal vlrUni))
             {
                 decimal total = qtd * vlrUni;
                 row.Cells["VLR_TOTAL"].Value = total.ToString("F2");
@@ -448,7 +523,6 @@ namespace WindowsFormsAppArvoredo
 
         private void ConfigurarFormatacaoCampos()
         {
-            // Formatação CPF/CNPJ
             txtCPF.KeyPress += (s, e) =>
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -479,7 +553,6 @@ namespace WindowsFormsAppArvoredo
                 }
             };
 
-            // Formatação CEP com consulta automática
             txtCEP.KeyPress += (s, e) =>
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -529,7 +602,6 @@ namespace WindowsFormsAppArvoredo
                 }
             };
 
-            // Formatação telefone
             txtTEL.KeyPress += (s, e) =>
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -646,33 +718,11 @@ namespace WindowsFormsAppArvoredo
 
         private void BtnSalvar_Click(object sender, EventArgs e)
         {
-            if (ValidarCampos())
-            {
-                MessageBox.Show("Orçamento salvo com sucesso!", "Salvar",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private void BtnConfirmar_Click(object sender, EventArgs e)
-        {
-            // 1. VALIDAR CAMPOS OBRIGATÓRIOS
-            if (string.IsNullOrWhiteSpace(txtCliente.Text))
-            {
-                MessageBox.Show("Campo Cliente é obrigatório!", "Validação",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtCliente.Focus();
+            // Validar campos obrigatórios
+            if (!ValidarCampos())
                 return;
-            }
 
-            if (string.IsNullOrWhiteSpace(txtCPF.Text))
-            {
-                MessageBox.Show("Campo CPF/CNPJ é obrigatório!", "Validação",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtCPF.Focus();
-                return;
-            }
-
-            // 2. VALIDAR SE HÁ PRODUTOS
+            // Validar se há produtos
             if (dgvProdutos.Rows.Count == 0)
             {
                 MessageBox.Show("Adicione pelo menos um produto ao orçamento!", "Validação",
@@ -681,7 +731,50 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
-            // 3. CONFIRMAR COM O USUÁRIO
+            try
+            {
+                // Criar orçamento do formulário
+                OrcamentoCriado = CriarOrcamentoDoFormulario();
+                OrcamentoCriado.Status = "Pendente";
+
+                // IMPORTANTE: Definir as flags corretamente
+                OrcamentoSalvo = true;
+                OrcamentoConfirmado = false;
+
+                // DEBUG: Verificar se as flags estão corretas
+                System.Diagnostics.Debug.WriteLine($"BtnSalvar_Click - OrcamentoSalvo: {OrcamentoSalvo}, OrcamentoConfirmado: {OrcamentoConfirmado}");
+
+                // Definir DialogResult e fechar
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Erro ao salvar orçamento:\n\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                OrcamentoCriado = null;
+                OrcamentoSalvo = false;
+                OrcamentoConfirmado = false;
+            }
+        }
+
+        private void BtnConfirmar_Click(object sender, EventArgs e)
+        {
+            if (!ValidarCampos())
+                return;
+
+            if (dgvProdutos.Rows.Count == 0)
+            {
+                MessageBox.Show("Adicione pelo menos um produto ao orçamento!", "Validação",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPesquisarProdutos.Focus();
+                return;
+            }
+
             DialogResult resultado = MessageBox.Show(
                 "Deseja confirmar este orçamento?\n\n" +
                 $"Cliente: {txtCliente.Text}\n" +
@@ -692,109 +785,97 @@ namespace WindowsFormsAppArvoredo
                 MessageBoxIcon.Question);
 
             if (resultado != DialogResult.Yes)
-            {
-                return; // Usuário cancelou
-            }
+                return;
 
             try
             {
-                // 4. CRIAR O OBJETO ORCAMENTO
-                OrcamentoCriado = new Orcamento();
-
-                // 5. PREENCHER DADOS DO CLIENTE
-                OrcamentoCriado.Cliente = txtCliente.Text.Trim();
-                OrcamentoCriado.Endereco = txtEndereco.Text.Trim();
-                OrcamentoCriado.CEP = txtCEP.Text.Trim();
-                OrcamentoCriado.Bairro = txtBairro.Text.Trim();
-                OrcamentoCriado.Cidade = txtCidade.Text.Trim();
-                OrcamentoCriado.UF = txtUF.Text.Trim();
-                OrcamentoCriado.CPF_CNPJ = txtCPF.Text.Trim();
-                OrcamentoCriado.Telefone = txtTEL.Text.Trim();
-                OrcamentoCriado.Vendedor = txtVendedor.Text.Trim();
-                OrcamentoCriado.DataEmissao = DateTime.Now;
-                OrcamentoCriado.Status = "Pendente";
-
-                // 6. ADICIONAR PRODUTOS DO DATAGRIDVIEW
-                decimal subTotal = 0;
-                int sequencia = 1;
-
-                foreach (DataGridViewRow row in dgvProdutos.Rows)
-                {
-                    if (row.Cells["DESCRICAO"].Value == null)
-                        continue;
-
-                    // Criar item do orçamento
-                    var item = new ItemOrcamento
-                    {
-                        Sequencia = sequencia++,
-                        Descricao = row.Cells["DESCRICAO"].Value?.ToString() ?? "",
-                        Unidade = row.Cells["UNI"].Value?.ToString() ?? "",
-                    };
-
-                    // Converter quantidade
-                    string qtdStr = row.Cells["QTD"].Value?.ToString()?.Replace(".", ",") ?? "0";
-                    if (decimal.TryParse(qtdStr, out decimal qtd))
-                        item.Quantidade = qtd;
-                    else
-                        item.Quantidade = 0;
-
-                    // Converter valor unitário
-                    string vlrUniStr = row.Cells["VLR_UNI"].Value?.ToString()?.Replace(".", ",") ?? "0";
-                    if (decimal.TryParse(vlrUniStr, out decimal vlrUni))
-                        item.ValorUnitario = vlrUni;
-                    else
-                        item.ValorUnitario = 0;
-
-                    // Calcular valor total do item
-                    item.RecalcularTotal();
-
-                    // Guardar referência ao produto original (se houver)
-                    item.ProdutoOrigem = row.Tag as Produto;
-
-                    // Adicionar à lista de itens
-                    OrcamentoCriado.Itens.Add(item);
-                    subTotal += item.ValorTotal;
-                }
-
-                // 7. CALCULAR TOTAIS
-                OrcamentoCriado.SubTotal = subTotal;
-
-                // Converter desconto
-                string descontoStr = txtDescontos.Text.Replace(".", ",").Replace("R$", "").Trim();
-                if (decimal.TryParse(descontoStr, out decimal desconto))
-                    OrcamentoCriado.Desconto = desconto;
-                else
-                    OrcamentoCriado.Desconto = 0;
-
-                // Converter acréscimo
-                string acrescimoStr = txtAcrescimos.Text.Replace(".", ",").Replace("R$", "").Trim();
-                if (decimal.TryParse(acrescimoStr, out decimal acrescimo))
-                    OrcamentoCriado.Acrescimo = acrescimo;
-                else
-                    OrcamentoCriado.Acrescimo = 0;
-
-                // Calcular total geral
-                OrcamentoCriado.TotalGeral = subTotal - OrcamentoCriado.Desconto + OrcamentoCriado.Acrescimo;
-
-                // 8. MARCAR COMO CONFIRMADO
+                OrcamentoCriado = CriarOrcamentoDoFormulario();
+                OrcamentoCriado.Status = "Confirmado";
                 OrcamentoConfirmado = true;
+                OrcamentoSalvo = false;
 
-                // 9. ⭐ FECHAR A TELA - MÉTODO GARANTIDO ⭐
                 this.DialogResult = DialogResult.OK;
-                this.Close(); // Força o fechamento
+                this.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Erro ao criar orçamento:\n\n{ex.Message}",
+                    $"Erro ao confirmar orçamento:\n\n{ex.Message}",
                     "Erro",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
 
-                // Resetar em caso de erro
                 OrcamentoCriado = null;
                 OrcamentoConfirmado = false;
             }
+        }
+
+        private Orcamento CriarOrcamentoDoFormulario()
+        {
+            var orcamento = new Orcamento();
+
+            orcamento.Cliente = txtCliente.Text.Trim();
+            orcamento.Endereco = txtEndereco.Text.Trim();
+            orcamento.CEP = txtCEP.Text.Trim();
+            orcamento.Bairro = txtBairro.Text.Trim();
+            orcamento.Cidade = txtCidade.Text.Trim();
+            orcamento.UF = txtUF.Text.Trim();
+            orcamento.CPF_CNPJ = txtCPF.Text.Trim();
+            orcamento.Telefone = txtTEL.Text.Trim();
+            orcamento.Vendedor = txtVendedor.Text.Trim();
+            orcamento.DataEmissao = DateTime.Now;
+
+            decimal subTotal = 0;
+            int sequencia = 1;
+
+            foreach (DataGridViewRow row in dgvProdutos.Rows)
+            {
+                if (row.Cells["DESCRICAO"].Value == null)
+                    continue;
+
+                var item = new ItemOrcamento
+                {
+                    Sequencia = sequencia++,
+                    Descricao = row.Cells["DESCRICAO"].Value?.ToString() ?? "",
+                    Unidade = row.Cells["UNI"].Value?.ToString() ?? "",
+                };
+
+                string qtdStr = row.Cells["QTD"].Value?.ToString()?.Replace(".", ",") ?? "0";
+                if (decimal.TryParse(qtdStr, out decimal qtd))
+                    item.Quantidade = qtd;
+                else
+                    item.Quantidade = 0;
+
+                string vlrUniStr = row.Cells["VLR_UNI"].Value?.ToString()?.Replace(".", ",") ?? "0";
+                if (decimal.TryParse(vlrUniStr, out decimal vlrUni))
+                    item.ValorUnitario = vlrUni;
+                else
+                    item.ValorUnitario = 0;
+
+                item.RecalcularTotal();
+                item.ProdutoOrigem = row.Tag as Produto;
+
+                orcamento.Itens.Add(item);
+                subTotal += item.ValorTotal;
+            }
+
+            orcamento.SubTotal = subTotal;
+
+            string descontoStr = txtDescontos.Text.Replace(".", ",").Replace("R$", "").Trim();
+            if (decimal.TryParse(descontoStr, out decimal desconto))
+                orcamento.Desconto = desconto;
+            else
+                orcamento.Desconto = 0;
+
+            string acrescimoStr = txtAcrescimos.Text.Replace(".", ",").Replace("R$", "").Trim();
+            if (decimal.TryParse(acrescimoStr, out decimal acrescimo))
+                orcamento.Acrescimo = acrescimo;
+            else
+                orcamento.Acrescimo = 0;
+
+            orcamento.TotalGeral = subTotal - orcamento.Desconto + orcamento.Acrescimo;
+
+            return orcamento;
         }
 
         private bool ValidarCampos()

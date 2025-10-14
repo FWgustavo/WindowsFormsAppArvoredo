@@ -435,10 +435,12 @@
             // 
             // panelPedidos
             // 
-            this.panelPedidos.Location = new System.Drawing.Point(0, 3);
+            this.panelPedidos.BackColor = System.Drawing.Color.Transparent;
+            this.panelPedidos.Location = new System.Drawing.Point(301, 74);
             this.panelPedidos.Name = "panelPedidos";
-            this.panelPedidos.Size = new System.Drawing.Size(784, 588);
-            this.panelPedidos.TabIndex = 3;
+            this.panelPedidos.Size = new System.Drawing.Size(783, 587);
+            this.panelPedidos.TabIndex = 6;
+            this.panelPedidos.AutoScroll = true;
             // 
             // TelaArvoredo
             // 
@@ -451,6 +453,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelDegrade);
             this.Controls.Add(this.panelMenu);
+            this.Controls.Add(this.panelPedidos);
             this.Controls.Add(this.panelEstoque);
             this.Name = "TelaArvoredo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
