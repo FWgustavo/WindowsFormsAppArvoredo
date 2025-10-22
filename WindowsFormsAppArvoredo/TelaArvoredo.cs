@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using MySqlX.XDevAPI;
 
 namespace WindowsFormsAppArvoredo
 {
@@ -19,6 +20,8 @@ namespace WindowsFormsAppArvoredo
         private List<Orcamento> orcamentos = new List<Orcamento>();
         private List<Produto> produtos = new List<Produto>();
         private List<Orcamento> pedidos = new List<Orcamento>();
+        private List<Cliente> clientes = new List<Cliente>();
+
 
         public TelaArvoredo()
         {
@@ -718,6 +721,278 @@ namespace WindowsFormsAppArvoredo
         }
 
         #endregion
+        #region Cadastro
+
+        private void ConfigurarPainelCadastro()
+        {
+            if (panelCadastro == null) return;
+
+            panelCadastro.BackColor = Color.Transparent;
+            panelCadastro.Controls.Clear();
+
+            // Barra de pesquisa
+            TextBox txtPesquisaCadastro = new TextBox();
+            txtPesquisaCadastro.Name = "txtPesquisaCadastro";
+            txtPesquisaCadastro.Location = new Point(450, 90);
+            txtPesquisaCadastro.Size = new Size(240, 30);
+            txtPesquisaCadastro.Font = new Font("Gagalin", 10F);
+            txtPesquisaCadastro.ForeColor = Color.Gray;
+            txtPesquisaCadastro.Text = "BARRA DE PESQUISA";
+            txtPesquisaCadastro.Enter += (s, e) =>
+            {
+                if (txtPesquisaCadastro.Text == "BARRA DE PESQUISA")
+                {
+                    txtPesquisaCadastro.Text = "";
+                    txtPesquisaCadastro.ForeColor = Color.FromArgb(57, 27, 1);
+                }
+            };
+            txtPesquisaCadastro.Leave += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(txtPesquisaCadastro.Text))
+                {
+                    txtPesquisaCadastro.Text = "BARRA DE PESQUISA";
+                    txtPesquisaCadastro.ForeColor = Color.Gray;
+                }
+            };
+            txtPesquisaCadastro.TextChanged += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
+            panelCadastro.Controls.Add(txtPesquisaCadastro);
+
+            // Botão de pesquisa
+            Button btnPesquisar = new Button();
+            btnPesquisar.Location = new Point(700, 90);
+            btnPesquisar.Size = new Size(40, 30);
+            btnPesquisar.Text = "🔍";
+            btnPesquisar.Font = new Font("Segoe UI", 12F);
+            btnPesquisar.BackColor = Color.FromArgb(239, 212, 172);
+            btnPesquisar.FlatStyle = FlatStyle.Flat;
+            btnPesquisar.FlatAppearance.BorderSize = 1;
+            btnPesquisar.Click += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
+            panelCadastro.Controls.Add(btnPesquisar);
+
+            // Botão adicionar cliente
+            Button btnAdicionarCliente = new Button();
+            btnAdicionarCliente.Name = "btnAdicionarCliente";
+            btnAdicionarCliente.Location = new Point(750, 90);
+            btnAdicionarCliente.Size = new Size(40, 30);
+            btnAdicionarCliente.Text = "➕";
+            btnAdicionarCliente.Font = new Font("Segoe UI", 14F);
+            btnAdicionarCliente.BackColor = Color.FromArgb(144, 238, 144);
+            btnAdicionarCliente.FlatStyle = FlatStyle.Flat;
+            btnAdicionarCliente.FlatAppearance.BorderSize = 1;
+            btnAdicionarCliente.Click += btnAdicionarCliente_Click;
+            panelCadastro.Controls.Add(btnAdicionarCliente);
+
+            // Container dos clientes
+            Panel containerClientes = new Panel();
+            containerClientes.Name = "containerClientes";
+            containerClientes.Location = new Point(440, 160);
+            containerClientes.Size = new Size(700, 400);
+            containerClientes.BackColor = Color.FromArgb(239, 212, 172);
+            containerClientes.BorderStyle = BorderStyle.FixedSingle;
+            containerClientes.AutoScroll = true;
+            panelCadastro.Controls.Add(containerClientes);
+
+            AtualizarListaClientes();
+        }
+
+        private void CarregarDadosExemploClientes()
+        {
+            clientes.Clear();
+            clientes.Add(new Cliente
+            {
+                Id = 1,
+                Nome = "Eduardo Castro de Souza",
+                CpfCnpj = "123.456.789-10",
+                Telefone = "(44) 12345-6789",
+                Cep = "12345-678",
+                Endereco = "Rua Tales Santos, 190",
+                Bairro = "Jd. Santo Amaro"
+            });
+            clientes.Add(new Cliente
+            {
+                Id = 2,
+                Nome = "Jordana Gleyse",
+                CpfCnpj = "987.654.321-00",
+                Telefone = "(44) 98765-4321",
+                Cep = "87654-321",
+                Endereco = "Av. Principal, 500",
+                Bairro = "Centro"
+            });
+            clientes.Add(new Cliente
+            {
+                Id = 3,
+                Nome = "Denise Maria de Souza",
+                CpfCnpj = "111.222.333-44",
+                Telefone = "(44) 91111-2222",
+                Cep = "11111-222",
+                Endereco = "Rua das Flores, 123",
+                Bairro = "Jardim das Acácias"
+            });
+            clientes.Add(new Cliente
+            {
+                Id = 4,
+                Nome = "Rayanne Ferreira",
+                CpfCnpj = "555.666.777-88",
+                Telefone = "(44) 95555-6666",
+                Cep = "55555-666",
+                Endereco = "Rua XV de Novembro, 789",
+                Bairro = "Vila Nova"
+            });
+        }
+
+        private void AtualizarListaClientes(List<Cliente> clientesFiltrados = null)
+        {
+            if (panelCadastro == null) return;
+
+            Panel containerClientes = panelCadastro.Controls.Find("containerClientes", false).FirstOrDefault() as Panel;
+            if (containerClientes == null) return;
+
+            containerClientes.Controls.Clear();
+
+            var listaExibir = clientesFiltrados ?? clientes;
+            int yPosition = 10;
+
+            foreach (var cliente in listaExibir)
+            {
+                Panel cardCliente = CriarCardCliente(cliente);
+                cardCliente.Location = new Point(10, yPosition);
+                containerClientes.Controls.Add(cardCliente);
+                yPosition += cardCliente.Height + 10;
+            }
+
+            if (listaExibir.Count == 0)
+            {
+                Label lblVazio = new Label();
+                lblVazio.Text = "Nenhum cliente encontrado.";
+                lblVazio.Location = new Point(200, 150);
+                lblVazio.Size = new Size(300, 30);
+                lblVazio.Font = new Font("Gagalin", 12F);
+                lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
+                lblVazio.TextAlign = ContentAlignment.MiddleCenter;
+                containerClientes.Controls.Add(lblVazio);
+            }
+        }
+
+        private Panel CriarCardCliente(Cliente cliente)
+        {
+            Panel card = new Panel();
+            card.Size = new Size(660, 140);
+            card.BackColor = Color.FromArgb(198, 143, 86);
+            card.BorderStyle = BorderStyle.FixedSingle;
+            card.Padding = new Padding(10);
+
+            // Nome do cliente
+            Label lblNome = new Label();
+            lblNome.Text = cliente.Nome.ToUpper();
+            lblNome.Location = new Point(15, 15);
+            lblNome.Size = new Size(500, 25);
+            lblNome.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+            lblNome.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblNome);
+
+            // CPF/CNPJ
+            Label lblCpf = new Label();
+            lblCpf.Text = $"CPF/CNPJ: {cliente.CpfCnpj}";
+            lblCpf.Location = new Point(15, 45);
+            lblCpf.Size = new Size(300, 20);
+            lblCpf.Font = new Font("Gagalin", 9F);
+            lblCpf.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblCpf);
+
+            // Telefone
+            Label lblTelefone = new Label();
+            lblTelefone.Text = $"TELEFONE/CELL: {cliente.Telefone}";
+            lblTelefone.Location = new Point(350, 45);
+            lblTelefone.Size = new Size(300, 20);
+            lblTelefone.Font = new Font("Gagalin", 9F);
+            lblTelefone.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblTelefone);
+
+            // CEP
+            Label lblCep = new Label();
+            lblCep.Text = $"CEP/MUNICÍPIO: {cliente.Cep}";
+            lblCep.Location = new Point(15, 70);
+            lblCep.Size = new Size(300, 20);
+            lblCep.Font = new Font("Gagalin", 9F);
+            lblCpf.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblCep);
+
+            // Endereço
+            Label lblEndereco = new Label();
+            lblEndereco.Text = $"ENDEREÇO: {cliente.Endereco}";
+            lblEndereco.Location = new Point(15, 95);
+            lblEndereco.Size = new Size(400, 20);
+            lblEndereco.Font = new Font("Gagalin", 9F);
+            lblEndereco.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblEndereco);
+
+            // Bairro
+            Label lblBairro = new Label();
+            lblBairro.Text = $"BAIRRO: {cliente.Bairro}";
+            lblBairro.Location = new Point(420, 95);
+            lblBairro.Size = new Size(220, 20);
+            lblBairro.Font = new Font("Gagalin", 9F);
+            lblBairro.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblBairro);
+
+            // Botão DETALHES
+            Button btnDetalhes = new Button();
+            btnDetalhes.Text = "DETALHES";
+            btnDetalhes.Location = new Point(550, 100);
+            btnDetalhes.Size = new Size(90, 25);
+            btnDetalhes.Font = new Font("Gagalin", 8F);
+            btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
+            btnDetalhes.FlatStyle = FlatStyle.Flat;
+            btnDetalhes.FlatAppearance.BorderSize = 1;
+            btnDetalhes.Click += (s, e) => AbrirDetalhesCliente(cliente);
+            card.Controls.Add(btnDetalhes);
+
+            return card;
+        }
+
+        private void FiltrarClientes(string filtro)
+        {
+            if (string.IsNullOrWhiteSpace(filtro) || filtro == "BARRA DE PESQUISA")
+            {
+                AtualizarListaClientes();
+                return;
+            }
+
+            var clientesFiltrados = clientes.Where(c =>
+                c.Nome.ToLower().Contains(filtro.ToLower()) ||
+                c.CpfCnpj.Contains(filtro) ||
+                c.Telefone.Contains(filtro)
+            ).ToList();
+
+            AtualizarListaClientes(clientesFiltrados);
+        }
+
+        private void AbrirDetalhesCliente(Cliente cliente)
+        {
+            string detalhes = $"DETALHES DO CLIENTE\n\n" +
+                             $"Nome: {cliente.Nome}\n" +
+                             $"CPF/CNPJ: {cliente.CpfCnpj}\n" +
+                             $"Telefone: {cliente.Telefone}\n" +
+                             $"CEP: {cliente.Cep}\n" +
+                             $"Endereço: {cliente.Endereco}\n" +
+                             $"Bairro: {cliente.Bairro}";
+
+            MessageBox.Show(detalhes, "Detalhes do Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnAdicionarCliente_Click(object sender, EventArgs e)
+        {
+            using (FormMenuCadastro formMenu = new FormMenuCadastro())
+            {
+                formMenu.ShowDialog();
+                // Aqui você pode adicionar lógica para atualizar a lista após adicionar um novo cliente
+                // AtualizarListaClientes();
+            }
+        }
+
+
+
+        #endregion
 
         #region Navegação
 
@@ -770,6 +1045,18 @@ namespace WindowsFormsAppArvoredo
             if (btnOrcamento != null) btnOrcamento.BackColor = corPadrao;
             if (btnEstoque != null) btnEstoque.BackColor = corPadrao;
         }
+        private void btnCadastro_Click(object sender, EventArgs e)
+        {
+            if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelPedidos != null) panelPedidos.Visible = false;
+
+            if (panelCadastro != null)
+            {
+                panelCadastro.Visible = true;
+                panelCadastro.BringToFront();
+            }
+        }
 
         private void btnSair_Click(object sender, EventArgs e)
         {
@@ -777,5 +1064,7 @@ namespace WindowsFormsAppArvoredo
         }
 
         #endregion
+
+        
     }
 }

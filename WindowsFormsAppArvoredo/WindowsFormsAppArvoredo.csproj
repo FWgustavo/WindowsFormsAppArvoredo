@@ -113,12 +113,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cliente.cs" />
     <Compile Include="EnderecoViaCep.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCadastroCliente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCadastroCliente.Designer.cs">
+      <DependentUpon>FormCadastroCliente.cs</DependentUpon>
     </Compile>
     <Compile Include="FormListaProdutos.cs">
       <SubType>Form</SubType>
