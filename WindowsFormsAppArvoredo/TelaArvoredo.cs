@@ -56,7 +56,7 @@ namespace WindowsFormsAppArvoredo
             ConfigurarEstoque();
             ConfigurarPedidos();
             CarregarDadosExemplo();
-
+            CarregarDadosExemploClientes();
             VincularEventos();
             panelDegrade?.Invalidate();
         }
@@ -135,6 +135,11 @@ namespace WindowsFormsAppArvoredo
             {
                 listViewEstoque.MouseClick -= listViewEstoque_MouseClick;
                 listViewEstoque.MouseClick += listViewEstoque_MouseClick;
+            }
+            if (btnCadastro != null)
+            {
+                btnCadastro.Click -= btnCadastro_Click;
+                btnCadastro.Click += btnCadastro_Click;
             }
         }
 
@@ -730,10 +735,24 @@ namespace WindowsFormsAppArvoredo
             panelCadastro.BackColor = Color.Transparent;
             panelCadastro.Controls.Clear();
 
+            // Botão Novo Cadastro
+            Button btnNovoCadastro = new Button();
+            btnNovoCadastro.Name = "btnNovoCadastro";
+            btnNovoCadastro.Location = new Point(22, 23);
+            btnNovoCadastro.Size = new Size(150, 30);
+            btnNovoCadastro.Text = "NOVO CADASTRO";
+            btnNovoCadastro.Font = new Font("Gagalin", 9F);
+            btnNovoCadastro.BackColor = Color.FromArgb(144, 238, 144);
+            btnNovoCadastro.FlatStyle = FlatStyle.Flat;
+            btnNovoCadastro.FlatAppearance.BorderSize = 0;
+            btnNovoCadastro.ForeColor = Color.Black;
+            btnNovoCadastro.Click += btnNovoCadastro_Click;
+            panelCadastro.Controls.Add(btnNovoCadastro);
+
             // Barra de pesquisa
             TextBox txtPesquisaCadastro = new TextBox();
             txtPesquisaCadastro.Name = "txtPesquisaCadastro";
-            txtPesquisaCadastro.Location = new Point(450, 90);
+            txtPesquisaCadastro.Location = new Point(420, 90);
             txtPesquisaCadastro.Size = new Size(240, 30);
             txtPesquisaCadastro.Font = new Font("Gagalin", 10F);
             txtPesquisaCadastro.ForeColor = Color.Gray;
@@ -759,7 +778,7 @@ namespace WindowsFormsAppArvoredo
 
             // Botão de pesquisa
             Button btnPesquisar = new Button();
-            btnPesquisar.Location = new Point(700, 90);
+            btnPesquisar.Location = new Point(670, 90);
             btnPesquisar.Size = new Size(40, 30);
             btnPesquisar.Text = "🔍";
             btnPesquisar.Font = new Font("Segoe UI", 12F);
@@ -772,20 +791,20 @@ namespace WindowsFormsAppArvoredo
             // Botão adicionar cliente
             Button btnAdicionarCliente = new Button();
             btnAdicionarCliente.Name = "btnAdicionarCliente";
-            btnAdicionarCliente.Location = new Point(750, 90);
+            btnAdicionarCliente.Location = new Point(720, 90);
             btnAdicionarCliente.Size = new Size(40, 30);
             btnAdicionarCliente.Text = "➕";
             btnAdicionarCliente.Font = new Font("Segoe UI", 14F);
             btnAdicionarCliente.BackColor = Color.FromArgb(144, 238, 144);
             btnAdicionarCliente.FlatStyle = FlatStyle.Flat;
             btnAdicionarCliente.FlatAppearance.BorderSize = 1;
-            btnAdicionarCliente.Click += btnAdicionarCliente_Click;
+            btnAdicionarCliente.Click += btnAdicionarClienteDireto_Click;
             panelCadastro.Controls.Add(btnAdicionarCliente);
 
             // Container dos clientes
             Panel containerClientes = new Panel();
             containerClientes.Name = "containerClientes";
-            containerClientes.Location = new Point(440, 160);
+            containerClientes.Location = new Point(40, 140);
             containerClientes.Size = new Size(700, 400);
             containerClientes.BackColor = Color.FromArgb(239, 212, 172);
             containerClientes.BorderStyle = BorderStyle.FixedSingle;
@@ -795,49 +814,32 @@ namespace WindowsFormsAppArvoredo
             AtualizarListaClientes();
         }
 
-        private void CarregarDadosExemploClientes()
+        // Método para o botão "Novo Cadastro" que abre o menu
+        private void btnNovoCadastro_Click(object sender, EventArgs e)
         {
-            clientes.Clear();
-            clientes.Add(new Cliente
+            using (FormMenuCadastro formMenu = new FormMenuCadastro())
             {
-                Id = 1,
-                Nome = "Eduardo Castro de Souza",
-                CpfCnpj = "123.456.789-10",
-                Telefone = "(44) 12345-6789",
-                Cep = "12345-678",
-                Endereco = "Rua Tales Santos, 190",
-                Bairro = "Jd. Santo Amaro"
-            });
-            clientes.Add(new Cliente
+                if (formMenu.ShowDialog() == DialogResult.OK)
+                {
+                    AtualizarListaClientes();
+                }
+            }
+        }
+
+        // Método para o botão "+" que adiciona cliente direto
+        private void btnAdicionarClienteDireto_Click(object sender, EventArgs e)
+        {
+            using (FormCadastroCliente formCadastro = new FormCadastroCliente())
             {
-                Id = 2,
-                Nome = "Jordana Gleyse",
-                CpfCnpj = "987.654.321-00",
-                Telefone = "(44) 98765-4321",
-                Cep = "87654-321",
-                Endereco = "Av. Principal, 500",
-                Bairro = "Centro"
-            });
-            clientes.Add(new Cliente
-            {
-                Id = 3,
-                Nome = "Denise Maria de Souza",
-                CpfCnpj = "111.222.333-44",
-                Telefone = "(44) 91111-2222",
-                Cep = "11111-222",
-                Endereco = "Rua das Flores, 123",
-                Bairro = "Jardim das Acácias"
-            });
-            clientes.Add(new Cliente
-            {
-                Id = 4,
-                Nome = "Rayanne Ferreira",
-                CpfCnpj = "555.666.777-88",
-                Telefone = "(44) 95555-6666",
-                Cep = "55555-666",
-                Endereco = "Rua XV de Novembro, 789",
-                Bairro = "Vila Nova"
-            });
+                if (formCadastro.ShowDialog() == DialogResult.OK)
+                {
+                    var novoCliente = formCadastro.ClienteCriado;
+                    novoCliente.Id = clientes.Count + 1;
+                    clientes.Add(novoCliente);
+                    AtualizarListaClientes();
+                    MessageBox.Show("Cliente cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
         private void AtualizarListaClientes(List<Cliente> clientesFiltrados = null)
@@ -914,7 +916,7 @@ namespace WindowsFormsAppArvoredo
             lblCep.Location = new Point(15, 70);
             lblCep.Size = new Size(300, 20);
             lblCep.Font = new Font("Gagalin", 9F);
-            lblCpf.ForeColor = Color.FromArgb(57, 27, 1);
+            lblCep.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblCep);
 
             // Endereço
@@ -969,29 +971,68 @@ namespace WindowsFormsAppArvoredo
 
         private void AbrirDetalhesCliente(Cliente cliente)
         {
-            string detalhes = $"DETALHES DO CLIENTE\n\n" +
-                             $"Nome: {cliente.Nome}\n" +
-                             $"CPF/CNPJ: {cliente.CpfCnpj}\n" +
-                             $"Telefone: {cliente.Telefone}\n" +
-                             $"CEP: {cliente.Cep}\n" +
-                             $"Endereço: {cliente.Endereco}\n" +
-                             $"Bairro: {cliente.Bairro}";
-
-            MessageBox.Show(detalhes, "Detalhes do Cliente", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void btnAdicionarCliente_Click(object sender, EventArgs e)
-        {
-            using (FormMenuCadastro formMenu = new FormMenuCadastro())
+            using (FormCadastroCliente formDetalhes = new FormCadastroCliente(cliente))
             {
-                formMenu.ShowDialog();
-                // Aqui você pode adicionar lógica para atualizar a lista após adicionar um novo cliente
-                // AtualizarListaClientes();
+                if (formDetalhes.ShowDialog() == DialogResult.OK)
+                {
+                    var clienteAtualizado = formDetalhes.ClienteCriado;
+                    int index = clientes.FindIndex(c => c.Id == cliente.Id);
+                    if (index >= 0)
+                    {
+                        clientes[index] = clienteAtualizado;
+                        AtualizarListaClientes();
+                        MessageBox.Show("Cliente atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
             }
         }
 
+        private void CarregarDadosExemploClientes()
+        {
+            if (clientes.Count > 0) return; // Não recarregar se já tem dados
 
-
+            clientes.Clear();
+            clientes.Add(new Cliente
+            {
+                Id = 1,
+                Nome = "Eduardo Castro de Souza",
+                CpfCnpj = "123.456.789-10",
+                Telefone = "(44) 12345-6789",
+                Cep = "12345-678",
+                Endereco = "Rua Tales Santos, 190",
+                Bairro = "Jd. Santo Amaro"
+            });
+            clientes.Add(new Cliente
+            {
+                Id = 2,
+                Nome = "Jordana Gleyse",
+                CpfCnpj = "987.654.321-00",
+                Telefone = "(44) 98765-4321",
+                Cep = "87654-321",
+                Endereco = "Av. Principal, 500",
+                Bairro = "Centro"
+            });
+            clientes.Add(new Cliente
+            {
+                Id = 3,
+                Nome = "Denise Maria de Souza",
+                CpfCnpj = "111.222.333-44",
+                Telefone = "(44) 91111-2222",
+                Cep = "11111-222",
+                Endereco = "Rua das Flores, 123",
+                Bairro = "Jardim das Acácias"
+            });
+            clientes.Add(new Cliente
+            {
+                Id = 4,
+                Nome = "Rayanne Ferreira",
+                CpfCnpj = "555.666.777-88",
+                Telefone = "(44) 95555-6666",
+                Cep = "55555-666",
+                Endereco = "Rua XV de Novembro, 789",
+                Bairro = "Vila Nova"
+            });
+        }
         #endregion
 
         #region Navegação
@@ -1053,6 +1094,7 @@ namespace WindowsFormsAppArvoredo
 
             if (panelCadastro != null)
             {
+                ConfigurarPainelCadastro(); // Reconfigurar toda vez que abrir
                 panelCadastro.Visible = true;
                 panelCadastro.BringToFront();
             }
