@@ -1,4 +1,7 @@
-﻿namespace WindowsFormsAppArvoredo
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace WindowsFormsAppArvoredo
 {
     partial class TelaArvoredo
     {
@@ -45,6 +48,7 @@
             this.btnHistorico = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panelCadastro = new System.Windows.Forms.Panel();
             this.panelPedidos = new System.Windows.Forms.Panel();
             this.panelOrcamento = new System.Windows.Forms.Panel();
             this.listViewOrcamentos = new System.Windows.Forms.ListView();
@@ -57,7 +61,6 @@
             this.btnRelatorioEstoque = new System.Windows.Forms.Button();
             this.btnAtualizarEstoque = new System.Windows.Forms.Button();
             this.btnNovoProduto = new System.Windows.Forms.Button();
-            this.panelCadastro = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -282,6 +285,13 @@
             this.panel2.Size = new System.Drawing.Size(784, 3);
             this.panel2.TabIndex = 3;
             // 
+            // panelCadastro
+            // 
+            this.panelCadastro.Location = new System.Drawing.Point(3, 3);
+            this.panelCadastro.Name = "panelCadastro";
+            this.panelCadastro.Size = new System.Drawing.Size(778, 585);
+            this.panelCadastro.TabIndex = 3;
+            // 
             // panelPedidos
             // 
             this.panelPedidos.AutoScroll = true;
@@ -443,13 +453,6 @@
             this.btnNovoProduto.Text = "NOVO PRODUTO";
             this.btnNovoProduto.UseVisualStyleBackColor = false;
             // 
-            // panelCadastro
-            // 
-            this.panelCadastro.Location = new System.Drawing.Point(3, 3);
-            this.panelCadastro.Name = "panelCadastro";
-            this.panelCadastro.Size = new System.Drawing.Size(778, 585);
-            this.panelCadastro.TabIndex = 3;
-            // 
             // TelaArvoredo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -460,7 +463,14 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelDegrade);
+            this.btnRelatorioEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.btnNovoProduto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            // Exemplo para um botão ocupar toda a largura do painel
+            this.btnNovoProduto.Dock = DockStyle.Top;
             this.Controls.Add(this.panelMenu);
+            this.btnNovoProduto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.btnAtualizarEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.btnRelatorioEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             this.Controls.Add(this.panelPedidos);
             this.Controls.Add(this.panelEstoque);
             this.Name = "TelaArvoredo";
@@ -476,8 +486,45 @@
             this.panelOrcamento.PerformLayout();
             this.panelEstoque.ResumeLayout(false);
             this.panelEstoque.PerformLayout();
+
+            // Painéis principais responsivos
+            this.panelOrcamento.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.panelEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.panelPedidos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             this.ResumeLayout(false);
 
+            // ListViews ocupam todo o painel
+            this.listViewOrcamentos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.listViewEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            
+            // Botões e labels fixos no topo/esquerda/direita conforme necessário
+            this.btnNewOrc.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            this.btnNovoProduto.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            this.btnAtualizarEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            this.btnRelatorioEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+
+            this.lblOrcamentosPendentes.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            this.lblControleEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            this.lblProdutosBaixoEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
+        }
+        private void ListViewOrcamentos_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = false;
+            Color backgroundColor = e.ItemIndex % 2 == 0 ? Color.FromArgb(239, 212, 172) : Color.FromArgb(250, 230, 194);
+
+            // Se estiver selecionado
+            if (e.Item.Selected)
+                backgroundColor = Color.FromArgb(198, 143, 86);
+
+            // Se estiver em hover (mouse sobre o item)
+            if (e.State.HasFlag(ListViewItemStates.Hot))
+                backgroundColor = Color.FromArgb(220, 200, 150); // Escolha uma cor de hover visível
+
+            using (SolidBrush brush = new SolidBrush(backgroundColor))
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            using (Pen pen = new Pen(Color.FromArgb(57, 27, 1), 1))
+                e.Graphics.DrawRectangle(pen, e.Bounds);
         }
 
         #endregion

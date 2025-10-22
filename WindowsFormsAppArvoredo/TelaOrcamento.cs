@@ -529,36 +529,6 @@ namespace WindowsFormsAppArvoredo
                     e.Handled = true;
             };
 
-            txtCPF.TextChanged += (s, e) =>
-            {
-                string text = txtCPF.Text.Replace(".", "").Replace("-", "").Replace("/", "");
-                if (text.Length <= 11)
-                {
-                    if (text.Length > 3) text = text.Insert(3, ".");
-                    if (text.Length > 7) text = text.Insert(7, ".");
-                    if (text.Length > 11) text = text.Insert(11, "-");
-                }
-                else
-                {
-                    if (text.Length > 2) text = text.Insert(2, ".");
-                    if (text.Length > 6) text = text.Insert(6, ".");
-                    if (text.Length > 10) text = text.Insert(10, "/");
-                    if (text.Length > 15) text = text.Insert(15, "-");
-                }
-
-                if (txtCPF.Text != text)
-                {
-                    txtCPF.Text = text;
-                    txtCPF.SelectionStart = text.Length;
-                }
-            };
-
-            txtCEP.KeyPress += (s, e) =>
-            {
-                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                    e.Handled = true;
-            };
-
             txtCEP.TextChanged += async (s, e) =>
             {
                 if (isConsultandoCep) return;
@@ -567,6 +537,8 @@ namespace WindowsFormsAppArvoredo
                 try
                 {
                     string text = txtCEP.Text.Replace("-", "").Replace(" ", "").Trim();
+                    int oldSelectionStart = txtCEP.SelectionStart;
+                    int oldLength = txtCEP.Text.Length;
 
                     if (text.Length > 8)
                         text = text.Substring(0, 8);
@@ -577,9 +549,16 @@ namespace WindowsFormsAppArvoredo
 
                     if (txtCEP.Text != formattedText)
                     {
-                        int cursorPosition = txtCEP.SelectionStart;
                         txtCEP.Text = formattedText;
-                        txtCEP.SelectionStart = cursorPosition <= formattedText.Length ? cursorPosition : formattedText.Length;
+
+                        // Calcula nova posição do cursor
+                        int newSelectionStart = oldSelectionStart + (txtCEP.Text.Length - oldLength);
+
+                        // Se o cursor estava logo após o 5º caractere e foi inserido o '-', avança 1
+                        if (oldSelectionStart == 5 && formattedText.Length > 5 && formattedText[5] == '-')
+                            newSelectionStart++;
+
+                        txtCEP.SelectionStart = Math.Min(newSelectionStart, txtCEP.Text.Length);
                     }
 
                     if (text.Length == 8 && text.All(char.IsDigit))
@@ -713,6 +692,7 @@ namespace WindowsFormsAppArvoredo
                 LimparFormulario();
                 MessageBox.Show("Orçamento excluído!", "Excluir",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Close(); // Fecha a tela após exclusão
             }
         }
 
