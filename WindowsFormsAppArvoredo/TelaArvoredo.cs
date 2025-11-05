@@ -51,6 +51,7 @@ namespace WindowsFormsAppArvoredo
             if (panelOrcamento != null) panelOrcamento.Visible = true;
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
+            if (panelCadastro != null) panelCadastro.Visible = false;
 
             ConfigurarListViewOrcamentos();
             ConfigurarEstoque();
@@ -299,6 +300,11 @@ namespace WindowsFormsAppArvoredo
             listViewOrcamentos.Columns.Add("Ações", 100);
 
             listViewOrcamentos.OwnerDraw = true;
+            // Remove handlers existentes antes de adicionar novos
+            listViewOrcamentos.DrawItem -= ListViewOrcamentos_DrawItem;
+            listViewOrcamentos.DrawSubItem -= ListViewOrcamentos_DrawSubItem;
+            listViewOrcamentos.DrawColumnHeader -= ListViewOrcamentos_DrawColumnHeader;
+
             listViewOrcamentos.DrawItem += ListViewOrcamentos_DrawItem;
             listViewOrcamentos.DrawSubItem += ListViewOrcamentos_DrawSubItem;
             listViewOrcamentos.DrawColumnHeader += ListViewOrcamentos_DrawColumnHeader;
@@ -340,6 +346,22 @@ namespace WindowsFormsAppArvoredo
             e.DrawDefault = true;
         }
 
+        private void ListViewOrcamentos_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = false;
+            Color backgroundColor = e.ItemIndex % 2 == 0 ? Color.FromArgb(239, 212, 172) : Color.FromArgb(250, 230, 194);
+
+            if (e.Item.Selected)
+                backgroundColor = Color.FromArgb(198, 143, 86);
+
+            if (e.State.HasFlag(ListViewItemStates.Hot))
+                backgroundColor = Color.FromArgb(220, 200, 150);
+
+            using (SolidBrush brush = new SolidBrush(backgroundColor))
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            using (Pen pen = new Pen(Color.FromArgb(57, 27, 1), 1))
+                e.Graphics.DrawRectangle(pen, e.Bounds);
+        }
 
         private void ListViewOrcamentos_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
@@ -395,7 +417,6 @@ namespace WindowsFormsAppArvoredo
                 {
                     if (telaOrcamento.OrcamentoConfirmado)
                     {
-                        // Orçamento foi confirmado - mover para pedidos
                         orcamentos.Remove(orcamento);
 
                         var pedido = telaOrcamento.OrcamentoCriado;
@@ -416,7 +437,6 @@ namespace WindowsFormsAppArvoredo
                     }
                     else if (telaOrcamento.OrcamentoSalvo)
                     {
-                        // Orçamento foi atualizado
                         var orcamentoAtualizado = telaOrcamento.OrcamentoCriado;
 
                         int index = orcamentos.IndexOf(orcamento);
@@ -444,24 +464,14 @@ namespace WindowsFormsAppArvoredo
             {
                 var resultado = telaOrcamento.ShowDialog();
 
-                // DEBUG: Ver o resultado
-                System.Diagnostics.Debug.WriteLine($"DialogResult: {resultado}");
-                System.Diagnostics.Debug.WriteLine($"OrcamentoCriado é null? {telaOrcamento.OrcamentoCriado == null}");
-                System.Diagnostics.Debug.WriteLine($"OrcamentoConfirmado: {telaOrcamento.OrcamentoConfirmado}");
-                System.Diagnostics.Debug.WriteLine($"OrcamentoSalvo: {telaOrcamento.OrcamentoSalvo}");
-
-                // Verificar se o DialogResult é OK e se há um orçamento criado
                 if (resultado == DialogResult.OK && telaOrcamento.OrcamentoCriado != null)
                 {
                     if (telaOrcamento.OrcamentoConfirmado)
                     {
-                        // CONFIRMADO - Adicionar à lista de PEDIDOS
                         var novoPedido = telaOrcamento.OrcamentoCriado;
                         novoPedido.Id = pedidos.Count + 1;
                         novoPedido.Status = "Confirmado";
                         pedidos.Add(novoPedido);
-
-                        System.Diagnostics.Debug.WriteLine($"Pedido adicionado. Total de pedidos: {pedidos.Count}");
 
                         AtualizarPanelPedidos();
 
@@ -476,18 +486,12 @@ namespace WindowsFormsAppArvoredo
                     }
                     else if (telaOrcamento.OrcamentoSalvo)
                     {
-                        // SALVO - Adicionar à lista de ORÇAMENTOS
                         var novoOrcamento = telaOrcamento.OrcamentoCriado;
                         novoOrcamento.Id = orcamentos.Count + 1;
                         novoOrcamento.Status = "Pendente";
                         orcamentos.Add(novoOrcamento);
 
-                        System.Diagnostics.Debug.WriteLine($"Orçamento adicionado. Total de orçamentos: {orcamentos.Count}");
-
-                        // Atualizar o ListView
                         AtualizarListViewOrcamentos();
-
-                        System.Diagnostics.Debug.WriteLine($"ListView atualizado. Itens no ListView: {listViewOrcamentos.Items.Count}");
 
                         MessageBox.Show(
                             $"Orçamento #{novoOrcamento.Id} salvo com sucesso!\n\n" +
@@ -498,14 +502,6 @@ namespace WindowsFormsAppArvoredo
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
                     }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine("ATENÇÃO: DialogResult = OK mas nenhuma flag está ativa!");
-                    }
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"Condição não atendida. DialogResult: {resultado}, OrcamentoCriado: {telaOrcamento.OrcamentoCriado != null}");
                 }
             }
         }
@@ -583,13 +579,11 @@ namespace WindowsFormsAppArvoredo
             if (produto != null && produto.Quantidade <= produto.QuantidadeMinima)
                 backgroundColor = Color.FromArgb(255, 220, 220);
 
-            // Se estiver selecionado
             if (e.Item.Selected)
                 backgroundColor = Color.FromArgb(198, 143, 86);
 
-            // Se estiver em hover (mouse sobre o item)
             if (e.State.HasFlag(ListViewItemStates.Hot))
-                backgroundColor = Color.FromArgb(220, 200, 150); // Escolha uma cor de hover visível
+                backgroundColor = Color.FromArgb(220, 200, 150);
 
             using (SolidBrush brush = new SolidBrush(backgroundColor))
                 e.Graphics.FillRectangle(brush, e.Bounds);
@@ -720,6 +714,7 @@ namespace WindowsFormsAppArvoredo
         }
 
         #endregion
+
         #region Cadastro
 
         private void ConfigurarPainelCadastro()
@@ -729,28 +724,27 @@ namespace WindowsFormsAppArvoredo
             panelCadastro.BackColor = Color.Transparent;
             panelCadastro.Controls.Clear();
 
-            // Botão Novo Cadastro
-            Button btnNovoCadastro = new Button();
-            btnNovoCadastro.Name = "btnNovoCadastro";
-            btnNovoCadastro.Location = new Point(22, 23);
-            btnNovoCadastro.Size = new Size(150, 30);
-            btnNovoCadastro.Text = "NOVO CADASTRO";
-            btnNovoCadastro.Font = new Font("Gagalin", 9F);
-            btnNovoCadastro.BackColor = Color.FromArgb(144, 238, 144);
-            btnNovoCadastro.FlatStyle = FlatStyle.Flat;
-            btnNovoCadastro.FlatAppearance.BorderSize = 0;
-            btnNovoCadastro.ForeColor = Color.Black;
-            btnNovoCadastro.Click += btnNovoCadastro_Click;
-            panelCadastro.Controls.Add(btnNovoCadastro);
+            // Label HISTÓRICO
+            Label lblHistorico = new Label();
+            lblHistorico.Name = "lblHistorico";
+            lblHistorico.Text = "HISTÓRICO";
+            lblHistorico.Location = new Point(22, 23);
+            lblHistorico.Size = new Size(180, 30);
+            lblHistorico.Font = new Font("Gagalin", 16F, FontStyle.Bold);
+            lblHistorico.ForeColor = Color.FromArgb(57, 27, 1);
+            lblHistorico.TextAlign = ContentAlignment.MiddleLeft;
+            panelCadastro.Controls.Add(lblHistorico);
 
-            // Barra de pesquisa
+            // Barra de pesquisa (maior e mais centralizada)
             TextBox txtPesquisaCadastro = new TextBox();
             txtPesquisaCadastro.Name = "txtPesquisaCadastro";
-            txtPesquisaCadastro.Location = new Point(420, 90);
-            txtPesquisaCadastro.Size = new Size(240, 30);
-            txtPesquisaCadastro.Font = new Font("Gagalin", 10F);
+            txtPesquisaCadastro.Location = new Point(240, 80);
+            txtPesquisaCadastro.Size = new Size(380, 30);
+            txtPesquisaCadastro.Font = new Font("Gagalin", 11F);
             txtPesquisaCadastro.ForeColor = Color.Gray;
             txtPesquisaCadastro.Text = "BARRA DE PESQUISA";
+            txtPesquisaCadastro.BorderStyle = BorderStyle.FixedSingle;
+            txtPesquisaCadastro.BackColor = Color.FromArgb(239, 212, 172);
             txtPesquisaCadastro.Enter += (s, e) =>
             {
                 if (txtPesquisaCadastro.Text == "BARRA DE PESQUISA")
@@ -770,57 +764,56 @@ namespace WindowsFormsAppArvoredo
             txtPesquisaCadastro.TextChanged += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
             panelCadastro.Controls.Add(txtPesquisaCadastro);
 
-            // Botão de pesquisa
-            Button btnPesquisar = new Button();
-            btnPesquisar.Location = new Point(670, 90);
-            btnPesquisar.Size = new Size(40, 30);
-            btnPesquisar.Text = "🔍";
-            btnPesquisar.Font = new Font("Segoe UI", 12F);
-            btnPesquisar.BackColor = Color.FromArgb(239, 212, 172);
-            btnPesquisar.FlatStyle = FlatStyle.Flat;
-            btnPesquisar.FlatAppearance.BorderSize = 1;
-            btnPesquisar.Click += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
-            panelCadastro.Controls.Add(btnPesquisar);
+            // Ícone de pesquisa (lupa)
+            PictureBox picLupa = new PictureBox();
+            picLupa.Location = new Point(630, 82);
+            picLupa.Size = new Size(26, 26);
+            picLupa.SizeMode = PictureBoxSizeMode.Zoom;
+            picLupa.BackColor = Color.Transparent;
+            picLupa.Cursor = Cursors.Hand;
 
-            // Botão adicionar cliente
+            // Criar ícone de lupa simples usando Graphics
+            Bitmap lupaBitmap = new Bitmap(26, 26);
+            using (Graphics g = Graphics.FromImage(lupaBitmap))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                using (Pen pen = new Pen(Color.FromArgb(57, 27, 1), 3))
+                {
+                    g.DrawEllipse(pen, 2, 2, 16, 16);
+                    g.DrawLine(pen, 15, 15, 23, 23);
+                }
+            }
+            picLupa.Image = lupaBitmap;
+            picLupa.Click += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
+            panelCadastro.Controls.Add(picLupa);
+
+            // Botão adicionar (+)
             Button btnAdicionarCliente = new Button();
             btnAdicionarCliente.Name = "btnAdicionarCliente";
-            btnAdicionarCliente.Location = new Point(720, 90);
-            btnAdicionarCliente.Size = new Size(40, 30);
-            btnAdicionarCliente.Text = "➕";
-            btnAdicionarCliente.Font = new Font("Segoe UI", 14F);
+            btnAdicionarCliente.Location = new Point(670, 80);
+            btnAdicionarCliente.Size = new Size(30, 30);
+            btnAdicionarCliente.Text = "+";
+            btnAdicionarCliente.Font = new Font("Arial", 16F, FontStyle.Bold);
             btnAdicionarCliente.BackColor = Color.FromArgb(144, 238, 144);
+            btnAdicionarCliente.ForeColor = Color.Black;
             btnAdicionarCliente.FlatStyle = FlatStyle.Flat;
-            btnAdicionarCliente.FlatAppearance.BorderSize = 1;
+            btnAdicionarCliente.FlatAppearance.BorderSize = 0;
+            btnAdicionarCliente.Cursor = Cursors.Hand;
             btnAdicionarCliente.Click += btnAdicionarClienteDireto_Click;
             panelCadastro.Controls.Add(btnAdicionarCliente);
 
-            // Container dos clientes
+            // Container dos clientes (com scroll)
             Panel containerClientes = new Panel();
             containerClientes.Name = "containerClientes";
-            containerClientes.Location = new Point(40, 140);
-            containerClientes.Size = new Size(700, 400);
-            containerClientes.BackColor = Color.FromArgb(239, 212, 172);
-            containerClientes.BorderStyle = BorderStyle.FixedSingle;
+            containerClientes.Location = new Point(22, 130);
+            containerClientes.Size = new Size(720, 420);
+            containerClientes.BackColor = Color.Transparent;
             containerClientes.AutoScroll = true;
             panelCadastro.Controls.Add(containerClientes);
 
             AtualizarListaClientes();
         }
 
-        // Método para o botão "Novo Cadastro" que abre o menu
-        private void btnNovoCadastro_Click(object sender, EventArgs e)
-        {
-            using (FormMenuCadastro formMenu = new FormMenuCadastro())
-            {
-                if (formMenu.ShowDialog() == DialogResult.OK)
-                {
-                    AtualizarListaClientes();
-                }
-            }
-        }
-
-        // Método para o botão "+" que adiciona cliente direto
         private void btnAdicionarClienteDireto_Click(object sender, EventArgs e)
         {
             using (FormCadastroCliente formCadastro = new FormCadastroCliente())
@@ -834,6 +827,126 @@ namespace WindowsFormsAppArvoredo
                     MessageBox.Show("Cliente cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+        }
+
+        private Panel CriarCardCliente(Cliente cliente)
+        {
+            Panel card = new Panel();
+            card.Size = new Size(680, 140);
+            card.BackColor = Color.FromArgb(198, 143, 86);
+            card.BorderStyle = BorderStyle.FixedSingle;
+            card.Margin = new Padding(0, 0, 0, 10);
+
+            // Nome do cliente
+            Label lblNome = new Label();
+            lblNome.Text = cliente.Nome.ToUpper();
+            lblNome.Location = new Point(15, 15);
+            lblNome.Size = new Size(500, 25);
+            lblNome.Font = new Font("Gagalin", 11F, FontStyle.Bold);
+            lblNome.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblNome);
+
+            // CPF/CNPJ
+            Label lblCpfLabel = new Label();
+            lblCpfLabel.Text = "CPF/CNPJ:";
+            lblCpfLabel.Location = new Point(15, 50);
+            lblCpfLabel.Size = new Size(100, 18);
+            lblCpfLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblCpfLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblCpfLabel);
+
+            Label lblCpf = new Label();
+            lblCpf.Text = cliente.CpfCnpj;
+            lblCpf.Location = new Point(120, 50);
+            lblCpf.Size = new Size(200, 18);
+            lblCpf.Font = new Font("Gagalin", 8F);
+            lblCpf.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblCpf);
+
+            // Telefone
+            Label lblTelLabel = new Label();
+            lblTelLabel.Text = "TELEFONE/CELL:";
+            lblTelLabel.Location = new Point(340, 50);
+            lblTelLabel.Size = new Size(140, 18);
+            lblTelLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblTelLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblTelLabel);
+
+            Label lblTelefone = new Label();
+            lblTelefone.Text = cliente.Telefone;
+            lblTelefone.Location = new Point(480, 50);
+            lblTelefone.Size = new Size(180, 18);
+            lblTelefone.Font = new Font("Gagalin", 8F);
+            lblTelefone.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblTelefone);
+
+            // CEP/Município
+            Label lblCepLabel = new Label();
+            lblCepLabel.Text = "CEP/MUNICÍPIO:";
+            lblCepLabel.Location = new Point(15, 75);
+            lblCepLabel.Size = new Size(140, 18);
+            lblCepLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblCepLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblCepLabel);
+
+            Label lblCep = new Label();
+            lblCep.Text = cliente.Cep;
+            lblCep.Location = new Point(160, 75);
+            lblCep.Size = new Size(160, 18);
+            lblCep.Font = new Font("Gagalin", 8F);
+            lblCep.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblCep);
+
+            // Endereço
+            Label lblEndLabel = new Label();
+            lblEndLabel.Text = "ENDEREÇO:";
+            lblEndLabel.Location = new Point(15, 100);
+            lblEndLabel.Size = new Size(100, 18);
+            lblEndLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblEndLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblEndLabel);
+
+            Label lblEndereco = new Label();
+            lblEndereco.Text = cliente.Endereco;
+            lblEndereco.Location = new Point(120, 100);
+            lblEndereco.Size = new Size(320, 18);
+            lblEndereco.Font = new Font("Gagalin", 8F);
+            lblEndereco.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblEndereco);
+
+            // Bairro
+            Label lblBairroLabel = new Label();
+            lblBairroLabel.Text = "BAIRRO:";
+            lblBairroLabel.Location = new Point(450, 100);
+            lblBairroLabel.Size = new Size(70, 18);
+            lblBairroLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblBairroLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblBairroLabel);
+
+            Label lblBairro = new Label();
+            lblBairro.Text = cliente.Bairro;
+            lblBairro.Location = new Point(525, 100);
+            lblBairro.Size = new Size(140, 18);
+            lblBairro.Font = new Font("Gagalin", 8F);
+            lblBairro.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblBairro);
+
+            // Botão DETALHES
+            Button btnDetalhes = new Button();
+            btnDetalhes.Text = "DETALHES";
+            btnDetalhes.Location = new Point(570, 105);
+            btnDetalhes.Size = new Size(95, 25);
+            btnDetalhes.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
+            btnDetalhes.ForeColor = Color.FromArgb(57, 27, 1);
+            btnDetalhes.FlatStyle = FlatStyle.Flat;
+            btnDetalhes.FlatAppearance.BorderSize = 1;
+            btnDetalhes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnDetalhes.Cursor = Cursors.Hand;
+            btnDetalhes.Click += (s, e) => AbrirDetalhesCliente(cliente);
+            card.Controls.Add(btnDetalhes);
+
+            return card;
         }
 
         private void AtualizarListaClientes(List<Cliente> clientesFiltrados = null)
@@ -853,97 +966,20 @@ namespace WindowsFormsAppArvoredo
                 Panel cardCliente = CriarCardCliente(cliente);
                 cardCliente.Location = new Point(10, yPosition);
                 containerClientes.Controls.Add(cardCliente);
-                yPosition += cardCliente.Height + 10;
+                yPosition += cardCliente.Height + 15;
             }
 
             if (listaExibir.Count == 0)
             {
                 Label lblVazio = new Label();
                 lblVazio.Text = "Nenhum cliente encontrado.";
-                lblVazio.Location = new Point(200, 150);
-                lblVazio.Size = new Size(300, 30);
+                lblVazio.Location = new Point(150, 150);
+                lblVazio.Size = new Size(400, 30);
                 lblVazio.Font = new Font("Gagalin", 12F);
                 lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
                 lblVazio.TextAlign = ContentAlignment.MiddleCenter;
                 containerClientes.Controls.Add(lblVazio);
             }
-        }
-
-        private Panel CriarCardCliente(Cliente cliente)
-        {
-            Panel card = new Panel();
-            card.Size = new Size(660, 140);
-            card.BackColor = Color.FromArgb(198, 143, 86);
-            card.BorderStyle = BorderStyle.FixedSingle;
-            card.Padding = new Padding(10);
-
-            // Nome do cliente
-            Label lblNome = new Label();
-            lblNome.Text = cliente.Nome.ToUpper();
-            lblNome.Location = new Point(15, 15);
-            lblNome.Size = new Size(500, 25);
-            lblNome.Font = new Font("Gagalin", 12F, FontStyle.Bold);
-            lblNome.ForeColor = Color.FromArgb(57, 27, 1);
-            card.Controls.Add(lblNome);
-
-            // CPF/CNPJ
-            Label lblCpf = new Label();
-            lblCpf.Text = $"CPF/CNPJ: {cliente.CpfCnpj}";
-            lblCpf.Location = new Point(15, 45);
-            lblCpf.Size = new Size(300, 20);
-            lblCpf.Font = new Font("Gagalin", 9F);
-            lblCpf.ForeColor = Color.FromArgb(57, 27, 1);
-            card.Controls.Add(lblCpf);
-
-            // Telefone
-            Label lblTelefone = new Label();
-            lblTelefone.Text = $"TELEFONE/CELL: {cliente.Telefone}";
-            lblTelefone.Location = new Point(350, 45);
-            lblTelefone.Size = new Size(300, 20);
-            lblTelefone.Font = new Font("Gagalin", 9F);
-            lblTelefone.ForeColor = Color.FromArgb(57, 27, 1);
-            card.Controls.Add(lblTelefone);
-
-            // CEP
-            Label lblCep = new Label();
-            lblCep.Text = $"CEP/MUNICÍPIO: {cliente.Cep}";
-            lblCep.Location = new Point(15, 70);
-            lblCep.Size = new Size(300, 20);
-            lblCep.Font = new Font("Gagalin", 9F);
-            lblCep.ForeColor = Color.FromArgb(57, 27, 1);
-            card.Controls.Add(lblCep);
-
-            // Endereço
-            Label lblEndereco = new Label();
-            lblEndereco.Text = $"ENDEREÇO: {cliente.Endereco}";
-            lblEndereco.Location = new Point(15, 95);
-            lblEndereco.Size = new Size(400, 20);
-            lblEndereco.Font = new Font("Gagalin", 9F);
-            lblEndereco.ForeColor = Color.FromArgb(57, 27, 1);
-            card.Controls.Add(lblEndereco);
-
-            // Bairro
-            Label lblBairro = new Label();
-            lblBairro.Text = $"BAIRRO: {cliente.Bairro}";
-            lblBairro.Location = new Point(420, 95);
-            lblBairro.Size = new Size(220, 20);
-            lblBairro.Font = new Font("Gagalin", 9F);
-            lblBairro.ForeColor = Color.FromArgb(57, 27, 1);
-            card.Controls.Add(lblBairro);
-
-            // Botão DETALHES
-            Button btnDetalhes = new Button();
-            btnDetalhes.Text = "DETALHES";
-            btnDetalhes.Location = new Point(550, 100);
-            btnDetalhes.Size = new Size(90, 25);
-            btnDetalhes.Font = new Font("Gagalin", 8F);
-            btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
-            btnDetalhes.FlatStyle = FlatStyle.Flat;
-            btnDetalhes.FlatAppearance.BorderSize = 1;
-            btnDetalhes.Click += (s, e) => AbrirDetalhesCliente(cliente);
-            card.Controls.Add(btnDetalhes);
-
-            return card;
         }
 
         private void FiltrarClientes(string filtro)
@@ -983,7 +1019,7 @@ namespace WindowsFormsAppArvoredo
 
         private void CarregarDadosExemploClientes()
         {
-            if (clientes.Count > 0) return; // Não recarregar se já tem dados
+            if (clientes.Count > 0) return;
 
             clientes.Clear();
             clientes.Add(new Cliente
@@ -1027,6 +1063,7 @@ namespace WindowsFormsAppArvoredo
                 Bairro = "Vila Nova"
             });
         }
+
         #endregion
 
         #region Navegação
@@ -1035,6 +1072,7 @@ namespace WindowsFormsAppArvoredo
         {
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
+            if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelOrcamento != null)
             {
                 panelOrcamento.Visible = true;
@@ -1048,6 +1086,7 @@ namespace WindowsFormsAppArvoredo
         {
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelPedidos != null)
             {
                 panelPedidos.Visible = true;
@@ -1062,6 +1101,7 @@ namespace WindowsFormsAppArvoredo
         {
             if (panelOrcamento != null) panelOrcamento.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
+            if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelEstoque != null)
             {
                 panelEstoque.Visible = true;
@@ -1072,14 +1112,6 @@ namespace WindowsFormsAppArvoredo
             AtualizarListaEstoque();
         }
 
-        private void ResetarCoresBotoes()
-        {
-            Color corPadrao = Color.FromArgb(239, 212, 172);
-            if (btnTitulos != null) btnTitulos.BackColor = corPadrao;
-            if (btnPedidos != null) btnPedidos.BackColor = corPadrao;
-            if (btnOrcamento != null) btnOrcamento.BackColor = corPadrao;
-            if (btnEstoque != null) btnEstoque.BackColor = corPadrao;
-        }
         private void btnCadastro_Click(object sender, EventArgs e)
         {
             if (panelOrcamento != null) panelOrcamento.Visible = false;
@@ -1088,10 +1120,19 @@ namespace WindowsFormsAppArvoredo
 
             if (panelCadastro != null)
             {
-                ConfigurarPainelCadastro(); // Reconfigurar toda vez que abrir
+                ConfigurarPainelCadastro();
                 panelCadastro.Visible = true;
                 panelCadastro.BringToFront();
             }
+        }
+
+        private void ResetarCoresBotoes()
+        {
+            Color corPadrao = Color.FromArgb(239, 212, 172);
+            if (btnTitulos != null) btnTitulos.BackColor = corPadrao;
+            if (btnPedidos != null) btnPedidos.BackColor = corPadrao;
+            if (btnOrcamento != null) btnOrcamento.BackColor = corPadrao;
+            if (btnEstoque != null) btnEstoque.BackColor = corPadrao;
         }
 
         private void btnSair_Click(object sender, EventArgs e)
@@ -1100,7 +1141,5 @@ namespace WindowsFormsAppArvoredo
         }
 
         #endregion
-
-        
     }
 }

@@ -508,24 +508,7 @@ namespace WindowsFormsAppArvoredo
             this.lblProdutosBaixoEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
         }
-        private void ListViewOrcamentos_DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-            e.DrawDefault = false;
-            Color backgroundColor = e.ItemIndex % 2 == 0 ? Color.FromArgb(239, 212, 172) : Color.FromArgb(250, 230, 194);
-
-            // Se estiver selecionado
-            if (e.Item.Selected)
-                backgroundColor = Color.FromArgb(198, 143, 86);
-
-            // Se estiver em hover (mouse sobre o item)
-            if (e.State.HasFlag(ListViewItemStates.Hot))
-                backgroundColor = Color.FromArgb(220, 200, 150); // Escolha uma cor de hover visível
-
-            using (SolidBrush brush = new SolidBrush(backgroundColor))
-                e.Graphics.FillRectangle(brush, e.Bounds);
-            using (Pen pen = new Pen(Color.FromArgb(57, 27, 1), 1))
-                e.Graphics.DrawRectangle(pen, e.Bounds);
-        }
+        
 
         #endregion
 
