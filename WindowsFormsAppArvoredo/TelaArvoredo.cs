@@ -51,10 +51,12 @@ namespace WindowsFormsAppArvoredo
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
+            if (panelTitulos != null) panelTitulos.Visible = false;  // ADICIONAR ESTA LINHA
 
             ConfigurarListViewOrcamentos();
             ConfigurarEstoque();
             ConfigurarPedidos();
+            ConfigurarPanelTitulos();  // ADICIONAR ESTA LINHA
             CarregarDadosExemplo();
             CarregarDadosExemploClientes();
             ConfigurarPainelCadastro();
@@ -104,6 +106,11 @@ namespace WindowsFormsAppArvoredo
             {
                 btnPedidos.Click -= btnPedidos_Click;
                 btnPedidos.Click += btnPedidos_Click;
+            }
+            if (btnTitulos != null)
+            {
+                btnTitulos.Click -= btnTitulos_Click;
+                btnTitulos.Click += btnTitulos_Click;
             }
             if (btnNewOrc != null)
             {
@@ -1088,6 +1095,7 @@ namespace WindowsFormsAppArvoredo
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
+            if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelOrcamento != null)
             {
                 panelOrcamento.Visible = true;
@@ -1102,6 +1110,7 @@ namespace WindowsFormsAppArvoredo
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelOrcamento != null) panelOrcamento.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
+            if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelPedidos != null)
             {
                 panelPedidos.Visible = true;
@@ -1117,6 +1126,7 @@ namespace WindowsFormsAppArvoredo
             if (panelOrcamento != null) panelOrcamento.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
+            if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelEstoque != null)
             {
                 panelEstoque.Visible = true;
@@ -1155,6 +1165,233 @@ namespace WindowsFormsAppArvoredo
         private void btnSair_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        #endregion
+
+        #region Títulos
+
+        private void ConfigurarPanelTitulos()
+        {
+            if (panelTitulos == null) return;
+
+            panelTitulos.BackColor = Color.Transparent;
+            panelTitulos.AutoScroll = true;
+            panelTitulos.Padding = new Padding(20);
+        }
+
+        private void AtualizarPanelTitulos()
+        {
+            if (panelTitulos == null) return;
+
+            panelTitulos.Controls.Clear();
+
+            Label lblTitulo = new Label();
+            lblTitulo.Text = "TÍTULOS PENDENTES";
+            lblTitulo.Location = new Point(300, 20);
+            lblTitulo.Size = new Size(200, 40);
+            lblTitulo.Font = new Font("Gagalin", 16F, FontStyle.Bold);
+            lblTitulo.ForeColor = Color.FromArgb(57, 27, 1);
+            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            panelTitulos.Controls.Add(lblTitulo);
+
+            int yPosition = 80;
+            int cardNumber = 1;
+
+            foreach (var pedido in pedidos)
+            {
+                Panel cardPedido = new Panel();
+                cardPedido.Size = new Size(720, 120);
+                cardPedido.Location = new Point(20, yPosition);
+                cardPedido.BackColor = Color.FromArgb(239, 212, 172);
+                cardPedido.BorderStyle = BorderStyle.FixedSingle;
+                cardPedido.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, cardPedido.Width, cardPedido.Height, 20, 20));
+
+                // Número e Cliente
+                Label lblNumero = new Label();
+                lblNumero.Text = $"N°{pedido.Id} - {pedido.Cliente.ToUpper()}";
+                lblNumero.Location = new Point(15, 10);
+                lblNumero.Size = new Size(500, 25);
+                lblNumero.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+                lblNumero.ForeColor = Color.FromArgb(57, 27, 1);
+                cardPedido.Controls.Add(lblNumero);
+
+                // Valor
+                Label lblValor = new Label();
+                lblValor.Text = $"Valor: {pedido.TotalGeral:C}";
+                lblValor.Location = new Point(15, 40);
+                lblValor.Size = new Size(200, 20);
+                lblValor.Font = new Font("Gagalin", 10F, FontStyle.Regular);
+                lblValor.ForeColor = Color.FromArgb(57, 27, 1);
+                cardPedido.Controls.Add(lblValor);
+
+                // Data de Emissão
+                Label lblData = new Label();
+                lblData.Text = $"Data: {pedido.DataEmissao:dd/MM/yyyy}";
+                lblData.Location = new Point(230, 40);
+                lblData.Size = new Size(150, 20);
+                lblData.Font = new Font("Gagalin", 10F, FontStyle.Regular);
+                lblData.ForeColor = Color.FromArgb(57, 27, 1);
+                cardPedido.Controls.Add(lblData);
+
+                // Status
+                Label lblStatus = new Label();
+                lblStatus.Text = $"Status: {pedido.Status}";
+                lblStatus.Location = new Point(400, 40);
+                lblStatus.Size = new Size(150, 20);
+                lblStatus.Font = new Font("Gagalin", 10F, FontStyle.Regular);
+                lblStatus.ForeColor = Color.FromArgb(57, 27, 1);
+                cardPedido.Controls.Add(lblStatus);
+
+                // Forma de Pagamento
+                Label lblPagamento = new Label();
+                lblPagamento.Text = $"Pagamento: {pedido.FormaPagamento}";
+                lblPagamento.Location = new Point(15, 70);
+                lblPagamento.Size = new Size(250, 20);
+                lblPagamento.Font = new Font("Gagalin", 10F, FontStyle.Regular);
+                lblPagamento.ForeColor = Color.FromArgb(57, 27, 1);
+                cardPedido.Controls.Add(lblPagamento);
+
+                // Botão de detalhes
+                Button btnDetalhes = new Button();
+                btnDetalhes.Text = "DETALHES";
+                btnDetalhes.Location = new Point(600, 80);
+                btnDetalhes.Size = new Size(100, 25);
+                btnDetalhes.Font = new Font("Gagalin", 9F, FontStyle.Bold);
+                btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
+                btnDetalhes.ForeColor = Color.FromArgb(57, 27, 1);
+                btnDetalhes.FlatStyle = FlatStyle.Flat;
+                btnDetalhes.FlatAppearance.BorderSize = 1;
+                btnDetalhes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+                btnDetalhes.Cursor = Cursors.Hand;
+                btnDetalhes.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnDetalhes.Width, btnDetalhes.Height, 10, 10));
+                btnDetalhes.Click += (s, e) => AbrirDetalhesPedido(pedido);
+                cardPedido.Controls.Add(btnDetalhes);
+
+                panelTitulos.Controls.Add(cardPedido);
+                yPosition += cardPedido.Height + 15;
+                cardNumber++;
+            }
+
+            if (pedidos.Count == 0)
+            {
+                Label lblVazio = new Label();
+                lblVazio.Text = "Nenhum título pendente no momento.";
+                lblVazio.Location = new Point(150, 150);
+                lblVazio.Size = new Size(480, 50);
+                lblVazio.Font = new Font("Gagalin", 12F, FontStyle.Regular);
+                lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
+                lblVazio.TextAlign = ContentAlignment.MiddleCenter;
+                panelTitulos.Controls.Add(lblVazio);
+            }
+        }
+
+        private Panel CriarCardTitulo(Orcamento pedido, int numero)
+        {
+            Panel card = new Panel();
+            card.Size = new Size(720, 70);
+            card.BackColor = Color.FromArgb(239, 212, 172);
+            card.BorderStyle = BorderStyle.FixedSingle;
+            card.Cursor = Cursors.Hand;
+
+            // Aplicar bordas arredondadas
+            card.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
+                card.Width, card.Height, 20, 20));
+
+            // Número do pedido
+            Label lblNumero = new Label();
+            lblNumero.Text = $"N°{numero} {pedido.Cliente.ToUpper()}";
+            lblNumero.Location = new Point(15, 15);
+            lblNumero.Size = new Size(500, 25);
+            lblNumero.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+            lblNumero.ForeColor = Color.FromArgb(57, 27, 1);
+            lblNumero.BackColor = Color.Transparent;
+            card.Controls.Add(lblNumero);
+
+            // Ícone de clique
+            Label lblIcone = new Label();
+            lblIcone.Text = "👆";
+            lblIcone.Location = new Point(520, 10);
+            lblIcone.Size = new Size(50, 35);
+            lblIcone.Font = new Font("Arial", 20F);
+            lblIcone.BackColor = Color.Transparent;
+            lblIcone.TextAlign = ContentAlignment.MiddleCenter;
+            card.Controls.Add(lblIcone);
+
+            // Valor
+            Label lblValor = new Label();
+            lblValor.Text = $"valor: {pedido.TotalGeral:N2}";
+            lblValor.Location = new Point(580, 15);
+            lblValor.Size = new Size(130, 25);
+            lblValor.Font = new Font("Gagalin", 10F, FontStyle.Regular);
+            lblValor.ForeColor = Color.FromArgb(57, 27, 1);
+            lblValor.BackColor = Color.Transparent;
+            lblValor.TextAlign = ContentAlignment.MiddleRight;
+            card.Controls.Add(lblValor);
+
+            // Eventos de hover
+            card.MouseEnter += (s, e) => {
+                card.BackColor = Color.FromArgb(220, 195, 155);
+            };
+            card.MouseLeave += (s, e) => {
+                card.BackColor = Color.FromArgb(239, 212, 172);
+            };
+
+            // Evento de clique
+            card.Click += (s, e) => AbrirDetalhesPedido(pedido);
+
+            // Fazer com que os labels também disparem o clique
+            foreach (Control ctrl in card.Controls)
+            {
+                ctrl.Click += (s, e) => AbrirDetalhesPedido(pedido);
+                ctrl.MouseEnter += (s, e) => {
+                    card.BackColor = Color.FromArgb(220, 195, 155);
+                };
+                ctrl.MouseLeave += (s, e) => {
+                    card.BackColor = Color.FromArgb(239, 212, 172);
+                };
+            }
+
+            return card;
+        }
+
+        private void AbrirDetalhesPedido(Orcamento pedido)
+        {
+            using (TelaTitulos telaDetalhes = new TelaTitulos(pedido))
+            {
+                var resultado = telaDetalhes.ShowDialog();
+
+                if (resultado == DialogResult.OK)
+                {
+                    // Pedido foi finalizado
+                    pedidos.Remove(pedido);
+                    AtualizarPanelTitulos();
+
+                    MessageBox.Show(
+                        $"Pedido de {pedido.Cliente} finalizado com sucesso!",
+                        "Pedido Finalizado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void btnTitulos_Click(object sender, EventArgs e)
+        {
+            if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelPedidos != null) panelPedidos.Visible = false;
+            if (panelCadastro != null) panelCadastro.Visible = false;
+
+            if (panelTitulos != null)
+            {
+                panelTitulos.Visible = true;
+                panelTitulos.BringToFront();
+                AtualizarPanelTitulos();
+            }
+
+            ResetarCoresBotoes();
+            if (btnTitulos != null) btnTitulos.BackColor = Color.FromArgb(206, 186, 157);
         }
 
         #endregion

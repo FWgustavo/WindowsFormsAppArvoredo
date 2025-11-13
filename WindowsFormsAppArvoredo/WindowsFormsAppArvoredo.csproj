@@ -174,6 +174,12 @@
     <Compile Include="TelaOrcamento.Designer.cs">
       <DependentUpon>TelaOrcamento.cs</DependentUpon>
     </Compile>
+    <Compile Include="TelaTitulos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TelaTitulos.Designer.cs">
+      <DependentUpon>TelaTitulos.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViaCepService.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

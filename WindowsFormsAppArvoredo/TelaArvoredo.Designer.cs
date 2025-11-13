@@ -473,9 +473,9 @@ namespace WindowsFormsAppArvoredo
             // 
             // panelTitulos
             // 
-            this.panelTitulos.Location = new System.Drawing.Point(3, 3);
+            this.panelTitulos.Location = new System.Drawing.Point(2, 0);
             this.panelTitulos.Name = "panelTitulos";
-            this.panelTitulos.Size = new System.Drawing.Size(777, 579);
+            this.panelTitulos.Size = new System.Drawing.Size(777, 581);
             this.panelTitulos.TabIndex = 3;
             // 
             // TelaArvoredo
