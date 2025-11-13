@@ -61,6 +61,7 @@ namespace WindowsFormsAppArvoredo
             this.btnRelatorioEstoque = new System.Windows.Forms.Button();
             this.btnAtualizarEstoque = new System.Windows.Forms.Button();
             this.btnNovoProduto = new System.Windows.Forms.Button();
+            this.panelTitulos = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -294,6 +295,9 @@ namespace WindowsFormsAppArvoredo
             // 
             // panelPedidos
             // 
+            this.panelPedidos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelPedidos.AutoScroll = true;
             this.panelPedidos.BackColor = System.Drawing.Color.Transparent;
             this.panelPedidos.Location = new System.Drawing.Point(301, 74);
@@ -303,7 +307,11 @@ namespace WindowsFormsAppArvoredo
             // 
             // panelOrcamento
             // 
+            this.panelOrcamento.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelOrcamento.BackColor = System.Drawing.Color.Transparent;
+            this.panelOrcamento.Controls.Add(this.panelTitulos);
             this.panelOrcamento.Controls.Add(this.listViewOrcamentos);
             this.panelOrcamento.Controls.Add(this.lblOrcamentosPendentes);
             this.panelOrcamento.Controls.Add(this.btnNewOrc);
@@ -314,6 +322,9 @@ namespace WindowsFormsAppArvoredo
             // 
             // listViewOrcamentos
             // 
+            this.listViewOrcamentos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewOrcamentos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.listViewOrcamentos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listViewOrcamentos.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -358,6 +369,9 @@ namespace WindowsFormsAppArvoredo
             // 
             // panelEstoque
             // 
+            this.panelEstoque.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelEstoque.BackColor = System.Drawing.Color.Transparent;
             this.panelEstoque.Controls.Add(this.lblProdutosBaixoEstoque);
             this.panelEstoque.Controls.Add(this.listViewEstoque);
@@ -373,6 +387,7 @@ namespace WindowsFormsAppArvoredo
             // 
             // lblProdutosBaixoEstoque
             // 
+            this.lblProdutosBaixoEstoque.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProdutosBaixoEstoque.AutoSize = true;
             this.lblProdutosBaixoEstoque.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblProdutosBaixoEstoque.ForeColor = System.Drawing.Color.Red;
@@ -384,6 +399,9 @@ namespace WindowsFormsAppArvoredo
             // 
             // listViewEstoque
             // 
+            this.listViewEstoque.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.listViewEstoque.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listViewEstoque.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -453,6 +471,13 @@ namespace WindowsFormsAppArvoredo
             this.btnNovoProduto.Text = "NOVO PRODUTO";
             this.btnNovoProduto.UseVisualStyleBackColor = false;
             // 
+            // panelTitulos
+            // 
+            this.panelTitulos.Location = new System.Drawing.Point(3, 3);
+            this.panelTitulos.Name = "panelTitulos";
+            this.panelTitulos.Size = new System.Drawing.Size(777, 579);
+            this.panelTitulos.TabIndex = 3;
+            // 
             // TelaArvoredo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -463,14 +488,7 @@ namespace WindowsFormsAppArvoredo
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelDegrade);
-            this.btnRelatorioEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            this.btnNovoProduto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            // Exemplo para um botão ocupar toda a largura do painel
-            this.btnNovoProduto.Dock = DockStyle.Top;
             this.Controls.Add(this.panelMenu);
-            this.btnNovoProduto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.btnAtualizarEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.btnRelatorioEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             this.Controls.Add(this.panelPedidos);
             this.Controls.Add(this.panelEstoque);
             this.Name = "TelaArvoredo";
@@ -486,26 +504,7 @@ namespace WindowsFormsAppArvoredo
             this.panelOrcamento.PerformLayout();
             this.panelEstoque.ResumeLayout(false);
             this.panelEstoque.PerformLayout();
-
-            // Painéis principais responsivos
-            this.panelOrcamento.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelPedidos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             this.ResumeLayout(false);
-
-            // ListViews ocupam todo o painel
-            this.listViewOrcamentos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            this.listViewEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            
-            // Botões e labels fixos no topo/esquerda/direita conforme necessário
-            this.btnNewOrc.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            this.btnNovoProduto.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            this.btnAtualizarEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            this.btnRelatorioEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-
-            this.lblOrcamentosPendentes.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            this.lblControleEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            this.lblProdutosBaixoEstoque.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
         }
         
@@ -542,5 +541,6 @@ namespace WindowsFormsAppArvoredo
         private System.Windows.Forms.Label lblProdutosBaixoEstoque;
         private System.Windows.Forms.Panel panelPedidos;
         private System.Windows.Forms.Panel panelCadastro;
+        private Panel panelTitulos;
     }
 }

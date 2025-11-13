@@ -40,6 +40,8 @@ namespace WindowsFormsAppArvoredo
         /// </summary>
         public int QuantidadeItens => Itens?.Count ?? 0;
 
+        public string FormaPagamento { get; internal set; }
+
         /// <summary>
         /// Retorna um resumo formatado do orçamento
         /// </summary>

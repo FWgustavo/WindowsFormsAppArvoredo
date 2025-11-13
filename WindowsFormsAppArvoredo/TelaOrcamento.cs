@@ -15,6 +15,7 @@ namespace WindowsFormsAppArvoredo
         private TextBox txtDescontos;
         private TextBox txtAcrescimos;
         private TextBox txtTotalVista;
+        private ComboBox cmbFormaPagamento;  // NOVO
         private Button btnImprimir;
         private Button btnExcluir;
         private Button btnSalvar;
@@ -27,7 +28,6 @@ namespace WindowsFormsAppArvoredo
         private ListBox listBoxSugestoes;
         private int sequenciaProduto = 1;
 
-        // Propriedades para o orçamento
         public Orcamento OrcamentoCriado { get; private set; }
         public bool OrcamentoConfirmado { get; private set; }
         public bool OrcamentoSalvo { get; private set; }
@@ -35,7 +35,6 @@ namespace WindowsFormsAppArvoredo
         private Orcamento orcamentoEmEdicao;
         private bool modoEdicao = false;
 
-        // Construtor para novo orçamento
         public TelaOrcamento(List<Produto> estoque = null)
         {
             InitializeComponent();
@@ -46,7 +45,6 @@ namespace WindowsFormsAppArvoredo
             AdicionarComponentesExtras();
         }
 
-        // Construtor para editar orçamento existente
         public TelaOrcamento(List<Produto> estoque, Orcamento orcamento)
         {
             InitializeComponent();
@@ -177,15 +175,32 @@ namespace WindowsFormsAppArvoredo
             txtAcrescimos.TextChanged += CalcularTotal;
             this.Controls.Add(txtAcrescimos);
 
+            // FORMA DE PAGAMENTO - NOVO
+            Label lblFormaPagamento = new Label();
+            lblFormaPagamento.Text = "FORMA PGTO:";
+            lblFormaPagamento.Location = new Point(100, 650);
+            lblFormaPagamento.Size = new Size(120, 20);
+            lblFormaPagamento.Font = new Font("Microsoft Sans Serif", 10F);
+            this.Controls.Add(lblFormaPagamento);
+
+            cmbFormaPagamento = new ComboBox();
+            cmbFormaPagamento.Location = new Point(230, 648);
+            cmbFormaPagamento.Size = new Size(150, 22);
+            cmbFormaPagamento.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbFormaPagamento.Items.AddRange(new string[] { "Dinheiro", "Débito", "Crédito", "PIX" });
+            cmbFormaPagamento.SelectedIndex = 0;
+            cmbFormaPagamento.Font = new Font("Microsoft Sans Serif", 10F);
+            this.Controls.Add(cmbFormaPagamento);
+
             Label lblTotalVista = new Label();
             lblTotalVista.Text = "TOTAL À VISTA:";
-            lblTotalVista.Location = new Point(100, 650);
+            lblTotalVista.Location = new Point(400, 680);
             lblTotalVista.Size = new Size(120, 20);
             lblTotalVista.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
             this.Controls.Add(lblTotalVista);
 
             txtTotalVista = new TextBox();
-            txtTotalVista.Location = new Point(230, 648);
+            txtTotalVista.Location = new Point(520, 678);
             txtTotalVista.Size = new Size(150, 22);
             txtTotalVista.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold);
             txtTotalVista.ReadOnly = true;
@@ -194,7 +209,7 @@ namespace WindowsFormsAppArvoredo
 
             btnImprimir = new Button();
             btnImprimir.Text = "IMPRIMIR";
-            btnImprimir.Location = new Point(200, 690);
+            btnImprimir.Location = new Point(200, 720);
             btnImprimir.Size = new Size(120, 40);
             btnImprimir.BackColor = Color.Gold;
             btnImprimir.FlatStyle = FlatStyle.Flat;
@@ -204,7 +219,7 @@ namespace WindowsFormsAppArvoredo
 
             btnExcluir = new Button();
             btnExcluir.Text = "EXCLUIR";
-            btnExcluir.Location = new Point(340, 690);
+            btnExcluir.Location = new Point(340, 720);
             btnExcluir.Size = new Size(120, 40);
             btnExcluir.BackColor = Color.Crimson;
             btnExcluir.ForeColor = Color.White;
@@ -215,7 +230,7 @@ namespace WindowsFormsAppArvoredo
 
             btnSalvar = new Button();
             btnSalvar.Text = "SALVAR";
-            btnSalvar.Location = new Point(480, 690);
+            btnSalvar.Location = new Point(480, 720);
             btnSalvar.Size = new Size(120, 40);
             btnSalvar.BackColor = Color.DodgerBlue;
             btnSalvar.ForeColor = Color.White;
@@ -226,7 +241,7 @@ namespace WindowsFormsAppArvoredo
 
             btnConfirmar = new Button();
             btnConfirmar.Text = "CONFIRMAR";
-            btnConfirmar.Location = new Point(620, 690);
+            btnConfirmar.Location = new Point(620, 720);
             btnConfirmar.Size = new Size(120, 40);
             btnConfirmar.BackColor = Color.LimeGreen;
             btnConfirmar.ForeColor = Color.White;
@@ -235,7 +250,7 @@ namespace WindowsFormsAppArvoredo
             btnConfirmar.Click += BtnConfirmar_Click;
             this.Controls.Add(btnConfirmar);
 
-            this.Size = new Size(1100, 780);
+            this.Size = new Size(1100, 820);
         }
 
         private void TelaOrcamento_Load(object sender, EventArgs e)
@@ -245,7 +260,6 @@ namespace WindowsFormsAppArvoredo
             lbldata.Text = data;
             ConfigurarFormatacaoCampos();
 
-            // Se está em modo edição, carregar dados do orçamento
             if (modoEdicao && orcamentoEmEdicao != null)
             {
                 CarregarOrcamento(orcamentoEmEdicao);
@@ -262,14 +276,22 @@ namespace WindowsFormsAppArvoredo
             txtUF.Text = orcamento.UF;
             txtCPF.Text = orcamento.CPF_CNPJ;
             txtTEL.Text = orcamento.Telefone;
+            txtFantasia.Text = orcamento.Numero ?? "";  // CARREGA NÚMERO
             txtVendedor.Text = orcamento.Vendedor;
+
+            // Carregar forma de pagamento
+            if (!string.IsNullOrEmpty(orcamento.FormaPagamento))
+            {
+                int index = cmbFormaPagamento.FindString(orcamento.FormaPagamento);
+                if (index >= 0)
+                    cmbFormaPagamento.SelectedIndex = index;
+            }
 
             lblCidade.Text = $"Cidade: {orcamento.Cidade}";
             lblUF.Text = $"UF: {orcamento.UF}";
             lblCidade.ForeColor = Color.Green;
             lblUF.ForeColor = Color.Green;
 
-            // Carregar produtos
             dgvProdutos.Rows.Clear();
             sequenciaProduto = 1;
 
@@ -288,7 +310,6 @@ namespace WindowsFormsAppArvoredo
                 row.Tag = item.ProdutoOrigem;
             }
 
-            // Carregar totais
             txtDescontos.Text = orcamento.Desconto.ToString("F2");
             txtAcrescimos.Text = orcamento.Acrescimo.ToString("F2");
 
@@ -309,7 +330,6 @@ namespace WindowsFormsAppArvoredo
                         dgvProdutos.Rows.Remove(row);
                     }
 
-                    // Renumerar sequências
                     int seq = 1;
                     foreach (DataGridViewRow row in dgvProdutos.Rows)
                     {
@@ -523,10 +543,50 @@ namespace WindowsFormsAppArvoredo
 
         private void ConfigurarFormatacaoCampos()
         {
+            // MÁSCARA DE CPF/CNPJ CORRIGIDA
             txtCPF.KeyPress += (s, e) =>
             {
-                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.' && e.KeyChar != '-' && e.KeyChar != '/')
                     e.Handled = true;
+            };
+
+            txtCPF.TextChanged += (s, e) =>
+            {
+                string text = txtCPF.Text.Replace(".", "").Replace("-", "").Replace("/", "").Trim();
+                int oldSelectionStart = txtCPF.SelectionStart;
+                int oldLength = txtCPF.Text.Length;
+
+                string formattedText = text;
+
+                if (text.Length <= 11) // CPF
+                {
+                    if (text.Length > 3 && text.Length <= 6)
+                        formattedText = text.Substring(0, 3) + "." + text.Substring(3);
+                    else if (text.Length > 6 && text.Length <= 9)
+                        formattedText = text.Substring(0, 3) + "." + text.Substring(3, 3) + "." + text.Substring(6);
+                    else if (text.Length > 9)
+                        formattedText = text.Substring(0, 3) + "." + text.Substring(3, 3) + "." + text.Substring(6, 3) + "-" + text.Substring(9, Math.Min(2, text.Length - 9));
+                }
+                else // CNPJ
+                {
+                    if (text.Length > 14) text = text.Substring(0, 14);
+
+                    if (text.Length > 2 && text.Length <= 5)
+                        formattedText = text.Substring(0, 2) + "." + text.Substring(2);
+                    else if (text.Length > 5 && text.Length <= 8)
+                        formattedText = text.Substring(0, 2) + "." + text.Substring(2, 3) + "." + text.Substring(5);
+                    else if (text.Length > 8 && text.Length <= 12)
+                        formattedText = text.Substring(0, 2) + "." + text.Substring(2, 3) + "." + text.Substring(5, 3) + "/" + text.Substring(8);
+                    else if (text.Length > 12)
+                        formattedText = text.Substring(0, 2) + "." + text.Substring(2, 3) + "." + text.Substring(5, 3) + "/" + text.Substring(8, 4) + "-" + text.Substring(12);
+                }
+
+                if (txtCPF.Text != formattedText)
+                {
+                    txtCPF.Text = formattedText;
+                    int newSelectionStart = oldSelectionStart + (txtCPF.Text.Length - oldLength);
+                    txtCPF.SelectionStart = Math.Min(Math.Max(0, newSelectionStart), txtCPF.Text.Length);
+                }
             };
 
             txtCEP.TextChanged += async (s, e) =>
@@ -551,10 +611,8 @@ namespace WindowsFormsAppArvoredo
                     {
                         txtCEP.Text = formattedText;
 
-                        // Calcula nova posição do cursor
                         int newSelectionStart = oldSelectionStart + (txtCEP.Text.Length - oldLength);
 
-                        // Se o cursor estava logo após o 5º caractere e foi inserido o '-', avança 1
                         if (oldSelectionStart == 5 && formattedText.Length > 5 && formattedText[5] == '-')
                             newSelectionStart++;
 
@@ -692,17 +750,15 @@ namespace WindowsFormsAppArvoredo
                 LimparFormulario();
                 MessageBox.Show("Orçamento excluído!", "Excluir",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close(); // Fecha a tela após exclusão
+                this.Close();
             }
         }
 
         private void BtnSalvar_Click(object sender, EventArgs e)
         {
-            // Validar campos obrigatórios
             if (!ValidarCampos())
                 return;
 
-            // Validar se há produtos
             if (dgvProdutos.Rows.Count == 0)
             {
                 MessageBox.Show("Adicione pelo menos um produto ao orçamento!", "Validação",
@@ -713,18 +769,12 @@ namespace WindowsFormsAppArvoredo
 
             try
             {
-                // Criar orçamento do formulário
                 OrcamentoCriado = CriarOrcamentoDoFormulario();
                 OrcamentoCriado.Status = "Pendente";
 
-                // IMPORTANTE: Definir as flags corretamente
                 OrcamentoSalvo = true;
                 OrcamentoConfirmado = false;
 
-                // DEBUG: Verificar se as flags estão corretas
-                System.Diagnostics.Debug.WriteLine($"BtnSalvar_Click - OrcamentoSalvo: {OrcamentoSalvo}, OrcamentoConfirmado: {OrcamentoConfirmado}");
-
-                // Definir DialogResult e fechar
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -802,7 +852,9 @@ namespace WindowsFormsAppArvoredo
             orcamento.UF = txtUF.Text.Trim();
             orcamento.CPF_CNPJ = txtCPF.Text.Trim();
             orcamento.Telefone = txtTEL.Text.Trim();
+            orcamento.Numero = txtFantasia.Text.Trim();  // SALVA NÚMERO
             orcamento.Vendedor = txtVendedor.Text.Trim();
+            orcamento.FormaPagamento = cmbFormaPagamento.SelectedItem?.ToString() ?? "Dinheiro";  // SALVA FORMA DE PAGAMENTO
             orcamento.DataEmissao = DateTime.Now;
 
             decimal subTotal = 0;
@@ -893,6 +945,7 @@ namespace WindowsFormsAppArvoredo
             txtAcrescimos.Text = "0,00";
             txtTotalVista.Clear();
             txtSemJuros.Clear();
+            cmbFormaPagamento.SelectedIndex = 0;
 
             lblCidade.Text = "Cidade:";
             lblUF.Text = "UF:";

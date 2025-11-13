@@ -22,7 +22,6 @@ namespace WindowsFormsAppArvoredo
         private List<Orcamento> pedidos = new List<Orcamento>();
         private List<Cliente> clientes = new List<Cliente>();
 
-
         public TelaArvoredo()
         {
             InitializeComponent();
@@ -58,6 +57,7 @@ namespace WindowsFormsAppArvoredo
             ConfigurarPedidos();
             CarregarDadosExemplo();
             CarregarDadosExemploClientes();
+            ConfigurarPainelCadastro();
             VincularEventos();
             panelDegrade?.Invalidate();
         }
@@ -300,7 +300,6 @@ namespace WindowsFormsAppArvoredo
             listViewOrcamentos.Columns.Add("Ações", 100);
 
             listViewOrcamentos.OwnerDraw = true;
-            // Remove handlers existentes antes de adicionar novos
             listViewOrcamentos.DrawItem -= ListViewOrcamentos_DrawItem;
             listViewOrcamentos.DrawSubItem -= ListViewOrcamentos_DrawSubItem;
             listViewOrcamentos.DrawColumnHeader -= ListViewOrcamentos_DrawColumnHeader;
@@ -724,27 +723,30 @@ namespace WindowsFormsAppArvoredo
             panelCadastro.BackColor = Color.Transparent;
             panelCadastro.Controls.Clear();
 
-            // Label HISTÓRICO
-            Label lblHistorico = new Label();
-            lblHistorico.Name = "lblHistorico";
-            lblHistorico.Text = "HISTÓRICO";
-            lblHistorico.Location = new Point(22, 23);
-            lblHistorico.Size = new Size(180, 30);
-            lblHistorico.Font = new Font("Gagalin", 16F, FontStyle.Bold);
-            lblHistorico.ForeColor = Color.FromArgb(57, 27, 1);
-            lblHistorico.TextAlign = ContentAlignment.MiddleLeft;
-            panelCadastro.Controls.Add(lblHistorico);
+            // Painel principal com borda arredondada (container de tudo)
+            Panel containerPrincipal = new Panel();
+            containerPrincipal.Name = "containerPrincipal";
+            containerPrincipal.Location = new Point(30, 30);
+            containerPrincipal.Size = new Size(720, 530);
+            containerPrincipal.BackColor = Color.FromArgb(239, 212, 172);
+            containerPrincipal.BorderStyle = BorderStyle.FixedSingle;
 
-            // Barra de pesquisa (maior e mais centralizada)
+            // Aplicar bordas arredondadas
+            containerPrincipal.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
+                containerPrincipal.Width, containerPrincipal.Height, 30, 30));
+
+            panelCadastro.Controls.Add(containerPrincipal);
+
+            // Barra de pesquisa
             TextBox txtPesquisaCadastro = new TextBox();
             txtPesquisaCadastro.Name = "txtPesquisaCadastro";
-            txtPesquisaCadastro.Location = new Point(240, 80);
-            txtPesquisaCadastro.Size = new Size(380, 30);
-            txtPesquisaCadastro.Font = new Font("Gagalin", 11F);
+            txtPesquisaCadastro.Location = new Point(260, 25);
+            txtPesquisaCadastro.Size = new Size(320, 35);
+            txtPesquisaCadastro.Font = new Font("Gagalin", 10F);
             txtPesquisaCadastro.ForeColor = Color.Gray;
             txtPesquisaCadastro.Text = "BARRA DE PESQUISA";
             txtPesquisaCadastro.BorderStyle = BorderStyle.FixedSingle;
-            txtPesquisaCadastro.BackColor = Color.FromArgb(239, 212, 172);
+            txtPesquisaCadastro.BackColor = Color.White;
             txtPesquisaCadastro.Enter += (s, e) =>
             {
                 if (txtPesquisaCadastro.Text == "BARRA DE PESQUISA")
@@ -762,54 +764,47 @@ namespace WindowsFormsAppArvoredo
                 }
             };
             txtPesquisaCadastro.TextChanged += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
-            panelCadastro.Controls.Add(txtPesquisaCadastro);
+            containerPrincipal.Controls.Add(txtPesquisaCadastro);
 
-            // Ícone de pesquisa (lupa)
-            PictureBox picLupa = new PictureBox();
-            picLupa.Location = new Point(630, 82);
-            picLupa.Size = new Size(26, 26);
-            picLupa.SizeMode = PictureBoxSizeMode.Zoom;
-            picLupa.BackColor = Color.Transparent;
-            picLupa.Cursor = Cursors.Hand;
-
-            // Criar ícone de lupa simples usando Graphics
-            Bitmap lupaBitmap = new Bitmap(26, 26);
-            using (Graphics g = Graphics.FromImage(lupaBitmap))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                using (Pen pen = new Pen(Color.FromArgb(57, 27, 1), 3))
-                {
-                    g.DrawEllipse(pen, 2, 2, 16, 16);
-                    g.DrawLine(pen, 15, 15, 23, 23);
-                }
-            }
-            picLupa.Image = lupaBitmap;
-            picLupa.Click += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
-            panelCadastro.Controls.Add(picLupa);
+            // Botão de pesquisa (lupa)
+            Button btnPesquisar = new Button();
+            btnPesquisar.Location = new Point(585, 25);
+            btnPesquisar.Size = new Size(35, 35);
+            btnPesquisar.BackColor = Color.White;
+            btnPesquisar.FlatStyle = FlatStyle.Flat;
+            btnPesquisar.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnPesquisar.FlatAppearance.BorderSize = 1;
+            btnPesquisar.Font = new Font("Arial", 16F, FontStyle.Bold);
+            btnPesquisar.ForeColor = Color.FromArgb(57, 27, 1);
+            btnPesquisar.Text = "🔍";
+            btnPesquisar.Cursor = Cursors.Hand;
+            btnPesquisar.Click += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
+            containerPrincipal.Controls.Add(btnPesquisar);
 
             // Botão adicionar (+)
             Button btnAdicionarCliente = new Button();
             btnAdicionarCliente.Name = "btnAdicionarCliente";
-            btnAdicionarCliente.Location = new Point(670, 80);
-            btnAdicionarCliente.Size = new Size(30, 30);
+            btnAdicionarCliente.Location = new Point(625, 25);
+            btnAdicionarCliente.Size = new Size(35, 35);
             btnAdicionarCliente.Text = "+";
-            btnAdicionarCliente.Font = new Font("Arial", 16F, FontStyle.Bold);
+            btnAdicionarCliente.Font = new Font("Arial", 18F, FontStyle.Bold);
             btnAdicionarCliente.BackColor = Color.FromArgb(144, 238, 144);
             btnAdicionarCliente.ForeColor = Color.Black;
             btnAdicionarCliente.FlatStyle = FlatStyle.Flat;
-            btnAdicionarCliente.FlatAppearance.BorderSize = 0;
+            btnAdicionarCliente.FlatAppearance.BorderSize = 1;
+            btnAdicionarCliente.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
             btnAdicionarCliente.Cursor = Cursors.Hand;
             btnAdicionarCliente.Click += btnAdicionarClienteDireto_Click;
-            panelCadastro.Controls.Add(btnAdicionarCliente);
+            containerPrincipal.Controls.Add(btnAdicionarCliente);
 
             // Container dos clientes (com scroll)
             Panel containerClientes = new Panel();
             containerClientes.Name = "containerClientes";
-            containerClientes.Location = new Point(22, 130);
-            containerClientes.Size = new Size(720, 420);
+            containerClientes.Location = new Point(20, 75);
+            containerClientes.Size = new Size(680, 440);
             containerClientes.BackColor = Color.Transparent;
             containerClientes.AutoScroll = true;
-            panelCadastro.Controls.Add(containerClientes);
+            containerPrincipal.Controls.Add(containerClientes);
 
             AtualizarListaClientes();
         }
@@ -832,117 +827,134 @@ namespace WindowsFormsAppArvoredo
         private Panel CriarCardCliente(Cliente cliente)
         {
             Panel card = new Panel();
-            card.Size = new Size(680, 140);
+            card.Size = new Size(640, 150);
             card.BackColor = Color.FromArgb(198, 143, 86);
             card.BorderStyle = BorderStyle.FixedSingle;
-            card.Margin = new Padding(0, 0, 0, 10);
+            card.Margin = new Padding(0, 0, 0, 15);
 
-            // Nome do cliente
+            // Aplicar bordas arredondadas ao card
+            card.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
+                card.Width, card.Height, 20, 20));
+
+            // Painel superior com nome do cliente
+            Panel panelNome = new Panel();
+            panelNome.Location = new Point(0, 0);
+            panelNome.Size = new Size(640, 40);
+            panelNome.BackColor = Color.FromArgb(239, 212, 172);
+            card.Controls.Add(panelNome);
+
             Label lblNome = new Label();
             lblNome.Text = cliente.Nome.ToUpper();
-            lblNome.Location = new Point(15, 15);
-            lblNome.Size = new Size(500, 25);
-            lblNome.Font = new Font("Gagalin", 11F, FontStyle.Bold);
+            lblNome.Location = new Point(15, 8);
+            lblNome.Size = new Size(610, 24);
+            lblNome.Font = new Font("Gagalin", 10F, FontStyle.Bold);
             lblNome.ForeColor = Color.FromArgb(57, 27, 1);
-            card.Controls.Add(lblNome);
+            lblNome.TextAlign = ContentAlignment.MiddleLeft;
+            panelNome.Controls.Add(lblNome);
 
             // CPF/CNPJ
             Label lblCpfLabel = new Label();
             lblCpfLabel.Text = "CPF/CNPJ:";
             lblCpfLabel.Location = new Point(15, 50);
-            lblCpfLabel.Size = new Size(100, 18);
-            lblCpfLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblCpfLabel.Size = new Size(200, 16);
+            lblCpfLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
             lblCpfLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblCpfLabel);
 
             Label lblCpf = new Label();
             lblCpf.Text = cliente.CpfCnpj;
-            lblCpf.Location = new Point(120, 50);
-            lblCpf.Size = new Size(200, 18);
-            lblCpf.Font = new Font("Gagalin", 8F);
+            lblCpf.Location = new Point(320, 50);
+            lblCpf.Size = new Size(300, 16);
+            lblCpf.Font = new Font("Gagalin", 7F);
             lblCpf.ForeColor = Color.FromArgb(57, 27, 1);
+            lblCpf.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblCpf);
 
             // Telefone
             Label lblTelLabel = new Label();
             lblTelLabel.Text = "TELEFONE/CELL:";
-            lblTelLabel.Location = new Point(340, 50);
-            lblTelLabel.Size = new Size(140, 18);
-            lblTelLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblTelLabel.Location = new Point(15, 70);
+            lblTelLabel.Size = new Size(200, 16);
+            lblTelLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
             lblTelLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblTelLabel);
 
             Label lblTelefone = new Label();
             lblTelefone.Text = cliente.Telefone;
-            lblTelefone.Location = new Point(480, 50);
-            lblTelefone.Size = new Size(180, 18);
-            lblTelefone.Font = new Font("Gagalin", 8F);
+            lblTelefone.Location = new Point(320, 70);
+            lblTelefone.Size = new Size(300, 16);
+            lblTelefone.Font = new Font("Gagalin", 7F);
             lblTelefone.ForeColor = Color.FromArgb(57, 27, 1);
+            lblTelefone.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblTelefone);
 
             // CEP/Município
             Label lblCepLabel = new Label();
             lblCepLabel.Text = "CEP/MUNICÍPIO:";
-            lblCepLabel.Location = new Point(15, 75);
-            lblCepLabel.Size = new Size(140, 18);
-            lblCepLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblCepLabel.Location = new Point(15, 90);
+            lblCepLabel.Size = new Size(200, 16);
+            lblCepLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
             lblCepLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblCepLabel);
 
             Label lblCep = new Label();
             lblCep.Text = cliente.Cep;
-            lblCep.Location = new Point(160, 75);
-            lblCep.Size = new Size(160, 18);
-            lblCep.Font = new Font("Gagalin", 8F);
+            lblCep.Location = new Point(320, 90);
+            lblCep.Size = new Size(300, 16);
+            lblCep.Font = new Font("Gagalin", 7F);
             lblCep.ForeColor = Color.FromArgb(57, 27, 1);
+            lblCep.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblCep);
 
             // Endereço
             Label lblEndLabel = new Label();
             lblEndLabel.Text = "ENDEREÇO:";
-            lblEndLabel.Location = new Point(15, 100);
-            lblEndLabel.Size = new Size(100, 18);
-            lblEndLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblEndLabel.Location = new Point(15, 110);
+            lblEndLabel.Size = new Size(200, 16);
+            lblEndLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
             lblEndLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblEndLabel);
 
             Label lblEndereco = new Label();
             lblEndereco.Text = cliente.Endereco;
-            lblEndereco.Location = new Point(120, 100);
-            lblEndereco.Size = new Size(320, 18);
-            lblEndereco.Font = new Font("Gagalin", 8F);
+            lblEndereco.Location = new Point(220, 110);
+            lblEndereco.Size = new Size(400, 16);
+            lblEndereco.Font = new Font("Gagalin", 7F);
             lblEndereco.ForeColor = Color.FromArgb(57, 27, 1);
+            lblEndereco.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblEndereco);
 
-            // Bairro
+            // Bairro + Botão DETALHES na mesma linha
             Label lblBairroLabel = new Label();
             lblBairroLabel.Text = "BAIRRO:";
-            lblBairroLabel.Location = new Point(450, 100);
-            lblBairroLabel.Size = new Size(70, 18);
-            lblBairroLabel.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            lblBairroLabel.Location = new Point(15, 130);
+            lblBairroLabel.Size = new Size(70, 16);
+            lblBairroLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
             lblBairroLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblBairroLabel);
 
             Label lblBairro = new Label();
             lblBairro.Text = cliente.Bairro;
-            lblBairro.Location = new Point(525, 100);
-            lblBairro.Size = new Size(140, 18);
-            lblBairro.Font = new Font("Gagalin", 8F);
+            lblBairro.Location = new Point(90, 130);
+            lblBairro.Size = new Size(350, 16);
+            lblBairro.Font = new Font("Gagalin", 7F);
             lblBairro.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblBairro);
 
             // Botão DETALHES
             Button btnDetalhes = new Button();
             btnDetalhes.Text = "DETALHES";
-            btnDetalhes.Location = new Point(570, 105);
-            btnDetalhes.Size = new Size(95, 25);
-            btnDetalhes.Font = new Font("Gagalin", 8F, FontStyle.Bold);
+            btnDetalhes.Location = new Point(520, 125);
+            btnDetalhes.Size = new Size(100, 20);
+            btnDetalhes.Font = new Font("Gagalin", 7F, FontStyle.Bold);
             btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
             btnDetalhes.ForeColor = Color.FromArgb(57, 27, 1);
             btnDetalhes.FlatStyle = FlatStyle.Flat;
             btnDetalhes.FlatAppearance.BorderSize = 1;
             btnDetalhes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
             btnDetalhes.Cursor = Cursors.Hand;
+            btnDetalhes.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
+                btnDetalhes.Width, btnDetalhes.Height, 10, 10));
             btnDetalhes.Click += (s, e) => AbrirDetalhesCliente(cliente);
             card.Controls.Add(btnDetalhes);
 
@@ -953,7 +965,10 @@ namespace WindowsFormsAppArvoredo
         {
             if (panelCadastro == null) return;
 
-            Panel containerClientes = panelCadastro.Controls.Find("containerClientes", false).FirstOrDefault() as Panel;
+            Panel containerPrincipal = panelCadastro.Controls.Find("containerPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal == null) return;
+
+            Panel containerClientes = containerPrincipal.Controls.Find("containerClientes", false).FirstOrDefault() as Panel;
             if (containerClientes == null) return;
 
             containerClientes.Controls.Clear();
@@ -1120,10 +1135,12 @@ namespace WindowsFormsAppArvoredo
 
             if (panelCadastro != null)
             {
-                ConfigurarPainelCadastro();
                 panelCadastro.Visible = true;
                 panelCadastro.BringToFront();
+                AtualizarListaClientes();
             }
+
+            ResetarCoresBotoes();
         }
 
         private void ResetarCoresBotoes()
