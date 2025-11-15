@@ -22,6 +22,10 @@ namespace WindowsFormsAppArvoredo
         private List<Orcamento> pedidos = new List<Orcamento>();
         private List<Cliente> clientes = new List<Cliente>();
 
+        // VARIÁVEIS DO HISTÓRICO
+        private int anoSelecionado = 0;
+        private string mesSelecionado = "";
+
         public TelaArvoredo()
         {
             InitializeComponent();
@@ -82,6 +86,7 @@ namespace WindowsFormsAppArvoredo
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
+            if (panelHistorico != null) panelHistorico.Visible = false;
 
             ConfigurarListViewOrcamentos();
             ConfigurarEstoque();
@@ -90,6 +95,7 @@ namespace WindowsFormsAppArvoredo
             CarregarDadosExemplo();
             CarregarDadosExemploClientes();
             ConfigurarPainelCadastro();
+            ConfigurarPanelHistorico();
             VincularEventos();
             panelDegrade?.Invalidate();
 
@@ -181,6 +187,11 @@ namespace WindowsFormsAppArvoredo
             {
                 btnCadastro.Click -= btnCadastro_Click;
                 btnCadastro.Click += btnCadastro_Click;
+            }
+            if (btnHistorico != null)
+            {
+                btnHistorico.Click -= btnHistorico_Click;
+                btnHistorico.Click += btnHistorico_Click;
             }
         }
 
@@ -1398,6 +1409,292 @@ namespace WindowsFormsAppArvoredo
 
             ResetarCoresBotoes();
             if (btnTitulos != null) btnTitulos.BackColor = Color.FromArgb(206, 186, 157);
+        }
+
+        #endregion
+
+        #region Histórico
+
+        private void ConfigurarPanelHistorico()
+        {
+            if (panelHistorico == null)
+            {
+                panelHistorico = new Panel();
+                panelHistorico.Name = "panelHistorico";
+                panelHistorico.Location = new Point(301, 74);
+                panelHistorico.Size = new Size(783, 587);
+                panelHistorico.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                panelHistorico.BackColor = Color.Transparent;
+                panelHistorico.Visible = false;
+                this.Controls.Add(panelHistorico);
+            }
+
+            panelHistorico.Controls.Clear();
+
+            // Título HISTÓRICO
+            Label lblTitulo = new Label();
+            lblTitulo.Text = "HISTÓRICO";
+            lblTitulo.Location = new Point(20, 20);
+            lblTitulo.Size = new Size(740, 40);
+            lblTitulo.Font = new Font("Gagalin", 18F, FontStyle.Bold);
+            lblTitulo.ForeColor = Color.FromArgb(57, 27, 1);
+            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            lblTitulo.BackColor = Color.FromArgb(239, 212, 172);
+            lblTitulo.BorderStyle = BorderStyle.FixedSingle;
+            lblTitulo.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, lblTitulo.Width, lblTitulo.Height, 20, 20));
+            panelHistorico.Controls.Add(lblTitulo);
+
+            // Container de Anos
+            Panel containerAnos = new Panel();
+            containerAnos.Name = "containerAnos";
+            containerAnos.Location = new Point(20, 80);
+            containerAnos.Size = new Size(740, 80);
+            containerAnos.BackColor = Color.FromArgb(239, 212, 172);
+            containerAnos.BorderStyle = BorderStyle.FixedSingle;
+            containerAnos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, containerAnos.Width, containerAnos.Height, 15, 15));
+            panelHistorico.Controls.Add(containerAnos);
+
+            // Seta Esquerda Anos
+            Button btnSetaEsqAnos = new Button();
+            btnSetaEsqAnos.Text = "◄";
+            btnSetaEsqAnos.Location = new Point(10, 25);
+            btnSetaEsqAnos.Size = new Size(50, 30);
+            btnSetaEsqAnos.Font = new Font("Arial", 16F, FontStyle.Bold);
+            btnSetaEsqAnos.BackColor = Color.FromArgb(239, 212, 172);
+            btnSetaEsqAnos.FlatStyle = FlatStyle.Flat;
+            btnSetaEsqAnos.FlatAppearance.BorderSize = 0;
+            btnSetaEsqAnos.Cursor = Cursors.Hand;
+            containerAnos.Controls.Add(btnSetaEsqAnos);
+
+            // Anos (2016-2020)
+            int[] anos = { 2016, 2017, 2018, 2019, 2020 };
+            int xPos = 80;
+            foreach (int ano in anos)
+            {
+                Button btnAno = new Button();
+                btnAno.Text = ano.ToString();
+                btnAno.Name = $"btnAno{ano}";
+                btnAno.Location = new Point(xPos, 20);
+                btnAno.Size = new Size(100, 40);
+                btnAno.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+                btnAno.BackColor = Color.White;
+                btnAno.ForeColor = Color.FromArgb(57, 27, 1);
+                btnAno.FlatStyle = FlatStyle.Flat;
+                btnAno.FlatAppearance.BorderSize = 2;
+                btnAno.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+                btnAno.Cursor = Cursors.Hand;
+                btnAno.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAno.Width, btnAno.Height, 15, 15));
+                btnAno.Tag = ano;
+                btnAno.Click += BtnAno_Click;
+                containerAnos.Controls.Add(btnAno);
+                xPos += 120;
+            }
+
+            // Seta Direita Anos
+            Button btnSetaDirAnos = new Button();
+            btnSetaDirAnos.Text = "►";
+            btnSetaDirAnos.Location = new Point(680, 25);
+            btnSetaDirAnos.Size = new Size(50, 30);
+            btnSetaDirAnos.Font = new Font("Arial", 16F, FontStyle.Bold);
+            btnSetaDirAnos.BackColor = Color.FromArgb(239, 212, 172);
+            btnSetaDirAnos.FlatStyle = FlatStyle.Flat;
+            btnSetaDirAnos.FlatAppearance.BorderSize = 0;
+            btnSetaDirAnos.Cursor = Cursors.Hand;
+            containerAnos.Controls.Add(btnSetaDirAnos);
+
+            // Container de Meses
+            Panel containerMeses = new Panel();
+            containerMeses.Name = "containerMeses";
+            containerMeses.Location = new Point(20, 180);
+            containerMeses.Size = new Size(740, 380);
+            containerMeses.BackColor = Color.FromArgb(239, 212, 172);
+            containerMeses.BorderStyle = BorderStyle.FixedSingle;
+            containerMeses.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, containerMeses.Width, containerMeses.Height, 15, 15));
+            panelHistorico.Controls.Add(containerMeses);
+
+            // Criar botões de meses
+            string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+                              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
+
+            int mesX = 30;
+            int mesY = 30;
+            int mesIndex = 0;
+
+            foreach (string mes in meses)
+            {
+                Button btnMes = new Button();
+                btnMes.Text = mes;
+                btnMes.Location = new Point(mesX, mesY);
+                btnMes.Size = new Size(150, 60);
+                btnMes.Font = new Font("Gagalin", 10F, FontStyle.Bold);
+                btnMes.BackColor = Color.FromArgb(198, 143, 86);
+                btnMes.ForeColor = Color.FromArgb(57, 27, 1);
+                btnMes.FlatStyle = FlatStyle.Flat;
+                btnMes.FlatAppearance.BorderSize = 2;
+                btnMes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+                btnMes.Cursor = Cursors.Hand;
+                btnMes.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnMes.Width, btnMes.Height, 15, 15));
+                btnMes.Tag = mes;
+                btnMes.Click += BtnMes_Click;
+                containerMeses.Controls.Add(btnMes);
+
+                mesIndex++;
+                mesX += 170;
+
+                if (mesIndex % 4 == 0)
+                {
+                    mesX = 30;
+                    mesY += 80;
+                }
+            }
+
+            // Botão BACKUP
+            Button btnBackup = new Button();
+            btnBackup.Text = "BACKUP";
+            btnBackup.Location = new Point(295, 325);
+            btnBackup.Size = new Size(150, 40);
+            btnBackup.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+            btnBackup.BackColor = Color.FromArgb(144, 238, 144);
+            btnBackup.ForeColor = Color.Black;
+            btnBackup.FlatStyle = FlatStyle.Flat;
+            btnBackup.FlatAppearance.BorderSize = 2;
+            btnBackup.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnBackup.Cursor = Cursors.Hand;
+            btnBackup.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnBackup.Width, btnBackup.Height, 15, 15));
+            btnBackup.Click += BtnBackup_Click;
+            containerMeses.Controls.Add(btnBackup);
+        }
+
+        private void BtnAno_Click(object sender, EventArgs e)
+        {
+            Button btnClicado = sender as Button;
+            if (btnClicado == null) return;
+
+            anoSelecionado = (int)btnClicado.Tag;
+
+            // Resetar cores de todos os botões de ano
+            Panel containerAnos = panelHistorico.Controls.Find("containerAnos", false).FirstOrDefault() as Panel;
+            if (containerAnos != null)
+            {
+                foreach (Control ctrl in containerAnos.Controls)
+                {
+                    if (ctrl is Button btn && btn.Name.StartsWith("btnAno"))
+                    {
+                        btn.BackColor = Color.White;
+                        btn.ForeColor = Color.FromArgb(57, 27, 1);
+                    }
+                }
+            }
+
+            // Destacar botão selecionado
+            btnClicado.BackColor = Color.FromArgb(198, 143, 86);
+            btnClicado.ForeColor = Color.White;
+
+            MessageBox.Show($"Ano {anoSelecionado} selecionado!\nSelecione um mês para ver o histórico.",
+                "Ano Selecionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void BtnMes_Click(object sender, EventArgs e)
+        {
+            Button btnClicado = sender as Button;
+            if (btnClicado == null) return;
+
+            mesSelecionado = btnClicado.Tag as string;
+
+            if (anoSelecionado == 0)
+            {
+                MessageBox.Show("Por favor, selecione um ano primeiro!",
+                    "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Resetar cores de todos os botões de mês
+            Panel containerMeses = panelHistorico.Controls.Find("containerMeses", false).FirstOrDefault() as Panel;
+            if (containerMeses != null)
+            {
+                foreach (Control ctrl in containerMeses.Controls)
+                {
+                    if (ctrl is Button btn && btn.Tag is string)
+                    {
+                        btn.BackColor = Color.FromArgb(198, 143, 86);
+                        btn.ForeColor = Color.FromArgb(57, 27, 1);
+                    }
+                }
+            }
+
+            // Destacar botão selecionado
+            btnClicado.BackColor = Color.FromArgb(144, 238, 144);
+            btnClicado.ForeColor = Color.Black;
+
+            // Filtrar pedidos pelo ano e mês selecionados
+            MostrarHistoricoPedidos(anoSelecionado, mesSelecionado);
+        }
+
+        private void MostrarHistoricoPedidos(int ano, string mes)
+        {
+            // Converter nome do mês para número
+            string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+                              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
+            int numeroMes = Array.IndexOf(meses, mes) + 1;
+
+            // Filtrar pedidos
+            var pedidosFiltrados = pedidos.Where(p =>
+                p.DataEmissao.Year == ano &&
+                p.DataEmissao.Month == numeroMes
+            ).ToList();
+
+            if (pedidosFiltrados.Count == 0)
+            {
+                MessageBox.Show($"Nenhum pedido encontrado para {mes}/{ano}.",
+                    "Histórico", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Criar relatório
+            string relatorio = $"HISTÓRICO DE PEDIDOS - {mes}/{ano}\n\n";
+            relatorio += $"Total de pedidos: {pedidosFiltrados.Count}\n\n";
+
+            decimal totalGeral = 0;
+
+            foreach (var pedido in pedidosFiltrados)
+            {
+                relatorio += $"Pedido #{pedido.Id} - {pedido.Cliente}\n";
+                relatorio += $"Data: {pedido.DataEmissao:dd/MM/yyyy}\n";
+                relatorio += $"Valor: {pedido.TotalGeral:C}\n";
+                relatorio += $"Status: {pedido.Status}\n\n";
+                totalGeral += pedido.TotalGeral;
+            }
+
+            relatorio += $"\nVALOR TOTAL DO PERÍODO: {totalGeral:C}";
+
+            using (FormRelatorio formRel = new FormRelatorio(relatorio, $"Histórico - {mes}/{ano}"))
+            {
+                formRel.ShowDialog();
+            }
+        }
+
+        private void BtnBackup_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Funcionalidade de backup será implementada em breve!\n\n" +
+                "Este recurso permitirá exportar todos os dados do sistema.",
+                "Backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnHistorico_Click(object sender, EventArgs e)
+        {
+            if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelPedidos != null) panelPedidos.Visible = false;
+            if (panelCadastro != null) panelCadastro.Visible = false;
+            if (panelTitulos != null) panelTitulos.Visible = false;
+
+            if (panelHistorico != null)
+            {
+                panelHistorico.Visible = true;
+                panelHistorico.BringToFront();
+            }
+
+            ResetarCoresBotoes();
         }
 
         #endregion

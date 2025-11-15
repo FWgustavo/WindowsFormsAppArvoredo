@@ -481,6 +481,7 @@ namespace WindowsFormsAppArvoredo
             // 
             // panelHistorico
             // 
+            this.panelHistorico.BackColor = System.Drawing.Color.Transparent;
             this.panelHistorico.Location = new System.Drawing.Point(303, 73);
             this.panelHistorico.Name = "panelHistorico";
             this.panelHistorico.Size = new System.Drawing.Size(777, 585);
