@@ -25,6 +25,8 @@ namespace WindowsFormsAppArvoredo
         // VARIÁVEIS DO HISTÓRICO
         private int anoSelecionado = 0;
         private string mesSelecionado = "";
+        private int[] todosAnos = { 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 };
+        private int indiceAnoInicial = 0;
 
         public TelaArvoredo()
         {
@@ -1126,6 +1128,7 @@ namespace WindowsFormsAppArvoredo
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
+            if (panelHistorico != null) panelHistorico.Visible = false;
             if (panelOrcamento != null)
             {
                 panelOrcamento.Visible = true;
@@ -1141,6 +1144,7 @@ namespace WindowsFormsAppArvoredo
             if (panelOrcamento != null) panelOrcamento.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
+            if (panelHistorico != null) panelHistorico.Visible = false;
             if (panelPedidos != null)
             {
                 panelPedidos.Visible = true;
@@ -1157,6 +1161,7 @@ namespace WindowsFormsAppArvoredo
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
+            if (panelHistorico != null) panelHistorico.Visible = false;
             if (panelEstoque != null)
             {
                 panelEstoque.Visible = true;
@@ -1173,6 +1178,7 @@ namespace WindowsFormsAppArvoredo
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
+            if (panelHistorico != null) panelHistorico.Visible = false;
 
             if (panelCadastro != null)
             {
@@ -1399,6 +1405,7 @@ namespace WindowsFormsAppArvoredo
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
+            if (panelHistorico != null) panelHistorico.Visible = false;
 
             if (panelTitulos != null)
             {
@@ -1456,6 +1463,7 @@ namespace WindowsFormsAppArvoredo
 
             // Seta Esquerda Anos
             Button btnSetaEsqAnos = new Button();
+            btnSetaEsqAnos.Name = "btnSetaEsqAnos";
             btnSetaEsqAnos.Text = "◄";
             btnSetaEsqAnos.Location = new Point(10, 25);
             btnSetaEsqAnos.Size = new Size(50, 30);
@@ -1464,34 +1472,22 @@ namespace WindowsFormsAppArvoredo
             btnSetaEsqAnos.FlatStyle = FlatStyle.Flat;
             btnSetaEsqAnos.FlatAppearance.BorderSize = 0;
             btnSetaEsqAnos.Cursor = Cursors.Hand;
+            btnSetaEsqAnos.Click += BtnSetaEsqAnos_Click;
             containerAnos.Controls.Add(btnSetaEsqAnos);
 
-            // Anos (2016-2020)
-            int[] anos = { 2016, 2017, 2018, 2019, 2020 };
-            int xPos = 80;
-            foreach (int ano in anos)
-            {
-                Button btnAno = new Button();
-                btnAno.Text = ano.ToString();
-                btnAno.Name = $"btnAno{ano}";
-                btnAno.Location = new Point(xPos, 20);
-                btnAno.Size = new Size(100, 40);
-                btnAno.Font = new Font("Gagalin", 12F, FontStyle.Bold);
-                btnAno.BackColor = Color.White;
-                btnAno.ForeColor = Color.FromArgb(57, 27, 1);
-                btnAno.FlatStyle = FlatStyle.Flat;
-                btnAno.FlatAppearance.BorderSize = 2;
-                btnAno.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
-                btnAno.Cursor = Cursors.Hand;
-                btnAno.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAno.Width, btnAno.Height, 15, 15));
-                btnAno.Tag = ano;
-                btnAno.Click += BtnAno_Click;
-                containerAnos.Controls.Add(btnAno);
-                xPos += 120;
-            }
+            // Container para os botões de anos
+            Panel panelBotoesAnos = new Panel();
+            panelBotoesAnos.Name = "panelBotoesAnos";
+            panelBotoesAnos.Location = new Point(80, 20);
+            panelBotoesAnos.Size = new Size(580, 40);
+            panelBotoesAnos.BackColor = Color.Transparent;
+            containerAnos.Controls.Add(panelBotoesAnos);
+
+            AtualizarBotoesAnos(panelBotoesAnos);
 
             // Seta Direita Anos
             Button btnSetaDirAnos = new Button();
+            btnSetaDirAnos.Name = "btnSetaDirAnos";
             btnSetaDirAnos.Text = "►";
             btnSetaDirAnos.Location = new Point(680, 25);
             btnSetaDirAnos.Size = new Size(50, 30);
@@ -1500,6 +1496,7 @@ namespace WindowsFormsAppArvoredo
             btnSetaDirAnos.FlatStyle = FlatStyle.Flat;
             btnSetaDirAnos.FlatAppearance.BorderSize = 0;
             btnSetaDirAnos.Cursor = Cursors.Hand;
+            btnSetaDirAnos.Click += BtnSetaDirAnos_Click;
             containerAnos.Controls.Add(btnSetaDirAnos);
 
             // Container de Meses
@@ -1565,6 +1562,72 @@ namespace WindowsFormsAppArvoredo
             containerMeses.Controls.Add(btnBackup);
         }
 
+        private void AtualizarBotoesAnos(Panel panelBotoesAnos)
+        {
+            panelBotoesAnos.Controls.Clear();
+
+            int xPos = 0;
+            for (int i = 0; i < 5 && (indiceAnoInicial + i) < todosAnos.Length; i++)
+            {
+                int ano = todosAnos[indiceAnoInicial + i];
+
+                Button btnAno = new Button();
+                btnAno.Text = ano.ToString();
+                btnAno.Name = $"btnAno{ano}";
+                btnAno.Location = new Point(xPos, 0);
+                btnAno.Size = new Size(100, 40);
+                btnAno.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+                btnAno.BackColor = anoSelecionado == ano ? Color.FromArgb(198, 143, 86) : Color.White;
+                btnAno.ForeColor = anoSelecionado == ano ? Color.White : Color.FromArgb(57, 27, 1);
+                btnAno.FlatStyle = FlatStyle.Flat;
+                btnAno.FlatAppearance.BorderSize = 2;
+                btnAno.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+                btnAno.Cursor = Cursors.Hand;
+                btnAno.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAno.Width, btnAno.Height, 15, 15));
+                btnAno.Tag = ano;
+                btnAno.Click += BtnAno_Click;
+
+                panelBotoesAnos.Controls.Add(btnAno);
+                xPos += 115;
+            }
+        }
+
+        private void BtnSetaEsqAnos_Click(object sender, EventArgs e)
+        {
+            if (indiceAnoInicial > 0)
+            {
+                indiceAnoInicial--;
+
+                Panel containerAnos = panelHistorico.Controls.Find("containerAnos", false).FirstOrDefault() as Panel;
+                if (containerAnos != null)
+                {
+                    Panel panelBotoesAnos = containerAnos.Controls.Find("panelBotoesAnos", false).FirstOrDefault() as Panel;
+                    if (panelBotoesAnos != null)
+                    {
+                        AtualizarBotoesAnos(panelBotoesAnos);
+                    }
+                }
+            }
+        }
+
+        private void BtnSetaDirAnos_Click(object sender, EventArgs e)
+        {
+            if (indiceAnoInicial + 5 < todosAnos.Length)
+            {
+                indiceAnoInicial++;
+
+                Panel containerAnos = panelHistorico.Controls.Find("containerAnos", false).FirstOrDefault() as Panel;
+                if (containerAnos != null)
+                {
+                    Panel panelBotoesAnos = containerAnos.Controls.Find("panelBotoesAnos", false).FirstOrDefault() as Panel;
+                    if (panelBotoesAnos != null)
+                    {
+                        AtualizarBotoesAnos(panelBotoesAnos);
+                    }
+                }
+            }
+        }
+
         private void BtnAno_Click(object sender, EventArgs e)
         {
             Button btnClicado = sender as Button;
@@ -1572,23 +1635,16 @@ namespace WindowsFormsAppArvoredo
 
             anoSelecionado = (int)btnClicado.Tag;
 
-            // Resetar cores de todos os botões de ano
+            // Atualizar cores de todos os botões de ano visíveis
             Panel containerAnos = panelHistorico.Controls.Find("containerAnos", false).FirstOrDefault() as Panel;
             if (containerAnos != null)
             {
-                foreach (Control ctrl in containerAnos.Controls)
+                Panel panelBotoesAnos = containerAnos.Controls.Find("panelBotoesAnos", false).FirstOrDefault() as Panel;
+                if (panelBotoesAnos != null)
                 {
-                    if (ctrl is Button btn && btn.Name.StartsWith("btnAno"))
-                    {
-                        btn.BackColor = Color.White;
-                        btn.ForeColor = Color.FromArgb(57, 27, 1);
-                    }
+                    AtualizarBotoesAnos(panelBotoesAnos);
                 }
             }
-
-            // Destacar botão selecionado
-            btnClicado.BackColor = Color.FromArgb(198, 143, 86);
-            btnClicado.ForeColor = Color.White;
 
             MessageBox.Show($"Ano {anoSelecionado} selecionado!\nSelecione um mês para ver o histórico.",
                 "Ano Selecionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1675,9 +1731,10 @@ namespace WindowsFormsAppArvoredo
 
         private void BtnBackup_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Funcionalidade de backup será implementada em breve!\n\n" +
-                "Este recurso permitirá exportar todos os dados do sistema.",
-                "Backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (FormBackup formBackup = new FormBackup())
+            {
+                formBackup.ShowDialog();
+            }
         }
 
         private void btnHistorico_Click(object sender, EventArgs e)
