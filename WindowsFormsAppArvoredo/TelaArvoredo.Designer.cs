@@ -51,6 +51,7 @@ namespace WindowsFormsAppArvoredo
             this.panelCadastro = new System.Windows.Forms.Panel();
             this.panelPedidos = new System.Windows.Forms.Panel();
             this.panelOrcamento = new System.Windows.Forms.Panel();
+            this.panelTitulos = new System.Windows.Forms.Panel();
             this.listViewOrcamentos = new System.Windows.Forms.ListView();
             this.lblOrcamentosPendentes = new System.Windows.Forms.Label();
             this.btnNewOrc = new System.Windows.Forms.Button();
@@ -61,7 +62,7 @@ namespace WindowsFormsAppArvoredo
             this.btnRelatorioEstoque = new System.Windows.Forms.Button();
             this.btnAtualizarEstoque = new System.Windows.Forms.Button();
             this.btnNovoProduto = new System.Windows.Forms.Button();
-            this.panelTitulos = new System.Windows.Forms.Panel();
+            this.panelHistorico = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -320,6 +321,13 @@ namespace WindowsFormsAppArvoredo
             this.panelOrcamento.Size = new System.Drawing.Size(783, 587);
             this.panelOrcamento.TabIndex = 4;
             // 
+            // panelTitulos
+            // 
+            this.panelTitulos.Location = new System.Drawing.Point(2, 0);
+            this.panelTitulos.Name = "panelTitulos";
+            this.panelTitulos.Size = new System.Drawing.Size(777, 581);
+            this.panelTitulos.TabIndex = 3;
+            // 
             // listViewOrcamentos
             // 
             this.listViewOrcamentos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -471,12 +479,12 @@ namespace WindowsFormsAppArvoredo
             this.btnNovoProduto.Text = "NOVO PRODUTO";
             this.btnNovoProduto.UseVisualStyleBackColor = false;
             // 
-            // panelTitulos
+            // panelHistorico
             // 
-            this.panelTitulos.Location = new System.Drawing.Point(2, 0);
-            this.panelTitulos.Name = "panelTitulos";
-            this.panelTitulos.Size = new System.Drawing.Size(777, 581);
-            this.panelTitulos.TabIndex = 3;
+            this.panelHistorico.Location = new System.Drawing.Point(303, 73);
+            this.panelHistorico.Name = "panelHistorico";
+            this.panelHistorico.Size = new System.Drawing.Size(777, 585);
+            this.panelHistorico.TabIndex = 0;
             // 
             // TelaArvoredo
             // 
@@ -484,6 +492,7 @@ namespace WindowsFormsAppArvoredo
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1084, 661);
             this.ControlBox = false;
+            this.Controls.Add(this.panelHistorico);
             this.Controls.Add(this.panelOrcamento);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -542,5 +551,6 @@ namespace WindowsFormsAppArvoredo
         private System.Windows.Forms.Panel panelPedidos;
         private System.Windows.Forms.Panel panelCadastro;
         private Panel panelTitulos;
+        private Panel panelHistorico;
     }
 }
