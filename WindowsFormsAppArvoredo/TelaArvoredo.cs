@@ -47,21 +47,54 @@ namespace WindowsFormsAppArvoredo
         {
             AplicarArredondamentoBotoes();
 
-            if (panelOrcamento != null) panelOrcamento.Visible = true;
+            // CORREÇÃO: Retirar panelTitulos de dentro do panelOrcamento
+            if (panelTitulos != null && panelTitulos.Parent == panelOrcamento)
+            {
+                panelOrcamento.Controls.Remove(panelTitulos);
+                this.Controls.Add(panelTitulos);
+            }
+
+            // CORREÇÃO: Retirar panelCadastro de dentro do panel2
+            if (panelCadastro != null && panelCadastro.Parent == panel2)
+            {
+                panel2.Controls.Remove(panelCadastro);
+                this.Controls.Add(panelCadastro);
+            }
+
+            // Configurar posição e tamanho corretos
+            if (panelTitulos != null)
+            {
+                panelTitulos.Location = new Point(301, 74);
+                panelTitulos.Size = new Size(783, 587);
+                panelTitulos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            }
+
+            if (panelCadastro != null)
+            {
+                panelCadastro.Location = new Point(301, 74);
+                panelCadastro.Size = new Size(783, 587);
+                panelCadastro.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            }
+
+            // Ocultar todos os painéis primeiro
+            if (panelOrcamento != null) panelOrcamento.Visible = false;
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
-            if (panelTitulos != null) panelTitulos.Visible = false;  // ADICIONAR ESTA LINHA
+            if (panelTitulos != null) panelTitulos.Visible = false;
 
             ConfigurarListViewOrcamentos();
             ConfigurarEstoque();
             ConfigurarPedidos();
-            ConfigurarPanelTitulos();  // ADICIONAR ESTA LINHA
+            ConfigurarPanelTitulos();
             CarregarDadosExemplo();
             CarregarDadosExemploClientes();
             ConfigurarPainelCadastro();
             VincularEventos();
             panelDegrade?.Invalidate();
+
+            // MOSTRAR O PAINEL DE ORÇAMENTOS COMO PADRÃO
+            btnOrcamento_Click(null, null);
         }
 
         private void AplicarArredondamentoBotoes()
@@ -730,7 +763,6 @@ namespace WindowsFormsAppArvoredo
             panelCadastro.BackColor = Color.Transparent;
             panelCadastro.Controls.Clear();
 
-            // Painel principal com borda arredondada (container de tudo)
             Panel containerPrincipal = new Panel();
             containerPrincipal.Name = "containerPrincipal";
             containerPrincipal.Location = new Point(30, 30);
@@ -738,13 +770,11 @@ namespace WindowsFormsAppArvoredo
             containerPrincipal.BackColor = Color.FromArgb(239, 212, 172);
             containerPrincipal.BorderStyle = BorderStyle.FixedSingle;
 
-            // Aplicar bordas arredondadas
             containerPrincipal.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
                 containerPrincipal.Width, containerPrincipal.Height, 30, 30));
 
             panelCadastro.Controls.Add(containerPrincipal);
 
-            // Barra de pesquisa
             TextBox txtPesquisaCadastro = new TextBox();
             txtPesquisaCadastro.Name = "txtPesquisaCadastro";
             txtPesquisaCadastro.Location = new Point(260, 25);
@@ -773,7 +803,6 @@ namespace WindowsFormsAppArvoredo
             txtPesquisaCadastro.TextChanged += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
             containerPrincipal.Controls.Add(txtPesquisaCadastro);
 
-            // Botão de pesquisa (lupa)
             Button btnPesquisar = new Button();
             btnPesquisar.Location = new Point(585, 25);
             btnPesquisar.Size = new Size(35, 35);
@@ -788,7 +817,6 @@ namespace WindowsFormsAppArvoredo
             btnPesquisar.Click += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
             containerPrincipal.Controls.Add(btnPesquisar);
 
-            // Botão adicionar (+)
             Button btnAdicionarCliente = new Button();
             btnAdicionarCliente.Name = "btnAdicionarCliente";
             btnAdicionarCliente.Location = new Point(625, 25);
@@ -804,7 +832,6 @@ namespace WindowsFormsAppArvoredo
             btnAdicionarCliente.Click += btnAdicionarClienteDireto_Click;
             containerPrincipal.Controls.Add(btnAdicionarCliente);
 
-            // Container dos clientes (com scroll)
             Panel containerClientes = new Panel();
             containerClientes.Name = "containerClientes";
             containerClientes.Location = new Point(20, 75);
@@ -839,11 +866,9 @@ namespace WindowsFormsAppArvoredo
             card.BorderStyle = BorderStyle.FixedSingle;
             card.Margin = new Padding(0, 0, 0, 15);
 
-            // Aplicar bordas arredondadas ao card
             card.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
                 card.Width, card.Height, 20, 20));
 
-            // Painel superior com nome do cliente
             Panel panelNome = new Panel();
             panelNome.Location = new Point(0, 0);
             panelNome.Size = new Size(640, 40);
@@ -859,7 +884,6 @@ namespace WindowsFormsAppArvoredo
             lblNome.TextAlign = ContentAlignment.MiddleLeft;
             panelNome.Controls.Add(lblNome);
 
-            // CPF/CNPJ
             Label lblCpfLabel = new Label();
             lblCpfLabel.Text = "CPF/CNPJ:";
             lblCpfLabel.Location = new Point(15, 50);
@@ -877,7 +901,6 @@ namespace WindowsFormsAppArvoredo
             lblCpf.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblCpf);
 
-            // Telefone
             Label lblTelLabel = new Label();
             lblTelLabel.Text = "TELEFONE/CELL:";
             lblTelLabel.Location = new Point(15, 70);
@@ -895,7 +918,6 @@ namespace WindowsFormsAppArvoredo
             lblTelefone.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblTelefone);
 
-            // CEP/Município
             Label lblCepLabel = new Label();
             lblCepLabel.Text = "CEP/MUNICÍPIO:";
             lblCepLabel.Location = new Point(15, 90);
@@ -913,7 +935,6 @@ namespace WindowsFormsAppArvoredo
             lblCep.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblCep);
 
-            // Endereço
             Label lblEndLabel = new Label();
             lblEndLabel.Text = "ENDEREÇO:";
             lblEndLabel.Location = new Point(15, 110);
@@ -931,7 +952,6 @@ namespace WindowsFormsAppArvoredo
             lblEndereco.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblEndereco);
 
-            // Bairro + Botão DETALHES na mesma linha
             Label lblBairroLabel = new Label();
             lblBairroLabel.Text = "BAIRRO:";
             lblBairroLabel.Location = new Point(15, 130);
@@ -948,7 +968,6 @@ namespace WindowsFormsAppArvoredo
             lblBairro.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblBairro);
 
-            // Botão DETALHES
             Button btnDetalhes = new Button();
             btnDetalhes.Text = "DETALHES";
             btnDetalhes.Location = new Point(520, 125);
@@ -1142,6 +1161,7 @@ namespace WindowsFormsAppArvoredo
             if (panelOrcamento != null) panelOrcamento.Visible = false;
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
+            if (panelTitulos != null) panelTitulos.Visible = false;
 
             if (panelCadastro != null)
             {
@@ -1207,7 +1227,6 @@ namespace WindowsFormsAppArvoredo
                 cardPedido.BorderStyle = BorderStyle.FixedSingle;
                 cardPedido.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, cardPedido.Width, cardPedido.Height, 20, 20));
 
-                // Número e Cliente
                 Label lblNumero = new Label();
                 lblNumero.Text = $"N°{pedido.Id} - {pedido.Cliente.ToUpper()}";
                 lblNumero.Location = new Point(15, 10);
@@ -1216,7 +1235,6 @@ namespace WindowsFormsAppArvoredo
                 lblNumero.ForeColor = Color.FromArgb(57, 27, 1);
                 cardPedido.Controls.Add(lblNumero);
 
-                // Valor
                 Label lblValor = new Label();
                 lblValor.Text = $"Valor: {pedido.TotalGeral:C}";
                 lblValor.Location = new Point(15, 40);
@@ -1225,7 +1243,6 @@ namespace WindowsFormsAppArvoredo
                 lblValor.ForeColor = Color.FromArgb(57, 27, 1);
                 cardPedido.Controls.Add(lblValor);
 
-                // Data de Emissão
                 Label lblData = new Label();
                 lblData.Text = $"Data: {pedido.DataEmissao:dd/MM/yyyy}";
                 lblData.Location = new Point(230, 40);
@@ -1234,7 +1251,6 @@ namespace WindowsFormsAppArvoredo
                 lblData.ForeColor = Color.FromArgb(57, 27, 1);
                 cardPedido.Controls.Add(lblData);
 
-                // Status
                 Label lblStatus = new Label();
                 lblStatus.Text = $"Status: {pedido.Status}";
                 lblStatus.Location = new Point(400, 40);
@@ -1243,7 +1259,6 @@ namespace WindowsFormsAppArvoredo
                 lblStatus.ForeColor = Color.FromArgb(57, 27, 1);
                 cardPedido.Controls.Add(lblStatus);
 
-                // Forma de Pagamento
                 Label lblPagamento = new Label();
                 lblPagamento.Text = $"Pagamento: {pedido.FormaPagamento}";
                 lblPagamento.Location = new Point(15, 70);
@@ -1252,7 +1267,6 @@ namespace WindowsFormsAppArvoredo
                 lblPagamento.ForeColor = Color.FromArgb(57, 27, 1);
                 cardPedido.Controls.Add(lblPagamento);
 
-                // Botão de detalhes
                 Button btnDetalhes = new Button();
                 btnDetalhes.Text = "DETALHES";
                 btnDetalhes.Location = new Point(600, 80);
@@ -1294,11 +1308,9 @@ namespace WindowsFormsAppArvoredo
             card.BorderStyle = BorderStyle.FixedSingle;
             card.Cursor = Cursors.Hand;
 
-            // Aplicar bordas arredondadas
             card.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
                 card.Width, card.Height, 20, 20));
 
-            // Número do pedido
             Label lblNumero = new Label();
             lblNumero.Text = $"N°{numero} {pedido.Cliente.ToUpper()}";
             lblNumero.Location = new Point(15, 15);
@@ -1308,7 +1320,6 @@ namespace WindowsFormsAppArvoredo
             lblNumero.BackColor = Color.Transparent;
             card.Controls.Add(lblNumero);
 
-            // Ícone de clique
             Label lblIcone = new Label();
             lblIcone.Text = "👆";
             lblIcone.Location = new Point(520, 10);
@@ -1318,7 +1329,6 @@ namespace WindowsFormsAppArvoredo
             lblIcone.TextAlign = ContentAlignment.MiddleCenter;
             card.Controls.Add(lblIcone);
 
-            // Valor
             Label lblValor = new Label();
             lblValor.Text = $"valor: {pedido.TotalGeral:N2}";
             lblValor.Location = new Point(580, 15);
@@ -1329,7 +1339,6 @@ namespace WindowsFormsAppArvoredo
             lblValor.TextAlign = ContentAlignment.MiddleRight;
             card.Controls.Add(lblValor);
 
-            // Eventos de hover
             card.MouseEnter += (s, e) => {
                 card.BackColor = Color.FromArgb(220, 195, 155);
             };
@@ -1337,10 +1346,8 @@ namespace WindowsFormsAppArvoredo
                 card.BackColor = Color.FromArgb(239, 212, 172);
             };
 
-            // Evento de clique
             card.Click += (s, e) => AbrirDetalhesPedido(pedido);
 
-            // Fazer com que os labels também disparem o clique
             foreach (Control ctrl in card.Controls)
             {
                 ctrl.Click += (s, e) => AbrirDetalhesPedido(pedido);
@@ -1363,7 +1370,6 @@ namespace WindowsFormsAppArvoredo
 
                 if (resultado == DialogResult.OK)
                 {
-                    // Pedido foi finalizado
                     pedidos.Remove(pedido);
                     AtualizarPanelTitulos();
 
