@@ -122,6 +122,18 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormDetalhePedidoHistorico.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormDetalhePedidoHistorico.Designer.cs">
+      <DependentUpon>FormDetalhePedidoHistorico.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormListaHistorico.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormListaHistorico.Designer.cs">
+      <DependentUpon>FormListaHistorico.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormBackup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -190,6 +202,9 @@
     <Compile Include="ViaCepService.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormListaHistorico.resx">
+      <DependentUpon>FormListaHistorico.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormListaProdutos.resx">
       <DependentUpon>FormListaProdutos.cs</DependentUpon>
