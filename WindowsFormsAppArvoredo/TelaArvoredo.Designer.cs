@@ -95,7 +95,7 @@ namespace WindowsFormsAppArvoredo
             this.btnEstoque.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnEstoque.FlatAppearance.BorderSize = 0;
             this.btnEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEstoque.Font = new System.Drawing.Font("Gagalin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEstoque.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnEstoque.Location = new System.Drawing.Point(0, 542);
             this.btnEstoque.Name = "btnEstoque";
@@ -119,7 +119,7 @@ namespace WindowsFormsAppArvoredo
             this.btnOrcamento.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnOrcamento.FlatAppearance.BorderSize = 0;
             this.btnOrcamento.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOrcamento.Font = new System.Drawing.Font("Gagalin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOrcamento.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnOrcamento.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnOrcamento.Location = new System.Drawing.Point(0, 428);
             this.btnOrcamento.Name = "btnOrcamento";
@@ -144,7 +144,7 @@ namespace WindowsFormsAppArvoredo
             this.btnPedidos.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnPedidos.FlatAppearance.BorderSize = 0;
             this.btnPedidos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPedidos.Font = new System.Drawing.Font("Gagalin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPedidos.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPedidos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnPedidos.Location = new System.Drawing.Point(0, 314);
             this.btnPedidos.Name = "btnPedidos";
@@ -168,7 +168,7 @@ namespace WindowsFormsAppArvoredo
             this.btnTitulos.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnTitulos.FlatAppearance.BorderSize = 0;
             this.btnTitulos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTitulos.Font = new System.Drawing.Font("Gagalin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTitulos.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnTitulos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnTitulos.Location = new System.Drawing.Point(0, 200);
             this.btnTitulos.Name = "btnTitulos";
@@ -216,12 +216,12 @@ namespace WindowsFormsAppArvoredo
             this.btnSair.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.btnSair.FlatAppearance.BorderSize = 0;
             this.btnSair.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSair.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSair.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSair.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnSair.Location = new System.Drawing.Point(557, 21);
             this.btnSair.Name = "btnSair";
             this.btnSair.Size = new System.Drawing.Size(170, 34);
-            this.btnSair.TabIndex = 0;
+            this.btnSair.TabIndex = 8;
             this.btnSair.Text = "Sair";
             this.btnSair.UseVisualStyleBackColor = false;
             this.btnSair.Click += new System.EventHandler(this.btnSair_Click);
@@ -231,12 +231,12 @@ namespace WindowsFormsAppArvoredo
             this.btnCaixa.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.btnCaixa.FlatAppearance.BorderSize = 0;
             this.btnCaixa.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCaixa.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCaixa.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCaixa.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnCaixa.Location = new System.Drawing.Point(381, 21);
             this.btnCaixa.Name = "btnCaixa";
             this.btnCaixa.Size = new System.Drawing.Size(170, 34);
-            this.btnCaixa.TabIndex = 0;
+            this.btnCaixa.TabIndex = 7;
             this.btnCaixa.Text = "Caixa";
             this.btnCaixa.UseVisualStyleBackColor = false;
             // 
@@ -245,12 +245,12 @@ namespace WindowsFormsAppArvoredo
             this.btnCadastro.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.btnCadastro.FlatAppearance.BorderSize = 0;
             this.btnCadastro.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCadastro.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCadastro.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCadastro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnCadastro.Location = new System.Drawing.Point(216, 21);
             this.btnCadastro.Name = "btnCadastro";
             this.btnCadastro.Size = new System.Drawing.Size(159, 34);
-            this.btnCadastro.TabIndex = 0;
+            this.btnCadastro.TabIndex = 6;
             this.btnCadastro.Text = "Cadastro";
             this.btnCadastro.UseVisualStyleBackColor = false;
             // 
@@ -259,12 +259,12 @@ namespace WindowsFormsAppArvoredo
             this.btnHistorico.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.btnHistorico.FlatAppearance.BorderSize = 0;
             this.btnHistorico.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHistorico.Font = new System.Drawing.Font("Gagalin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHistorico.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnHistorico.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnHistorico.Location = new System.Drawing.Point(45, 21);
             this.btnHistorico.Name = "btnHistorico";
             this.btnHistorico.Size = new System.Drawing.Size(165, 34);
-            this.btnHistorico.TabIndex = 0;
+            this.btnHistorico.TabIndex = 5;
             this.btnHistorico.Text = "Histórico";
             this.btnHistorico.UseVisualStyleBackColor = false;
             // 
@@ -335,7 +335,7 @@ namespace WindowsFormsAppArvoredo
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewOrcamentos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.listViewOrcamentos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listViewOrcamentos.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listViewOrcamentos.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listViewOrcamentos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.listViewOrcamentos.FullRowSelect = true;
             this.listViewOrcamentos.GridLines = true;
@@ -352,11 +352,11 @@ namespace WindowsFormsAppArvoredo
             // lblOrcamentosPendentes
             // 
             this.lblOrcamentosPendentes.AutoSize = true;
-            this.lblOrcamentosPendentes.Font = new System.Drawing.Font("Gagalin", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOrcamentosPendentes.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOrcamentosPendentes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblOrcamentosPendentes.Location = new System.Drawing.Point(22, 80);
             this.lblOrcamentosPendentes.Name = "lblOrcamentosPendentes";
-            this.lblOrcamentosPendentes.Size = new System.Drawing.Size(252, 26);
+            this.lblOrcamentosPendentes.Size = new System.Drawing.Size(330, 26);
             this.lblOrcamentosPendentes.TabIndex = 1;
             this.lblOrcamentosPendentes.Text = "ORÇAMENTOS PENDENTES";
             // 
@@ -365,7 +365,7 @@ namespace WindowsFormsAppArvoredo
             this.btnNewOrc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
             this.btnNewOrc.FlatAppearance.BorderSize = 0;
             this.btnNewOrc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNewOrc.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNewOrc.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnNewOrc.ForeColor = System.Drawing.Color.Black;
             this.btnNewOrc.Location = new System.Drawing.Point(22, 23);
             this.btnNewOrc.Name = "btnNewOrc";
@@ -397,11 +397,11 @@ namespace WindowsFormsAppArvoredo
             // 
             this.lblProdutosBaixoEstoque.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblProdutosBaixoEstoque.AutoSize = true;
-            this.lblProdutosBaixoEstoque.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProdutosBaixoEstoque.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblProdutosBaixoEstoque.ForeColor = System.Drawing.Color.Red;
             this.lblProdutosBaixoEstoque.Location = new System.Drawing.Point(480, 80);
             this.lblProdutosBaixoEstoque.Name = "lblProdutosBaixoEstoque";
-            this.lblProdutosBaixoEstoque.Size = new System.Drawing.Size(219, 17);
+            this.lblProdutosBaixoEstoque.Size = new System.Drawing.Size(223, 17);
             this.lblProdutosBaixoEstoque.TabIndex = 8;
             this.lblProdutosBaixoEstoque.Text = "⚠️ Produtos com estoque baixo: 0";
             // 
@@ -412,7 +412,7 @@ namespace WindowsFormsAppArvoredo
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.listViewEstoque.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listViewEstoque.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listViewEstoque.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listViewEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.listViewEstoque.FullRowSelect = true;
             this.listViewEstoque.GridLines = true;
@@ -429,11 +429,11 @@ namespace WindowsFormsAppArvoredo
             // lblControleEstoque
             // 
             this.lblControleEstoque.AutoSize = true;
-            this.lblControleEstoque.Font = new System.Drawing.Font("Gagalin", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblControleEstoque.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblControleEstoque.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblControleEstoque.Location = new System.Drawing.Point(22, 80);
             this.lblControleEstoque.Name = "lblControleEstoque";
-            this.lblControleEstoque.Size = new System.Drawing.Size(231, 26);
+            this.lblControleEstoque.Size = new System.Drawing.Size(302, 26);
             this.lblControleEstoque.TabIndex = 5;
             this.lblControleEstoque.Text = "CONTROLE DE ESTOQUE";
             // 
@@ -442,7 +442,7 @@ namespace WindowsFormsAppArvoredo
             this.btnRelatorioEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(218)))), ((int)(((byte)(185)))));
             this.btnRelatorioEstoque.FlatAppearance.BorderSize = 0;
             this.btnRelatorioEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRelatorioEstoque.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRelatorioEstoque.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRelatorioEstoque.ForeColor = System.Drawing.Color.Black;
             this.btnRelatorioEstoque.Location = new System.Drawing.Point(288, 23);
             this.btnRelatorioEstoque.Name = "btnRelatorioEstoque";
@@ -456,7 +456,7 @@ namespace WindowsFormsAppArvoredo
             this.btnAtualizarEstoque.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(173)))), ((int)(((byte)(216)))), ((int)(((byte)(230)))));
             this.btnAtualizarEstoque.FlatAppearance.BorderSize = 0;
             this.btnAtualizarEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAtualizarEstoque.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAtualizarEstoque.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAtualizarEstoque.ForeColor = System.Drawing.Color.Black;
             this.btnAtualizarEstoque.Location = new System.Drawing.Point(155, 23);
             this.btnAtualizarEstoque.Name = "btnAtualizarEstoque";
@@ -470,7 +470,7 @@ namespace WindowsFormsAppArvoredo
             this.btnNovoProduto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
             this.btnNovoProduto.FlatAppearance.BorderSize = 0;
             this.btnNovoProduto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNovoProduto.Font = new System.Drawing.Font("Gagalin", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNovoProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnNovoProduto.ForeColor = System.Drawing.Color.Black;
             this.btnNovoProduto.Location = new System.Drawing.Point(22, 23);
             this.btnNovoProduto.Name = "btnNovoProduto";

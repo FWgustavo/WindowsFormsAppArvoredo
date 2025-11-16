@@ -50,11 +50,11 @@
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.label1.Location = new System.Drawing.Point(273, 142);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 42);
+            this.label1.Size = new System.Drawing.Size(101, 39);
             this.label1.TabIndex = 1;
             this.label1.Text = "Login";
             // 
@@ -82,11 +82,11 @@
             this.btnEntrar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.btnEntrar.FlatAppearance.BorderSize = 0;
             this.btnEntrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEntrar.Font = new System.Drawing.Font("Gagalin", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEntrar.Location = new System.Drawing.Point(94, 487);
+            this.btnEntrar.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEntrar.Location = new System.Drawing.Point(125, 487);
             this.btnEntrar.Name = "btnEntrar";
-            this.btnEntrar.Size = new System.Drawing.Size(417, 65);
-            this.btnEntrar.TabIndex = 4;
+            this.btnEntrar.Size = new System.Drawing.Size(351, 65);
+            this.btnEntrar.TabIndex = 3;
             this.btnEntrar.Text = "Login";
             this.btnEntrar.UseVisualStyleBackColor = true;
             this.btnEntrar.Click += new System.EventHandler(this.btnEntrar_Click);
@@ -97,7 +97,7 @@
             this.btnVoltar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.btnVoltar.FlatAppearance.BorderSize = 0;
             this.btnVoltar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnVoltar.Font = new System.Drawing.Font("Gagalin", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnVoltar.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnVoltar.Location = new System.Drawing.Point(12, 609);
             this.btnVoltar.Name = "btnVoltar";
             this.btnVoltar.Size = new System.Drawing.Size(128, 51);
@@ -111,22 +111,22 @@
             this.Txt_Usuario.BackAlpha = 10;
             this.Txt_Usuario.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.Txt_Usuario.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.Txt_Usuario.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Txt_Usuario.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Txt_Usuario.Location = new System.Drawing.Point(125, 243);
             this.Txt_Usuario.Name = "Txt_Usuario";
-            this.Txt_Usuario.Size = new System.Drawing.Size(333, 42);
-            this.Txt_Usuario.TabIndex = 6;
+            this.Txt_Usuario.Size = new System.Drawing.Size(333, 40);
+            this.Txt_Usuario.TabIndex = 1;
             // 
             // Txt_Senha
             // 
             this.Txt_Senha.BackAlpha = 10;
             this.Txt_Senha.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.Txt_Senha.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.Txt_Senha.Font = new System.Drawing.Font("Gagalin", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Txt_Senha.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Txt_Senha.Location = new System.Drawing.Point(125, 392);
             this.Txt_Senha.Name = "Txt_Senha";
-            this.Txt_Senha.Size = new System.Drawing.Size(333, 42);
-            this.Txt_Senha.TabIndex = 6;
+            this.Txt_Senha.Size = new System.Drawing.Size(333, 40);
+            this.Txt_Senha.TabIndex = 2;
             // 
             // pictureBoxMostrarSenha
             // 

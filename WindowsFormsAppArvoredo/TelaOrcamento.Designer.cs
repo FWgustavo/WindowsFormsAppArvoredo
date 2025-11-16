@@ -306,7 +306,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1100, 780);
+            this.ClientSize = new System.Drawing.Size(1104, 780);
             this.Controls.Add(this.txtUF);
             this.Controls.Add(this.txtCidade);
             this.Controls.Add(this.txtFantasia);

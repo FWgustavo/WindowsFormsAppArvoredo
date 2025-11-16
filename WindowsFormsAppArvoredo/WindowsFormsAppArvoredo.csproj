@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlphaBlendTextBox">
-      <HintPath>..\..\..\..\..\Downloads\AlphaBlendTextBox_demo (3)\AlphaBlendTextBox.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\AlphaBlendTextBox.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
       <HintPath>..\packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
@@ -176,6 +176,12 @@
     <Compile Include="FormRelatorio.Designer.cs">
       <DependentUpon>FormRelatorio.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormSobre.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSobre.Designer.cs">
+      <DependentUpon>FormSobre.cs</DependentUpon>
+    </Compile>
     <Compile Include="Orcamento.cs" />
     <Compile Include="Produto.cs" />
     <Compile Include="ProdutoEstoque.cs" />
@@ -214,6 +220,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormRelatorio.resx">
       <DependentUpon>FormRelatorio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSobre.resx">
+      <DependentUpon>FormSobre.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

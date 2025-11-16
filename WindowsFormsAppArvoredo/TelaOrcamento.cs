@@ -73,8 +73,8 @@ namespace WindowsFormsAppArvoredo
             this.Controls.Add(lblUF);
 
             txtPesquisarProdutos = new TextBox();
-            txtPesquisarProdutos.Location = new Point(200, 320);
-            txtPesquisarProdutos.Size = new Size(500, 26);
+            txtPesquisarProdutos.Location = new Point((ClientSize.Width - txtPesquisarProdutos.Width) / 3, 320);
+            txtPesquisarProdutos.Size = new Size(400, 26);
             txtPesquisarProdutos.Font = new Font("Microsoft Sans Serif", 12F);
             txtPesquisarProdutos.Text = "PESQUISAR PRODUTOS";
             txtPesquisarProdutos.ForeColor = Color.Gray;
@@ -126,7 +126,7 @@ namespace WindowsFormsAppArvoredo
 
             Label lblTotais = new Label();
             lblTotais.Text = "TOTAIS";
-            lblTotais.Location = new Point(500, 580);
+            lblTotais.Location = new Point((ClientSize.Width - lblTotais.Width) / 2, 580);
             lblTotais.Size = new Size(100, 25);
             lblTotais.Font = new Font("Microsoft Sans Serif", 15F, FontStyle.Bold);
             lblTotais.BorderStyle = BorderStyle.FixedSingle;
@@ -209,7 +209,7 @@ namespace WindowsFormsAppArvoredo
 
             btnImprimir = new Button();
             btnImprimir.Text = "IMPRIMIR";
-            btnImprimir.Location = new Point(200, 720);
+            btnImprimir.Location = new Point(275, 720);
             btnImprimir.Size = new Size(120, 40);
             btnImprimir.BackColor = Color.Gold;
             btnImprimir.FlatStyle = FlatStyle.Flat;
@@ -219,7 +219,7 @@ namespace WindowsFormsAppArvoredo
 
             btnExcluir = new Button();
             btnExcluir.Text = "EXCLUIR";
-            btnExcluir.Location = new Point(340, 720);
+            btnExcluir.Location = new Point(425, 720);
             btnExcluir.Size = new Size(120, 40);
             btnExcluir.BackColor = Color.Crimson;
             btnExcluir.ForeColor = Color.White;
@@ -230,7 +230,7 @@ namespace WindowsFormsAppArvoredo
 
             btnSalvar = new Button();
             btnSalvar.Text = "SALVAR";
-            btnSalvar.Location = new Point(480, 720);
+            btnSalvar.Location = new Point(575, 720);
             btnSalvar.Size = new Size(120, 40);
             btnSalvar.BackColor = Color.DodgerBlue;
             btnSalvar.ForeColor = Color.White;
@@ -241,7 +241,7 @@ namespace WindowsFormsAppArvoredo
 
             btnConfirmar = new Button();
             btnConfirmar.Text = "CONFIRMAR";
-            btnConfirmar.Location = new Point(620, 720);
+            btnConfirmar.Location = new Point(725, 720);
             btnConfirmar.Size = new Size(120, 40);
             btnConfirmar.BackColor = Color.LimeGreen;
             btnConfirmar.ForeColor = Color.White;

@@ -85,6 +85,10 @@ namespace WindowsFormsAppArvoredo
         public FormLogin()
         {
             InitializeComponent();
+            btnEntrar.TabStop = false;
+            btnEntrar.FlatAppearance.BorderSize = 0;
+            btnVoltar.TabStop = false;
+            btnVoltar.FlatAppearance.BorderSize = 0;
 
             // Registra o evento de pintura
             this.Paint += new PaintEventHandler(FormLogin_Paint);
@@ -98,6 +102,7 @@ namespace WindowsFormsAppArvoredo
 
             this.Text = "Login Arvoredo";
         }
+
 
         private void SetBackColorDegrade(object sender, PaintEventArgs e)
         {
@@ -139,10 +144,12 @@ namespace WindowsFormsAppArvoredo
 
         private void FormLogin_Load(object sender, EventArgs e)
         {
-            btnEntrar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEntrar.Width, btnEntrar.Height, 100, 100));
-            btnVoltar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnVoltar.Width, btnVoltar.Height, 100, 100));
-            Txt_Usuario.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Usuario.Width, Txt_Usuario.Height, 20, 20));
-            Txt_Senha.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Senha.Width, Txt_Senha.Height, 20, 20));
+            btnEntrar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnEntrar.Width, btnEntrar.Height, 57, 57));
+            btnVoltar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnVoltar.Width, btnVoltar.Height, 40, 40));
+            Txt_Usuario.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Usuario.Width, Txt_Usuario.Height, 10, 10));
+            Txt_Senha.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Txt_Senha.Width, Txt_Senha.Height, 10, 10));
+
+            btnEntrar.Left = (this.ClientSize.Width - btnEntrar.Width) / 2;
 
             Txt_Senha.PasswordChar = '•';
 
@@ -196,11 +203,6 @@ namespace WindowsFormsAppArvoredo
 
         private void btnVoltar_Click(object sender, EventArgs e)
         {
-            Form1 formPrincipal = Application.OpenForms.OfType<Form1>().FirstOrDefault();
-
-            formPrincipal = new Form1();
-            formPrincipal.Show();
-
             this.Close();
         }
 
@@ -253,20 +255,22 @@ namespace WindowsFormsAppArvoredo
                     MessageBox.Show($"Bem-vindo ao Sistema Arvoredo, {usuarioEncontrado.nome}!",
                         "Login realizado com sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // Oculta o formulário de login (não fecha completamente)
-                    this.Hide();
+                    // ✅ Define o resultado do diálogo como OK
+                    this.DialogResult = DialogResult.OK;
 
-                    // Cria e exibe a tela principal do sistema
+                    // ✅ Cria e exibe a tela principal do sistema
                     TelaArvoredo telaArvoredo = new TelaArvoredo();
                     telaArvoredo.FormClosed += (s, args) =>
                     {
-                        // Quando a tela principal for fechada, limpa os dados do usuário e fecha o login
+                        // Quando a tela principal for fechada, limpa os dados do usuário e encerra a aplicação
                         UsuarioLogado.Limpar();
-                        this.Close();
+                        Application.Exit();
                     };
-                    telaArvoredo.Show();
 
-                    this.DialogResult = DialogResult.OK;
+                    // ✅ Fecha o formulário de login antes de abrir a tela principal
+                    this.Hide();
+                    telaArvoredo.ShowDialog();
+                    this.Close();
                 }
                 else
                 {
@@ -431,5 +435,6 @@ namespace WindowsFormsAppArvoredo
                 ((PictureBox)sender).Image = Properties.Resources.senha_do_olho;
             }
         }
+
     }
 }

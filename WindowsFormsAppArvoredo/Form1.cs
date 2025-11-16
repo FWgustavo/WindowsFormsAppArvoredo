@@ -28,10 +28,17 @@ namespace WindowsFormsAppArvoredo
         public Form1()
         {
             InitializeComponent();
-
+            CentralizarControles();
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.SetStyle(ControlStyles.ResizeRedraw, true);
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+
+            Btn_Login.TabStop = false;
+            Btn_Login.FlatAppearance.BorderSize = 0; 
+            Btn_Config.TabStop = false;
+            Btn_Config.FlatAppearance.BorderSize = 0;
+
 
             this.Text = "Sistema Arvoredo";
         }
@@ -88,8 +95,8 @@ namespace WindowsFormsAppArvoredo
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            Btn_Login.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Login.Width, Btn_Login.Height, 100, 100));
-            Btn_Config.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Config.Width, Btn_Config.Height, 100, 100));
+            Btn_Login.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Login.Width, Btn_Login.Height, 65, 65));
+            Btn_Config.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Btn_Config.Width, Btn_Config.Height, 65, 65));
 
         }
 
@@ -107,6 +114,14 @@ namespace WindowsFormsAppArvoredo
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Btn_Config_Click(object sender, EventArgs e)
+        {
+            using (FormSobre formConfig = new FormSobre())
+            {
+                formConfig.ShowDialog();
+            }
         }
     }
 }

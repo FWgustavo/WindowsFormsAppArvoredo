@@ -52,6 +52,32 @@ namespace WindowsFormsAppArvoredo
         private void TelaArvoredo_Load(object sender, EventArgs e)
         {
             AplicarArredondamentoBotoes();
+            btnTitulos.TabStop = false;
+            btnTitulos.FlatAppearance.BorderSize = 0;
+            btnPedidos.TabStop = false;
+            btnPedidos.FlatAppearance.BorderSize = 0;
+            btnOrcamento.TabStop = false;
+            btnOrcamento.FlatAppearance.BorderSize = 0;
+            btnEstoque.TabStop = false;
+            btnEstoque.FlatAppearance.BorderSize = 0;
+            btnHistorico.TabStop = false;
+            btnHistorico.FlatAppearance.BorderSize = 0;
+            btnCadastro.TabStop = false;
+            btnCadastro.FlatAppearance.BorderSize = 0;
+            btnCaixa.TabStop = false;
+            btnCaixa.FlatAppearance.BorderSize = 0;
+            btnSair.TabStop = false;
+            btnSair.FlatAppearance.BorderSize = 0;
+            btnNovoProduto.TabStop = false;
+            btnNovoProduto.FlatAppearance.BorderSize = 0;
+            btnAtualizarEstoque.TabStop = false;
+            btnAtualizarEstoque.FlatAppearance.BorderSize=0;
+            btnRelatorioEstoque.TabStop = false;
+            btnRelatorioEstoque.FlatAppearance.BorderSize = 0;
+            btnOrcamento.TabStop= false;
+            btnOrcamento.FlatAppearance.BorderSize=0;
+            btnNewOrc.TabStop = false;
+            btnNewOrc.FlatAppearance.BorderSize = 0;
 
             // CORREÇÃO: Retirar panelTitulos de dentro do panelOrcamento
             if (panelTitulos != null && panelTitulos.Parent == panelOrcamento)
@@ -126,7 +152,11 @@ namespace WindowsFormsAppArvoredo
                 if (btnSair != null)
                     btnSair.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSair.Width, btnSair.Height, 15, 15));
                 if (btnNewOrc != null)
-                    btnNewOrc.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNewOrc.Width, btnNewOrc.Height, 10, 10));
+                    btnNewOrc.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNewOrc.Width, btnNewOrc.Height, 20, 20));
+                btnNovoProduto.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNovoProduto.Width, btnNovoProduto.Height, 20, 20));
+                btnAtualizarEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAtualizarEstoque.Width, btnAtualizarEstoque.Height, 20, 20));
+                btnRelatorioEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnRelatorioEstoque.Width, btnRelatorioEstoque.Height, 20, 20));
+
             }
             catch { }
         }
@@ -577,10 +607,21 @@ namespace WindowsFormsAppArvoredo
             listViewEstoque.Columns.Add("Status", 100);
             listViewEstoque.Columns.Add("Ações", 80);
 
-            listViewEstoque.OwnerDraw = true;
-            listViewEstoque.DrawItem += ListViewEstoque_DrawItem;
-            listViewEstoque.DrawSubItem += ListViewEstoque_DrawSubItem;
-            listViewEstoque.DrawColumnHeader += ListViewEstoque_DrawColumnHeader;
+            // DESABILITA OwnerDraw - vamos usar o desenho padrão
+            listViewEstoque.OwnerDraw = false;
+
+            // Remove todos os eventos de desenho
+            listViewEstoque.DrawItem -= ListViewEstoque_DrawItem;
+            listViewEstoque.DrawSubItem -= ListViewEstoque_DrawSubItem;
+            listViewEstoque.DrawColumnHeader -= ListViewEstoque_DrawColumnHeader;
+
+            // Configurações do ListView
+            listViewEstoque.View = View.Details;
+            listViewEstoque.FullRowSelect = true;
+            listViewEstoque.HideSelection = false;
+            listViewEstoque.HotTracking = false;
+            listViewEstoque.BackColor = Color.FromArgb(239, 212, 172);
+            listViewEstoque.ForeColor = Color.FromArgb(57, 27, 1);
         }
 
         private void AtualizarListaEstoque()
@@ -783,8 +824,6 @@ namespace WindowsFormsAppArvoredo
             containerPrincipal.BackColor = Color.FromArgb(239, 212, 172);
             containerPrincipal.BorderStyle = BorderStyle.FixedSingle;
 
-            containerPrincipal.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
-                containerPrincipal.Width, containerPrincipal.Height, 30, 30));
 
             panelCadastro.Controls.Add(containerPrincipal);
 
@@ -878,9 +917,6 @@ namespace WindowsFormsAppArvoredo
             card.BackColor = Color.FromArgb(198, 143, 86);
             card.BorderStyle = BorderStyle.FixedSingle;
             card.Margin = new Padding(0, 0, 0, 15);
-
-            card.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
-                card.Width, card.Height, 20, 20));
 
             Panel panelNome = new Panel();
             panelNome.Location = new Point(0, 0);
@@ -983,17 +1019,15 @@ namespace WindowsFormsAppArvoredo
 
             Button btnDetalhes = new Button();
             btnDetalhes.Text = "DETALHES";
-            btnDetalhes.Location = new Point(520, 125);
-            btnDetalhes.Size = new Size(100, 20);
+            btnDetalhes.Location = new Point(520, 120);
+            btnDetalhes.Size = new Size(100, 30);
             btnDetalhes.Font = new Font("Gagalin", 7F, FontStyle.Bold);
             btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
             btnDetalhes.ForeColor = Color.FromArgb(57, 27, 1);
             btnDetalhes.FlatStyle = FlatStyle.Flat;
-            btnDetalhes.FlatAppearance.BorderSize = 1;
+            btnDetalhes.FlatAppearance.BorderSize = 0;
             btnDetalhes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
             btnDetalhes.Cursor = Cursors.Hand;
-            btnDetalhes.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
-                btnDetalhes.Width, btnDetalhes.Height, 10, 10));
             btnDetalhes.Click += (s, e) => AbrirDetalhesCliente(cliente);
             card.Controls.Add(btnDetalhes);
 
@@ -1448,7 +1482,6 @@ namespace WindowsFormsAppArvoredo
             lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
             lblTitulo.BackColor = Color.FromArgb(239, 212, 172);
             lblTitulo.BorderStyle = BorderStyle.FixedSingle;
-            lblTitulo.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, lblTitulo.Width, lblTitulo.Height, 20, 20));
             panelHistorico.Controls.Add(lblTitulo);
 
             // Container de Anos
@@ -1458,7 +1491,6 @@ namespace WindowsFormsAppArvoredo
             containerAnos.Size = new Size(740, 80);
             containerAnos.BackColor = Color.FromArgb(239, 212, 172);
             containerAnos.BorderStyle = BorderStyle.FixedSingle;
-            containerAnos.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, containerAnos.Width, containerAnos.Height, 15, 15));
             panelHistorico.Controls.Add(containerAnos);
 
             // Seta Esquerda Anos
@@ -1506,7 +1538,6 @@ namespace WindowsFormsAppArvoredo
             containerMeses.Size = new Size(740, 380);
             containerMeses.BackColor = Color.FromArgb(239, 212, 172);
             containerMeses.BorderStyle = BorderStyle.FixedSingle;
-            containerMeses.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, containerMeses.Width, containerMeses.Height, 15, 15));
             panelHistorico.Controls.Add(containerMeses);
 
             // Criar botões de meses
@@ -1527,7 +1558,7 @@ namespace WindowsFormsAppArvoredo
                 btnMes.BackColor = Color.FromArgb(198, 143, 86);
                 btnMes.ForeColor = Color.FromArgb(57, 27, 1);
                 btnMes.FlatStyle = FlatStyle.Flat;
-                btnMes.FlatAppearance.BorderSize = 2;
+                btnMes.FlatAppearance.BorderSize = 0;
                 btnMes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
                 btnMes.Cursor = Cursors.Hand;
                 btnMes.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnMes.Width, btnMes.Height, 15, 15));
@@ -1554,7 +1585,7 @@ namespace WindowsFormsAppArvoredo
             btnBackup.BackColor = Color.FromArgb(144, 238, 144);
             btnBackup.ForeColor = Color.Black;
             btnBackup.FlatStyle = FlatStyle.Flat;
-            btnBackup.FlatAppearance.BorderSize = 2;
+            btnBackup.FlatAppearance.BorderSize = 0;
             btnBackup.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
             btnBackup.Cursor = Cursors.Hand;
             btnBackup.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnBackup.Width, btnBackup.Height, 15, 15));
@@ -1580,7 +1611,7 @@ namespace WindowsFormsAppArvoredo
                 btnAno.BackColor = anoSelecionado == ano ? Color.FromArgb(198, 143, 86) : Color.White;
                 btnAno.ForeColor = anoSelecionado == ano ? Color.White : Color.FromArgb(57, 27, 1);
                 btnAno.FlatStyle = FlatStyle.Flat;
-                btnAno.FlatAppearance.BorderSize = 2;
+                btnAno.FlatAppearance.BorderSize = 0;
                 btnAno.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
                 btnAno.Cursor = Cursors.Hand;
                 btnAno.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAno.Width, btnAno.Height, 15, 15));
