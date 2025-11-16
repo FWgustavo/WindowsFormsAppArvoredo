@@ -21,6 +21,7 @@ namespace WindowsFormsAppArvoredo
         private List<Produto> produtos = new List<Produto>();
         private List<Orcamento> pedidos = new List<Orcamento>();
         private List<Cliente> clientes = new List<Cliente>();
+        private List<Orcamento> pedidosFinalizados = new List<Orcamento>();
 
         // VARIÁVEIS DO HISTÓRICO
         private int anoSelecionado = 0;
@@ -1421,11 +1422,17 @@ namespace WindowsFormsAppArvoredo
 
                 if (resultado == DialogResult.OK)
                 {
+                    // Adicionar ao histórico de pedidos finalizados
+                    pedido.Status = "Finalizado";
+                    pedidosFinalizados.Add(pedido);
+
+                    // Remover da lista de pendentes
                     pedidos.Remove(pedido);
                     AtualizarPanelTitulos();
 
                     MessageBox.Show(
-                        $"Pedido de {pedido.Cliente} finalizado com sucesso!",
+                        $"Pedido de {pedido.Cliente} finalizado com sucesso!\n" +
+                        $"O pedido foi salvo no histórico de {pedido.DataEmissao:MMMM/yyyy}.",
                         "Pedido Finalizado",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -1542,7 +1549,7 @@ namespace WindowsFormsAppArvoredo
 
             // Criar botões de meses
             string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
+                      "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
 
             int mesX = 30;
             int mesY = 30;
@@ -1591,6 +1598,62 @@ namespace WindowsFormsAppArvoredo
             btnBackup.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnBackup.Width, btnBackup.Height, 15, 15));
             btnBackup.Click += BtnBackup_Click;
             containerMeses.Controls.Add(btnBackup);
+
+            // Carregar alguns pedidos de exemplo para teste
+            CarregarPedidosFinalizadosExemplo();
+        }
+
+        private void CarregarPedidosFinalizadosExemplo()
+        {
+            // Se já existem pedidos finalizados, não adiciona exemplos
+            if (pedidosFinalizados.Count > 0) return;
+
+            // Criar pedidos de exemplo para diferentes meses
+            Random rand = new Random();
+
+            for (int i = 1; i <= 15; i++)
+            {
+                Orcamento pedidoExemplo = new Orcamento
+                {
+                    Id = 1000 + i,
+                    Cliente = $"Cliente Exemplo {i}",
+                    CPF_CNPJ = $"123.456.789-{i:00}",
+                    Endereco = $"Rua Exemplo, {i * 10}",
+                    Numero = $"{i * 10}",
+                    Bairro = "Centro",
+                    CEP = "12345-678",
+                    Cidade = "Jaú",
+                    UF = "SP",
+                    Telefone = $"(14) 9{i:0000}-{rand.Next(1000, 9999)}",
+                    Vendedor = "Vendedor Sistema",
+                    FormaPagamento = i % 2 == 0 ? "Dinheiro" : "Cartão",
+                    Status = "Finalizado",
+                    DataEmissao = new DateTime(2024 + (i % 2), (i % 12) + 1, rand.Next(1, 28)),
+                    Desconto = 0,
+                    Acrescimo = 0
+                };
+
+                // Adicionar alguns itens
+                decimal valorTotal = 0;
+                for (int j = 1; j <= 3; j++)
+                {
+                    decimal valorUnit = rand.Next(20, 150);
+                    decimal qtd = rand.Next(1, 10);
+                    pedidoExemplo.Itens.Add(new ItemOrcamento
+                    {
+                        Sequencia = j,
+                        Descricao = $"Produto Exemplo {j}",
+                        Unidade = "m",
+                        Quantidade = qtd,
+                        ValorUnitario = valorUnit,
+                        ValorTotal = valorUnit * qtd
+                    });
+                    valorTotal += valorUnit * qtd;
+                }
+
+                pedidoExemplo.TotalGeral = valorTotal;
+                pedidosFinalizados.Add(pedidoExemplo);
+            }
         }
 
         private void AtualizarBotoesAnos(Panel panelBotoesAnos)
@@ -1676,9 +1739,6 @@ namespace WindowsFormsAppArvoredo
                     AtualizarBotoesAnos(panelBotoesAnos);
                 }
             }
-
-            MessageBox.Show($"Ano {anoSelecionado} selecionado!\nSelecione um mês para ver o histórico.",
-                "Ano Selecionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void BtnMes_Click(object sender, EventArgs e)
@@ -1713,55 +1773,40 @@ namespace WindowsFormsAppArvoredo
             btnClicado.BackColor = Color.FromArgb(144, 238, 144);
             btnClicado.ForeColor = Color.Black;
 
-            // Filtrar pedidos pelo ano e mês selecionados
-            MostrarHistoricoPedidos(anoSelecionado, mesSelecionado);
+            // Mostrar lista de pedidos do mês/ano selecionados
+            MostrarListaPedidosMes(anoSelecionado, mesSelecionado);
         }
 
-        private void MostrarHistoricoPedidos(int ano, string mes)
+        private void MostrarListaPedidosMes(int ano, string mes)
         {
             // Converter nome do mês para número
             string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
+                      "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
             int numeroMes = Array.IndexOf(meses, mes) + 1;
 
-            // Filtrar pedidos
-            var pedidosFiltrados = pedidos.Where(p =>
+            // Filtrar pedidos finalizados pelo ano e mês
+            var pedidosFiltrados = pedidosFinalizados.Where(p =>
                 p.DataEmissao.Year == ano &&
                 p.DataEmissao.Month == numeroMes
             ).ToList();
 
             if (pedidosFiltrados.Count == 0)
             {
-                MessageBox.Show($"Nenhum pedido encontrado para {mes}/{ano}.",
+                MessageBox.Show($"Nenhum pedido finalizado encontrado para {mes}/{ano}.",
                     "Histórico", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            // Criar relatório
-            string relatorio = $"HISTÓRICO DE PEDIDOS - {mes}/{ano}\n\n";
-            relatorio += $"Total de pedidos: {pedidosFiltrados.Count}\n\n";
-
-            decimal totalGeral = 0;
-
-            foreach (var pedido in pedidosFiltrados)
+            // Abrir tela de lista de histórico
+            using (FormListaHistorico formLista = new FormListaHistorico(pedidosFiltrados, mes, ano))
             {
-                relatorio += $"Pedido #{pedido.Id} - {pedido.Cliente}\n";
-                relatorio += $"Data: {pedido.DataEmissao:dd/MM/yyyy}\n";
-                relatorio += $"Valor: {pedido.TotalGeral:C}\n";
-                relatorio += $"Status: {pedido.Status}\n\n";
-                totalGeral += pedido.TotalGeral;
-            }
-
-            relatorio += $"\nVALOR TOTAL DO PERÍODO: {totalGeral:C}";
-
-            using (FormRelatorio formRel = new FormRelatorio(relatorio, $"Histórico - {mes}/{ano}"))
-            {
-                formRel.ShowDialog();
+                formLista.ShowDialog();
             }
         }
 
         private void BtnBackup_Click(object sender, EventArgs e)
         {
+            // Abrir tela de backup
             using (FormBackup formBackup = new FormBackup())
             {
                 formBackup.ShowDialog();
