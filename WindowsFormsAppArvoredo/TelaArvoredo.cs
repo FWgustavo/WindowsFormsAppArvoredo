@@ -22,6 +22,8 @@ namespace WindowsFormsAppArvoredo
         private List<Orcamento> pedidos = new List<Orcamento>();
         private List<Cliente> clientes = new List<Cliente>();
         private List<Orcamento> pedidosFinalizados = new List<Orcamento>();
+        private List<Usuario> usuarios = new List<Usuario>();
+        private string abaCadastroAtiva = "clientes";
 
         // VARIÁVEIS DO HISTÓRICO
         private int anoSelecionado = 0;
@@ -818,20 +820,60 @@ namespace WindowsFormsAppArvoredo
             panelCadastro.BackColor = Color.Transparent;
             panelCadastro.Controls.Clear();
 
+            // Container principal
             Panel containerPrincipal = new Panel();
             containerPrincipal.Name = "containerPrincipal";
             containerPrincipal.Location = new Point(30, 30);
             containerPrincipal.Size = new Size(720, 530);
             containerPrincipal.BackColor = Color.FromArgb(239, 212, 172);
             containerPrincipal.BorderStyle = BorderStyle.FixedSingle;
-
-
             panelCadastro.Controls.Add(containerPrincipal);
 
+            // Painel de abas
+            Panel panelAbas = new Panel();
+            panelAbas.Name = "panelAbas";
+            panelAbas.Location = new Point(20, 20);
+            panelAbas.Size = new Size(680, 50);
+            panelAbas.BackColor = Color.Transparent;
+            containerPrincipal.Controls.Add(panelAbas);
+
+            // Botão aba Clientes
+            Button btnAbaClientes = new Button();
+            btnAbaClientes.Name = "btnAbaClientes";
+            btnAbaClientes.Text = "👥 CLIENTES";
+            btnAbaClientes.Location = new Point(0, 0);
+            btnAbaClientes.Size = new Size(200, 50);
+            btnAbaClientes.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+            btnAbaClientes.BackColor = Color.FromArgb(144, 238, 144);
+            btnAbaClientes.ForeColor = Color.Black;
+            btnAbaClientes.FlatStyle = FlatStyle.Flat;
+            btnAbaClientes.FlatAppearance.BorderSize = 0;
+            btnAbaClientes.Cursor = Cursors.Hand;
+            btnAbaClientes.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAbaClientes.Width, btnAbaClientes.Height, 15, 15));
+            btnAbaClientes.Click += (s, e) => TrocarAbaCadastro("clientes");
+            panelAbas.Controls.Add(btnAbaClientes);
+
+            // Botão aba Usuários
+            Button btnAbaUsuarios = new Button();
+            btnAbaUsuarios.Name = "btnAbaUsuarios";
+            btnAbaUsuarios.Text = "👤 USUÁRIOS";
+            btnAbaUsuarios.Location = new Point(210, 0);
+            btnAbaUsuarios.Size = new Size(200, 50);
+            btnAbaUsuarios.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+            btnAbaUsuarios.BackColor = Color.FromArgb(221, 160, 221);
+            btnAbaUsuarios.ForeColor = Color.Black;
+            btnAbaUsuarios.FlatStyle = FlatStyle.Flat;
+            btnAbaUsuarios.FlatAppearance.BorderSize = 0;
+            btnAbaUsuarios.Cursor = Cursors.Hand;
+            btnAbaUsuarios.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAbaUsuarios.Width, btnAbaUsuarios.Height, 15, 15));
+            btnAbaUsuarios.Click += (s, e) => TrocarAbaCadastro("usuarios");
+            panelAbas.Controls.Add(btnAbaUsuarios);
+
+            // Barra de pesquisa
             TextBox txtPesquisaCadastro = new TextBox();
             txtPesquisaCadastro.Name = "txtPesquisaCadastro";
-            txtPesquisaCadastro.Location = new Point(260, 25);
-            txtPesquisaCadastro.Size = new Size(320, 35);
+            txtPesquisaCadastro.Location = new Point(20, 85);
+            txtPesquisaCadastro.Size = new Size(520, 35);
             txtPesquisaCadastro.Font = new Font("Gagalin", 10F);
             txtPesquisaCadastro.ForeColor = Color.Gray;
             txtPesquisaCadastro.Text = "BARRA DE PESQUISA";
@@ -853,11 +895,12 @@ namespace WindowsFormsAppArvoredo
                     txtPesquisaCadastro.ForeColor = Color.Gray;
                 }
             };
-            txtPesquisaCadastro.TextChanged += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
+            txtPesquisaCadastro.TextChanged += (s, e) => FiltrarCadastros(txtPesquisaCadastro.Text);
             containerPrincipal.Controls.Add(txtPesquisaCadastro);
 
+            // Botão pesquisar
             Button btnPesquisar = new Button();
-            btnPesquisar.Location = new Point(585, 25);
+            btnPesquisar.Location = new Point(545, 85);
             btnPesquisar.Size = new Size(35, 35);
             btnPesquisar.BackColor = Color.White;
             btnPesquisar.FlatStyle = FlatStyle.Flat;
@@ -867,33 +910,97 @@ namespace WindowsFormsAppArvoredo
             btnPesquisar.ForeColor = Color.FromArgb(57, 27, 1);
             btnPesquisar.Text = "🔍";
             btnPesquisar.Cursor = Cursors.Hand;
-            btnPesquisar.Click += (s, e) => FiltrarClientes(txtPesquisaCadastro.Text);
+            btnPesquisar.Click += (s, e) => FiltrarCadastros(txtPesquisaCadastro.Text);
             containerPrincipal.Controls.Add(btnPesquisar);
 
-            Button btnAdicionarCliente = new Button();
-            btnAdicionarCliente.Name = "btnAdicionarCliente";
-            btnAdicionarCliente.Location = new Point(625, 25);
-            btnAdicionarCliente.Size = new Size(35, 35);
-            btnAdicionarCliente.Text = "+";
-            btnAdicionarCliente.Font = new Font("Arial", 18F, FontStyle.Bold);
-            btnAdicionarCliente.BackColor = Color.FromArgb(144, 238, 144);
-            btnAdicionarCliente.ForeColor = Color.Black;
-            btnAdicionarCliente.FlatStyle = FlatStyle.Flat;
-            btnAdicionarCliente.FlatAppearance.BorderSize = 1;
-            btnAdicionarCliente.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
-            btnAdicionarCliente.Cursor = Cursors.Hand;
-            btnAdicionarCliente.Click += btnAdicionarClienteDireto_Click;
-            containerPrincipal.Controls.Add(btnAdicionarCliente);
+            // Botão adicionar
+            Button btnAdicionar = new Button();
+            btnAdicionar.Name = "btnAdicionar";
+            btnAdicionar.Location = new Point(585, 85);
+            btnAdicionar.Size = new Size(35, 35);
+            btnAdicionar.Text = "+";
+            btnAdicionar.Font = new Font("Arial", 18F, FontStyle.Bold);
+            btnAdicionar.BackColor = Color.FromArgb(144, 238, 144);
+            btnAdicionar.ForeColor = Color.Black;
+            btnAdicionar.FlatStyle = FlatStyle.Flat;
+            btnAdicionar.FlatAppearance.BorderSize = 1;
+            btnAdicionar.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnAdicionar.Cursor = Cursors.Hand;
+            btnAdicionar.Click += btnAdicionarCadastro_Click;
+            containerPrincipal.Controls.Add(btnAdicionar);
 
-            Panel containerClientes = new Panel();
-            containerClientes.Name = "containerClientes";
-            containerClientes.Location = new Point(20, 75);
-            containerClientes.Size = new Size(680, 440);
-            containerClientes.BackColor = Color.Transparent;
-            containerClientes.AutoScroll = true;
-            containerPrincipal.Controls.Add(containerClientes);
+            // Container de conteúdo
+            Panel containerConteudo = new Panel();
+            containerConteudo.Name = "containerConteudo";
+            containerConteudo.Location = new Point(20, 135);
+            containerConteudo.Size = new Size(680, 380);
+            containerConteudo.BackColor = Color.Transparent;
+            containerConteudo.AutoScroll = true;
+            containerPrincipal.Controls.Add(containerConteudo);
 
-            AtualizarListaClientes();
+            CarregarDadosExemploUsuarios();
+            TrocarAbaCadastro("clientes");
+        }
+
+        private void TrocarAbaCadastro(string aba)
+        {
+            abaCadastroAtiva = aba;
+
+            // Atualizar cores dos botões de aba
+            if (panelCadastro == null) return;
+            Panel containerPrincipal = panelCadastro.Controls.Find("containerPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal == null) return;
+
+            Panel panelAbas = containerPrincipal.Controls.Find("panelAbas", false).FirstOrDefault() as Panel;
+            if (panelAbas != null)
+            {
+                Button btnAbaClientes = panelAbas.Controls.Find("btnAbaClientes", false).FirstOrDefault() as Button;
+                Button btnAbaUsuarios = panelAbas.Controls.Find("btnAbaUsuarios", false).FirstOrDefault() as Button;
+
+                if (btnAbaClientes != null)
+                {
+                    btnAbaClientes.BackColor = aba == "clientes" ? Color.FromArgb(144, 238, 144) : Color.FromArgb(200, 200, 200);
+                }
+
+                if (btnAbaUsuarios != null)
+                {
+                    btnAbaUsuarios.BackColor = aba == "usuarios" ? Color.FromArgb(221, 160, 221) : Color.FromArgb(200, 200, 200);
+                }
+            }
+
+            // Atualizar lista
+            if (aba == "clientes")
+            {
+                AtualizarListaClientes();
+            }
+            else
+            {
+                AtualizarListaUsuarios();
+            }
+        }
+
+        private void FiltrarCadastros(string filtro)
+        {
+            if (abaCadastroAtiva == "clientes")
+            {
+                FiltrarClientes(filtro);
+            }
+            else
+            {
+                FiltrarUsuarios(filtro);
+            }
+        }
+
+        private void btnAdicionarCadastro_Click(object sender, EventArgs e)
+        {
+            if (abaCadastroAtiva == "clientes")
+            {
+                btnAdicionarClienteDireto_Click(sender, e);
+            }
+            else
+            {
+                btnAdicionarUsuarioDireto_Click(sender, e);
+            }
         }
 
         private void btnAdicionarClienteDireto_Click(object sender, EventArgs e)
@@ -908,6 +1015,93 @@ namespace WindowsFormsAppArvoredo
                     AtualizarListaClientes();
                     MessageBox.Show("Cliente cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+            }
+        }
+
+        private void btnAdicionarUsuarioDireto_Click(object sender, EventArgs e)
+        {
+            using (FormCadastroUsuario formCadastro = new FormCadastroUsuario())
+            {
+                if (formCadastro.ShowDialog() == DialogResult.OK)
+                {
+                    var novoUsuario = formCadastro.UsuarioCriado;
+                    novoUsuario.Id = usuarios.Count + 1;
+                    usuarios.Add(novoUsuario);
+                    AtualizarListaUsuarios();
+                    MessageBox.Show("Usuário cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void AtualizarListaClientes(List<Cliente> clientesFiltrados = null)
+        {
+            if (panelCadastro == null) return;
+
+            Panel containerPrincipal = panelCadastro.Controls.Find("containerPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal == null) return;
+
+            Panel containerConteudo = containerPrincipal.Controls.Find("containerConteudo", false).FirstOrDefault() as Panel;
+            if (containerConteudo == null) return;
+
+            containerConteudo.Controls.Clear();
+
+            var listaExibir = clientesFiltrados ?? clientes;
+            int yPosition = 10;
+
+            foreach (var cliente in listaExibir)
+            {
+                Panel cardCliente = CriarCardCliente(cliente);
+                cardCliente.Location = new Point(10, yPosition);
+                containerConteudo.Controls.Add(cardCliente);
+                yPosition += cardCliente.Height + 15;
+            }
+
+            if (listaExibir.Count == 0)
+            {
+                Label lblVazio = new Label();
+                lblVazio.Text = "Nenhum cliente encontrado.";
+                lblVazio.Location = new Point(150, 150);
+                lblVazio.Size = new Size(400, 30);
+                lblVazio.Font = new Font("Gagalin", 12F);
+                lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
+                lblVazio.TextAlign = ContentAlignment.MiddleCenter;
+                containerConteudo.Controls.Add(lblVazio);
+            }
+        }
+
+        private void AtualizarListaUsuarios(List<Usuario> usuariosFiltrados = null)
+        {
+            if (panelCadastro == null) return;
+
+            Panel containerPrincipal = panelCadastro.Controls.Find("containerPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal == null) return;
+
+            Panel containerConteudo = containerPrincipal.Controls.Find("containerConteudo", false).FirstOrDefault() as Panel;
+            if (containerConteudo == null) return;
+
+            containerConteudo.Controls.Clear();
+
+            var listaExibir = usuariosFiltrados ?? usuarios;
+            int yPosition = 10;
+
+            foreach (var usuario in listaExibir)
+            {
+                Panel cardUsuario = CriarCardUsuario(usuario);
+                cardUsuario.Location = new Point(10, yPosition);
+                containerConteudo.Controls.Add(cardUsuario);
+                yPosition += cardUsuario.Height + 15;
+            }
+
+            if (listaExibir.Count == 0)
+            {
+                Label lblVazio = new Label();
+                lblVazio.Text = "Nenhum usuário encontrado.";
+                lblVazio.Location = new Point(150, 150);
+                lblVazio.Size = new Size(400, 30);
+                lblVazio.Font = new Font("Gagalin", 12F);
+                lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
+                lblVazio.TextAlign = ContentAlignment.MiddleCenter;
+                containerConteudo.Controls.Add(lblVazio);
             }
         }
 
@@ -1035,40 +1229,110 @@ namespace WindowsFormsAppArvoredo
             return card;
         }
 
-        private void AtualizarListaClientes(List<Cliente> clientesFiltrados = null)
+        private Panel CriarCardUsuario(Usuario usuario)
         {
-            if (panelCadastro == null) return;
+            Panel card = new Panel();
+            card.Size = new Size(640, 120);
+            card.BackColor = Color.FromArgb(198, 143, 86);
+            card.BorderStyle = BorderStyle.FixedSingle;
+            card.Margin = new Padding(0, 0, 0, 15);
 
-            Panel containerPrincipal = panelCadastro.Controls.Find("containerPrincipal", false).FirstOrDefault() as Panel;
-            if (containerPrincipal == null) return;
+            // Painel do nome
+            Panel panelNome = new Panel();
+            panelNome.Location = new Point(0, 0);
+            panelNome.Size = new Size(640, 40);
+            panelNome.BackColor = Color.FromArgb(239, 212, 172);
+            card.Controls.Add(panelNome);
 
-            Panel containerClientes = containerPrincipal.Controls.Find("containerClientes", false).FirstOrDefault() as Panel;
-            if (containerClientes == null) return;
+            Label lblNome = new Label();
+            lblNome.Text = usuario.Nome.ToUpper();
+            lblNome.Location = new Point(15, 8);
+            lblNome.Size = new Size(450, 24);
+            lblNome.Font = new Font("Gagalin", 10F, FontStyle.Bold);
+            lblNome.ForeColor = Color.FromArgb(57, 27, 1);
+            lblNome.TextAlign = ContentAlignment.MiddleLeft;
+            panelNome.Controls.Add(lblNome);
 
-            containerClientes.Controls.Clear();
+            // Status (Ativo/Inativo)
+            Label lblStatus = new Label();
+            lblStatus.Text = usuario.Ativo ? "✅ ATIVO" : "❌ INATIVO";
+            lblStatus.Location = new Point(480, 8);
+            lblStatus.Size = new Size(145, 24);
+            lblStatus.Font = new Font("Gagalin", 9F, FontStyle.Bold);
+            lblStatus.ForeColor = usuario.Ativo ? Color.Green : Color.Red;
+            lblStatus.TextAlign = ContentAlignment.MiddleRight;
+            panelNome.Controls.Add(lblStatus);
 
-            var listaExibir = clientesFiltrados ?? clientes;
-            int yPosition = 10;
+            // Login
+            Label lblLoginLabel = new Label();
+            lblLoginLabel.Text = "LOGIN:";
+            lblLoginLabel.Location = new Point(15, 50);
+            lblLoginLabel.Size = new Size(100, 16);
+            lblLoginLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblLoginLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblLoginLabel);
 
-            foreach (var cliente in listaExibir)
-            {
-                Panel cardCliente = CriarCardCliente(cliente);
-                cardCliente.Location = new Point(10, yPosition);
-                containerClientes.Controls.Add(cardCliente);
-                yPosition += cardCliente.Height + 15;
-            }
+            Label lblLogin = new Label();
+            lblLogin.Text = usuario.Login;
+            lblLogin.Location = new Point(320, 50);
+            lblLogin.Size = new Size(300, 16);
+            lblLogin.Font = new Font("Gagalin", 7F);
+            lblLogin.ForeColor = Color.FromArgb(57, 27, 1);
+            lblLogin.TextAlign = ContentAlignment.TopRight;
+            card.Controls.Add(lblLogin);
 
-            if (listaExibir.Count == 0)
-            {
-                Label lblVazio = new Label();
-                lblVazio.Text = "Nenhum cliente encontrado.";
-                lblVazio.Location = new Point(150, 150);
-                lblVazio.Size = new Size(400, 30);
-                lblVazio.Font = new Font("Gagalin", 12F);
-                lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
-                lblVazio.TextAlign = ContentAlignment.MiddleCenter;
-                containerClientes.Controls.Add(lblVazio);
-            }
+            // E-mail
+            Label lblEmailLabel = new Label();
+            lblEmailLabel.Text = "E-MAIL:";
+            lblEmailLabel.Location = new Point(15, 70);
+            lblEmailLabel.Size = new Size(100, 16);
+            lblEmailLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblEmailLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblEmailLabel);
+
+            Label lblEmail = new Label();
+            lblEmail.Text = usuario.Email;
+            lblEmail.Location = new Point(220, 70);
+            lblEmail.Size = new Size(400, 16);
+            lblEmail.Font = new Font("Gagalin", 7F);
+            lblEmail.ForeColor = Color.FromArgb(57, 27, 1);
+            lblEmail.TextAlign = ContentAlignment.TopRight;
+            card.Controls.Add(lblEmail);
+
+            // Perfil
+            Label lblPerfilLabel = new Label();
+            lblPerfilLabel.Text = "PERFIL:";
+            lblPerfilLabel.Location = new Point(15, 90);
+            lblPerfilLabel.Size = new Size(100, 16);
+            lblPerfilLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblPerfilLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            card.Controls.Add(lblPerfilLabel);
+
+            Label lblPerfil = new Label();
+            lblPerfil.Text = usuario.Perfil;
+            lblPerfil.Location = new Point(320, 90);
+            lblPerfil.Size = new Size(200, 16);
+            lblPerfil.Font = new Font("Gagalin", 7F, FontStyle.Bold);
+            lblPerfil.ForeColor = Color.FromArgb(57, 27, 1);
+            lblPerfil.TextAlign = ContentAlignment.TopRight;
+            card.Controls.Add(lblPerfil);
+
+            // Botão detalhes
+            Button btnDetalhes = new Button();
+            btnDetalhes.Text = "DETALHES";
+            btnDetalhes.Location = new Point(520, 85);
+            btnDetalhes.Size = new Size(100, 30);
+            btnDetalhes.Font = new Font("Gagalin", 7F, FontStyle.Bold);
+            btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
+            btnDetalhes.ForeColor = Color.FromArgb(57, 27, 1);
+            btnDetalhes.FlatStyle = FlatStyle.Flat;
+            btnDetalhes.FlatAppearance.BorderSize = 0;
+            btnDetalhes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnDetalhes.Cursor = Cursors.Hand;
+            btnDetalhes.Click += (s, e) => AbrirDetalhesUsuario(usuario);
+            card.Controls.Add(btnDetalhes);
+
+            return card;
         }
 
         private void FiltrarClientes(string filtro)
@@ -1088,6 +1352,23 @@ namespace WindowsFormsAppArvoredo
             AtualizarListaClientes(clientesFiltrados);
         }
 
+        private void FiltrarUsuarios(string filtro)
+        {
+            if (string.IsNullOrWhiteSpace(filtro) || filtro == "BARRA DE PESQUISA")
+            {
+                AtualizarListaUsuarios();
+                return;
+            }
+
+            var usuariosFiltrados = usuarios.Where(u =>
+                u.Nome.ToLower().Contains(filtro.ToLower()) ||
+                u.Login.ToLower().Contains(filtro.ToLower()) ||
+                u.Email.ToLower().Contains(filtro.ToLower())
+            ).ToList();
+
+            AtualizarListaUsuarios(usuariosFiltrados);
+        }
+
         private void AbrirDetalhesCliente(Cliente cliente)
         {
             using (FormCadastroCliente formDetalhes = new FormCadastroCliente(cliente))
@@ -1101,6 +1382,24 @@ namespace WindowsFormsAppArvoredo
                         clientes[index] = clienteAtualizado;
                         AtualizarListaClientes();
                         MessageBox.Show("Cliente atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+        }
+
+        private void AbrirDetalhesUsuario(Usuario usuario)
+        {
+            using (FormCadastroUsuario formDetalhes = new FormCadastroUsuario(usuario))
+            {
+                if (formDetalhes.ShowDialog() == DialogResult.OK)
+                {
+                    var usuarioAtualizado = formDetalhes.UsuarioCriado;
+                    int index = usuarios.FindIndex(u => u.Id == usuario.Id);
+                    if (index >= 0)
+                    {
+                        usuarios[index] = usuarioAtualizado;
+                        AtualizarListaUsuarios();
+                        MessageBox.Show("Usuário atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
@@ -1150,6 +1449,43 @@ namespace WindowsFormsAppArvoredo
                 Cep = "55555-666",
                 Endereco = "Rua XV de Novembro, 789",
                 Bairro = "Vila Nova"
+            });
+        }
+
+        private void CarregarDadosExemploUsuarios()
+        {
+            if (usuarios.Count > 0) return;
+
+            usuarios.Clear();
+            usuarios.Add(new Usuario
+            {
+                Id = 1,
+                Nome = "Administrador",
+                Login = "admin",
+                Senha = "admin123",
+                Email = "admin@arvoredo.com.br",
+                Perfil = "Admin",
+                Ativo = true
+            });
+            usuarios.Add(new Usuario
+            {
+                Id = 2,
+                Nome = "João Silva",
+                Login = "joao.silva",
+                Senha = "senha123",
+                Email = "joao.silva@arvoredo.com.br",
+                Perfil = "Vendedor",
+                Ativo = true
+            });
+            usuarios.Add(new Usuario
+            {
+                Id = 3,
+                Nome = "Maria Santos",
+                Login = "maria.santos",
+                Senha = "senha123",
+                Email = "maria.santos@arvoredo.com.br",
+                Perfil = "Usuario",
+                Ativo = false
             });
         }
 
