@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySqlX.XDevAPI;
 
@@ -51,6 +52,7 @@ namespace WindowsFormsAppArvoredo
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.Text = "Sistema Arvoredo";
         }
+
 
         private void TelaArvoredo_Load(object sender, EventArgs e)
         {
@@ -123,7 +125,7 @@ namespace WindowsFormsAppArvoredo
             ConfigurarEstoque();
             ConfigurarPedidos();
             ConfigurarPanelTitulos();
-            CarregarDadosExemplo();
+            CarregarProdutosDaAPIAsync();
             CarregarDadosExemploClientes();
             ConfigurarPainelCadastro();
             ConfigurarPanelHistorico();
@@ -400,15 +402,7 @@ namespace WindowsFormsAppArvoredo
 
         private void CarregarDadosExemplo()
         {
-            produtos.Clear();
-            produtos.Add(new Produto { Sequencia = 1, Descricao = "Tábua Eucalipto 2x10", Tipo = "Eucalipto", Quantidade = 45, QuantidadeMinima = 20, ValorUnitario = 35.50m, UltimaAtualizacao = DateTime.Now.AddDays(-2), Unidade = "m" });
-            produtos.Add(new Produto { Sequencia = 2, Descricao = "Viga Peroba 6x12", Tipo = "Peroba", Quantidade = 15, QuantidadeMinima = 25, ValorUnitario = 125.00m, UltimaAtualizacao = DateTime.Now.AddDays(-1), Unidade = "m" });
-            produtos.Add(new Produto { Sequencia = 3, Descricao = "Ripão Câmbara 5x7", Tipo = "Câmbara", Quantidade = 32, QuantidadeMinima = 15, ValorUnitario = 28.75m, UltimaAtualizacao = DateTime.Now.AddDays(-3), Unidade = "m" });
-            produtos.Add(new Produto { Sequencia = 4, Descricao = "Caibro Pinnus 5x6", Tipo = "Pinnus", Quantidade = 67, QuantidadeMinima = 30, ValorUnitario = 18.90m, UltimaAtualizacao = DateTime.Now, Unidade = "m" });
-            produtos.Add(new Produto { Sequencia = 5, Descricao = "Testeira 2x20", Tipo = "Testeira", Quantidade = 8, QuantidadeMinima = 12, ValorUnitario = 42.30m, UltimaAtualizacao = DateTime.Now.AddDays(-4), Unidade = "m" });
-            produtos.Add(new Produto { Sequencia = 6, Descricao = "Prancha Eucalipto 3x30", Tipo = "Eucalipto", Quantidade = 22, QuantidadeMinima = 10, ValorUnitario = 65.80m, UltimaAtualizacao = DateTime.Now.AddDays(-1), Unidade = "m" });
-
-            AtualizarListaEstoque();
+            
         }
 
         private void AtualizarListViewOrcamentos()
@@ -736,7 +730,40 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private void EditarProduto(Produto produto)
+        private async void btnNovoProduto_Click(object sender, EventArgs e)
+        {
+            using (var form = new FormNovoProduto())
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    var novo = form.ProdutoCriado;
+                    novo.UltimaAtualizacao = DateTime.Now;
+
+                    // Salvar na API
+                    bool salvou = await SalvarProdutoNaAPIAsync(novo);
+
+                    if (salvou)
+                    {
+                        // Adicionar à lista local
+                        produtos.Add(novo);
+
+                        // Reindexar
+                        for (int i = 0; i < produtos.Count; i++)
+                            produtos[i].Sequencia = produtos[i].Sequencia > 0 ? produtos[i].Sequencia : i + 1;
+
+                        AtualizarListaEstoque();
+
+                        MessageBox.Show(
+                            "Produto cadastrado com sucesso!",
+                            "Sucesso",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                }
+            }
+        }
+
+        private async void EditarProduto(Produto produto)
         {
             if (produto == null) return;
 
@@ -744,39 +771,186 @@ namespace WindowsFormsAppArvoredo
             {
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    AtualizarListaEstoque();
-                    MessageBox.Show("Produto atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Salvar na API
+                    bool salvou = await SalvarProdutoNaAPIAsync(produto);
+
+                    if (salvou)
+                    {
+                        AtualizarListaEstoque();
+                        MessageBox.Show(
+                            "Produto atualizado com sucesso!",
+                            "Sucesso",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
                 }
             }
         }
 
-        private void ExcluirProduto(Produto produto)
+        private async Task CarregarProdutosDaAPIAsync()
         {
-            if (produto == null) return;
-
-            var result = MessageBox.Show($"Tem certeza que deseja excluir o produto '{produto.Descricao}'?", "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
+            try
             {
-                produtos.Remove(produto);
-                for (int i = 0; i < produtos.Count; i++)
-                    produtos[i].Sequencia = i + 1;
+                // Buscar produtos da API
+                var produtosAPI = await ApiClient.GetAsync<List<ProdutoAPI>>("/produtos");
 
-                AtualizarListaEstoque();
-                MessageBox.Show("Produto excluído.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (produtosAPI != null && produtosAPI.Count > 0)
+                {
+                    produtos.Clear();
+
+                    foreach (var prodAPI in produtosAPI)
+                    {
+                        produtos.Add(new Produto
+                        {
+                            Sequencia = prodAPI.id,
+                            Descricao = prodAPI.nome,
+                            Tipo = ObterNomeMadeira(prodAPI.madeiraId),
+                            Quantidade = prodAPI.quantidade,
+                            QuantidadeMinima = prodAPI.quantidadeMin,
+                            ValorUnitario = (decimal)prodAPI.valor,
+                            Unidade = prodAPI.unidade ?? "m",
+                            UltimaAtualizacao = DateTime.Now
+                        });
+                    }
+
+                    AtualizarListaEstoque();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Erro ao carregar produtos da API: {ex.Message}\n\nUsando dados locais.",
+                    "Aviso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                // Carrega dados de exemplo se a API falhar
+                CarregarDadosExemplo();
             }
         }
 
-        private void btnNovoProduto_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Salva um produto na API
+        /// </summary>
+        private async Task<bool> SalvarProdutoNaAPIAsync(Produto produto)
         {
-            using (var form = new FormNovoProduto())
+            try
             {
-                if (form.ShowDialog() == DialogResult.OK)
+                var produtoAPI = new ProdutoAPICreate
                 {
-                    var novo = form.ProdutoCriado;
-                    novo.Sequencia = produtos.Count + 1;
-                    novo.UltimaAtualizacao = DateTime.Now;
-                    produtos.Add(novo);
+                    nome = produto.Descricao,
+                    valor = (double)produto.ValorUnitario,
+                    unidade = produto.Unidade,
+                    quantidade = (int)produto.Quantidade,
+                    quantidadeMin = produto.QuantidadeMinima,
+                    ativo = true
+                };
+
+                if (produto.Sequencia > 0)
+                {
+                    // Atualizar produto existente
+                    await ApiClient.PutAsync<ProdutoAPICreate, ProdutoAPI>(
+                        $"/produtos/{produto.Sequencia}",
+                        produtoAPI);
+                }
+                else
+                {
+                    // Criar novo produto
+                    var novoProduto = await ApiClient.PostAsync<ProdutoAPICreate, ProdutoAPI>(
+                        "/produtos",
+                        produtoAPI);
+
+                    if (novoProduto != null)
+                    {
+                        produto.Sequencia = novoProduto.id;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Erro ao salvar produto na API: {ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Exclui um produto da API
+        /// </summary>
+        private async Task<bool> ExcluirProdutoDaAPIAsync(int produtoId)
+        {
+            try
+            {
+                bool sucesso = await ApiClient.DeleteAsync($"/produtos/{produtoId}");
+                return sucesso;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Erro ao excluir produto da API: {ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Obtém o nome da madeira por ID (mock - você pode buscar da API também)
+        /// </summary>
+        private string ObterNomeMadeira(int? madeiraId)
+        {
+            if (!madeiraId.HasValue) return "Sem tipo";
+
+            // Aqui você pode fazer uma chamada à API para buscar o nome real da madeira
+            // Por enquanto, retornamos tipos genéricos
+            switch (madeiraId)
+            {
+                case 1: return "Eucalipto";
+                case 2: return "Peroba";
+                case 3: return "Câmbara";
+                case 4: return "Pinnus";
+                default: return $"Madeira {madeiraId}";
+            }
+        }
+
+
+        private async void ExcluirProduto(Produto produto)
+        {
+            if (produto == null) return;
+
+            var result = MessageBox.Show(
+                $"Tem certeza que deseja excluir o produto '{produto.Descricao}'?",
+                "Confirmar Exclusão",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                // Excluir da API
+                bool excluiu = await ExcluirProdutoDaAPIAsync(produto.Sequencia);
+
+                if (excluiu)
+                {
+                    produtos.Remove(produto);
+
+                    // Reindexar
+                    for (int i = 0; i < produtos.Count; i++)
+                        produtos[i].Sequencia = i + 1;
+
                     AtualizarListaEstoque();
+                    MessageBox.Show(
+                        "Produto excluído com sucesso!",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
                 }
             }
         }

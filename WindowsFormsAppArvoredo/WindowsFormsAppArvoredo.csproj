@@ -190,6 +190,7 @@
     </Compile>
     <Compile Include="Orcamento.cs" />
     <Compile Include="Produto.cs" />
+    <Compile Include="ProdutoAPI.cs" />
     <Compile Include="ProdutoEstoque.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

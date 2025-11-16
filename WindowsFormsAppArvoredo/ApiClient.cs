@@ -10,8 +10,8 @@ namespace WindowsFormsAppArvoredo
     public class ApiClient
     {
         private static readonly HttpClient client = new HttpClient();
-        private static string baseUrl = "https://arvoredoapi.vercel.app"; // Substitua pela URL da sua API
-        private static string apiKey = "68e553e6f1c4fffd11c95840"; // Será configurado pelo usuário
+        private static string baseUrl = "https://arvoredoapi.vercel.app"; 
+        private static string apiKey = "68e553e6f1c4fffd11c95840"; 
 
         static ApiClient()
         {
