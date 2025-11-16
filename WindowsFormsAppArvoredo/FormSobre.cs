@@ -196,11 +196,12 @@ namespace WindowsFormsAppArvoredo
             btnSobre.Location = new Point((containerConfig.Width - btnSobre.Width) / 3, 260);
             btnSobre.Size = new Size(250, 40);
             btnSobre.Font = new Font("Gagalin", 10F, FontStyle.Bold);
-            btnSobre.BackColor = Color.FromArgb(255, 218, 185);
+            btnSobre.BackColor = Color.FromArgb(198, 143, 86);
             btnSobre.ForeColor = Color.Black;
             btnSobre.FlatStyle = FlatStyle.Flat;
-            btnSobre.FlatAppearance.BorderSize = 2;
+            btnSobre.FlatAppearance.BorderSize = 0;
             btnSobre.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnSobre.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSobre.Width, btnSobre.Height, 25, 25));
             btnSobre.Cursor = Cursors.Hand;
             btnSobre.Click += BtnSobre_Click;
             containerConfig.Controls.Add(btnSobre);

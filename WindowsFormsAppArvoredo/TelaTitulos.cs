@@ -19,6 +19,8 @@ namespace WindowsFormsAppArvoredo
         private TextBox txtDescontos;
         private TextBox txtAcrescimos;
         private TextBox txtTotalVista;
+        private Label lblCidade;
+        private Label lblUF;
 
         public TelaTitulos(Orcamento pedido)
         {
@@ -50,6 +52,20 @@ namespace WindowsFormsAppArvoredo
             txtNumero.Text = pedidoSelecionado.Numero ?? "";
             txtVendedor.Text = pedidoSelecionado.Vendedor;
             txtFormaPagamento.Text = pedidoSelecionado.FormaPagamento ?? "Dinheiro";
+
+            // labels
+            lblCidade = new Label();
+            lblCidade.Text = "Cidade:";
+            lblCidade.Location = new Point(450, 213);
+            lblCidade.Size = new Size(60, 20);
+            lblCidade.Font = new Font("Microsoft Sans Serif", 10F);
+            this.Controls.Add(lblCidade);
+            lblUF = new Label();
+            lblUF.Text = "UF:";
+            lblUF.Location = new Point(450, 240);
+            lblUF.Size = new Size(30, 20);
+            lblUF.Font = new Font("Microsoft Sans Serif", 10F);
+            this.Controls.Add(lblUF);
 
             // Criar DataGridView para produtos
             CriarGridProdutos();

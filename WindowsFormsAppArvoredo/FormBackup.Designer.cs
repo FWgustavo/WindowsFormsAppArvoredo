@@ -62,7 +62,7 @@ namespace WindowsFormsAppArvoredo
             this.chkCompactar.BackColor = System.Drawing.Color.Transparent;
             this.chkCompactar.Checked = true;
             this.chkCompactar.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCompactar.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Regular);
+            this.chkCompactar.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular);
             this.chkCompactar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.chkCompactar.Location = new System.Drawing.Point(50, 145);
             this.chkCompactar.Name = "chkCompactar";
@@ -86,9 +86,9 @@ namespace WindowsFormsAppArvoredo
             this.btnRestaurarBackup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(173)))), ((int)(((byte)(216)))), ((int)(((byte)(230)))));
             this.btnRestaurarBackup.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnRestaurarBackup.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnRestaurarBackup.FlatAppearance.BorderSize = 2;
+            this.btnRestaurarBackup.FlatAppearance.BorderSize = 0;
             this.btnRestaurarBackup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRestaurarBackup.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Bold);
+            this.btnRestaurarBackup.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold);
             this.btnRestaurarBackup.ForeColor = System.Drawing.Color.Black;
             this.btnRestaurarBackup.Location = new System.Drawing.Point(400, 155);
             this.btnRestaurarBackup.Name = "btnRestaurarBackup";
@@ -104,9 +104,9 @@ namespace WindowsFormsAppArvoredo
             this.btnExcluirBackup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(182)))), ((int)(((byte)(193)))));
             this.btnExcluirBackup.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExcluirBackup.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnExcluirBackup.FlatAppearance.BorderSize = 2;
+            this.btnExcluirBackup.FlatAppearance.BorderSize = 0;
             this.btnExcluirBackup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExcluirBackup.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Bold);
+            this.btnExcluirBackup.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold);
             this.btnExcluirBackup.ForeColor = System.Drawing.Color.Black;
             this.btnExcluirBackup.Location = new System.Drawing.Point(400, 195);
             this.btnExcluirBackup.Name = "btnExcluirBackup";
@@ -122,9 +122,9 @@ namespace WindowsFormsAppArvoredo
             this.btnAbrirPasta.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(218)))), ((int)(((byte)(185)))));
             this.btnAbrirPasta.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAbrirPasta.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnAbrirPasta.FlatAppearance.BorderSize = 2;
+            this.btnAbrirPasta.FlatAppearance.BorderSize = 0;
             this.btnAbrirPasta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAbrirPasta.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Bold);
+            this.btnAbrirPasta.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Bold);
             this.btnAbrirPasta.ForeColor = System.Drawing.Color.Black;
             this.btnAbrirPasta.Location = new System.Drawing.Point(400, 235);
             this.btnAbrirPasta.Name = "btnAbrirPasta";
@@ -140,9 +140,9 @@ namespace WindowsFormsAppArvoredo
             this.btnCriarArquivo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
             this.btnCriarArquivo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCriarArquivo.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnCriarArquivo.FlatAppearance.BorderSize = 2;
+            this.btnCriarArquivo.FlatAppearance.BorderSize = 0;
             this.btnCriarArquivo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCriarArquivo.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Bold);
+            this.btnCriarArquivo.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold);
             this.btnCriarArquivo.ForeColor = System.Drawing.Color.Black;
             this.btnCriarArquivo.Location = new System.Drawing.Point(400, 105);
             this.btnCriarArquivo.Name = "btnCriarArquivo";
@@ -158,9 +158,9 @@ namespace WindowsFormsAppArvoredo
             this.btnVoltar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.btnVoltar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnVoltar.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.btnVoltar.FlatAppearance.BorderSize = 2;
+            this.btnVoltar.FlatAppearance.BorderSize = 0;
             this.btnVoltar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnVoltar.Font = new System.Drawing.Font("Gagalin", 10F, System.Drawing.FontStyle.Bold);
+            this.btnVoltar.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold);
             this.btnVoltar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.btnVoltar.Location = new System.Drawing.Point(275, 500);
             this.btnVoltar.Name = "btnVoltar";
@@ -175,7 +175,7 @@ namespace WindowsFormsAppArvoredo
             // 
             this.lblTituloCriar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.lblTituloCriar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblTituloCriar.Font = new System.Drawing.Font("Gagalin", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTituloCriar.Font = new System.Drawing.Font("Arial", 14F, System.Drawing.FontStyle.Bold);
             this.lblTituloCriar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblTituloCriar.Location = new System.Drawing.Point(50, 30);
             this.lblTituloCriar.Name = "lblTituloCriar";
@@ -183,11 +183,10 @@ namespace WindowsFormsAppArvoredo
             this.lblTituloCriar.TabIndex = 8;
             this.lblTituloCriar.Text = "CRIAR NOVO BACKUP";
             this.lblTituloCriar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblTituloCriar.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, 300, 35, 20, 20));
             // 
             // lblNomeBackup
             // 
-            this.lblNomeBackup.Font = new System.Drawing.Font("Gagalin", 9F, System.Drawing.FontStyle.Regular);
+            this.lblNomeBackup.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular);
             this.lblNomeBackup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblNomeBackup.Location = new System.Drawing.Point(50, 85);
             this.lblNomeBackup.Name = "lblNomeBackup";
@@ -199,7 +198,7 @@ namespace WindowsFormsAppArvoredo
             // 
             this.lblTituloAcoes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.lblTituloAcoes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblTituloAcoes.Font = new System.Drawing.Font("Gagalin", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTituloAcoes.Font = new System.Drawing.Font("Arial", 14F, System.Drawing.FontStyle.Bold);
             this.lblTituloAcoes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblTituloAcoes.Location = new System.Drawing.Point(400, 30);
             this.lblTituloAcoes.Name = "lblTituloAcoes";
@@ -207,13 +206,12 @@ namespace WindowsFormsAppArvoredo
             this.lblTituloAcoes.TabIndex = 10;
             this.lblTituloAcoes.Text = "AÇÕES";
             this.lblTituloAcoes.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblTituloAcoes.Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, 250, 35, 20, 20));
             // 
             // lblListaArquivos
             // 
             this.lblListaArquivos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.lblListaArquivos.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblListaArquivos.Font = new System.Drawing.Font("Gagalin", 7F, System.Drawing.FontStyle.Bold);
+            this.lblListaArquivos.Font = new System.Drawing.Font("Arial", 7F, System.Drawing.FontStyle.Bold);
             this.lblListaArquivos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblListaArquivos.Location = new System.Drawing.Point(35, 280);
             this.lblListaArquivos.Name = "lblListaArquivos";

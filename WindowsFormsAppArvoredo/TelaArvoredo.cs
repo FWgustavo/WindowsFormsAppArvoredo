@@ -16,7 +16,7 @@ namespace WindowsFormsAppArvoredo
         private static extern IntPtr CreateRoundRectRgn(
            int nLeft, int nTop, int nRight, int nBottom,
            int nWidthEllipse, int nHeightEllipse);
-
+        
         private List<Orcamento> orcamentos = new List<Orcamento>();
         private List<Produto> produtos = new List<Produto>();
         private List<Orcamento> pedidos = new List<Orcamento>();
@@ -385,14 +385,17 @@ namespace WindowsFormsAppArvoredo
             listViewOrcamentos.Columns.Add("Status", 100);
             listViewOrcamentos.Columns.Add("Ações", 100);
 
-            listViewOrcamentos.OwnerDraw = true;
+            listViewOrcamentos.OwnerDraw = false;
+
             listViewOrcamentos.DrawItem -= ListViewOrcamentos_DrawItem;
             listViewOrcamentos.DrawSubItem -= ListViewOrcamentos_DrawSubItem;
             listViewOrcamentos.DrawColumnHeader -= ListViewOrcamentos_DrawColumnHeader;
 
-            listViewOrcamentos.DrawItem += ListViewOrcamentos_DrawItem;
-            listViewOrcamentos.DrawSubItem += ListViewOrcamentos_DrawSubItem;
-            listViewOrcamentos.DrawColumnHeader += ListViewOrcamentos_DrawColumnHeader;
+            listViewOrcamentos.FullRowSelect = true;
+            listViewOrcamentos.HideSelection = false;
+            listViewOrcamentos.HotTracking = false;
+            listViewOrcamentos.BackColor = Color.FromArgb(239, 212, 172);
+            listViewOrcamentos.ForeColor = Color.FromArgb(57, 21, 1);
         }
 
         private void CarregarDadosExemplo()
@@ -451,7 +454,7 @@ namespace WindowsFormsAppArvoredo
         private void ListViewOrcamentos_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
             Color textColor = Color.FromArgb(57, 27, 1);
-            Font font = new Font("Gagalin", 9F, FontStyle.Regular);
+            Font font = new Font("Arial", 9F, FontStyle.Regular);
             StringFormat format = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
 
             using (SolidBrush brush = new SolidBrush(textColor))
@@ -700,7 +703,7 @@ namespace WindowsFormsAppArvoredo
                     textColor = Color.Green;
             }
 
-            Font font = new Font("Gagalin", 9F, FontStyle.Regular);
+            Font font = new Font("Arial", 9F, FontStyle.Regular);
             StringFormat format = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near };
 
             using (SolidBrush brush = new SolidBrush(textColor))
@@ -874,7 +877,7 @@ namespace WindowsFormsAppArvoredo
             txtPesquisaCadastro.Name = "txtPesquisaCadastro";
             txtPesquisaCadastro.Location = new Point(20, 85);
             txtPesquisaCadastro.Size = new Size(520, 35);
-            txtPesquisaCadastro.Font = new Font("Gagalin", 10F);
+            txtPesquisaCadastro.Font = new Font("Arial", 10F);
             txtPesquisaCadastro.ForeColor = Color.Gray;
             txtPesquisaCadastro.Text = "BARRA DE PESQUISA";
             txtPesquisaCadastro.BorderStyle = BorderStyle.FixedSingle;
@@ -1062,7 +1065,7 @@ namespace WindowsFormsAppArvoredo
                 lblVazio.Text = "Nenhum cliente encontrado.";
                 lblVazio.Location = new Point(150, 150);
                 lblVazio.Size = new Size(400, 30);
-                lblVazio.Font = new Font("Gagalin", 12F);
+                lblVazio.Font = new Font("Arial", 12F);
                 lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
                 lblVazio.TextAlign = ContentAlignment.MiddleCenter;
                 containerConteudo.Controls.Add(lblVazio);
@@ -1098,7 +1101,7 @@ namespace WindowsFormsAppArvoredo
                 lblVazio.Text = "Nenhum usuário encontrado.";
                 lblVazio.Location = new Point(150, 150);
                 lblVazio.Size = new Size(400, 30);
-                lblVazio.Font = new Font("Gagalin", 12F);
+                lblVazio.Font = new Font("Arial", 12F);
                 lblVazio.ForeColor = Color.FromArgb(57, 27, 1);
                 lblVazio.TextAlign = ContentAlignment.MiddleCenter;
                 containerConteudo.Controls.Add(lblVazio);
@@ -1132,7 +1135,7 @@ namespace WindowsFormsAppArvoredo
             lblCpfLabel.Text = "CPF/CNPJ:";
             lblCpfLabel.Location = new Point(15, 50);
             lblCpfLabel.Size = new Size(200, 16);
-            lblCpfLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblCpfLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblCpfLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblCpfLabel);
 
@@ -1140,7 +1143,7 @@ namespace WindowsFormsAppArvoredo
             lblCpf.Text = cliente.CpfCnpj;
             lblCpf.Location = new Point(320, 50);
             lblCpf.Size = new Size(300, 16);
-            lblCpf.Font = new Font("Gagalin", 7F);
+            lblCpf.Font = new Font("Arial", 7F);
             lblCpf.ForeColor = Color.FromArgb(57, 27, 1);
             lblCpf.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblCpf);
@@ -1149,7 +1152,7 @@ namespace WindowsFormsAppArvoredo
             lblTelLabel.Text = "TELEFONE/CELL:";
             lblTelLabel.Location = new Point(15, 70);
             lblTelLabel.Size = new Size(200, 16);
-            lblTelLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblTelLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblTelLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblTelLabel);
 
@@ -1157,7 +1160,7 @@ namespace WindowsFormsAppArvoredo
             lblTelefone.Text = cliente.Telefone;
             lblTelefone.Location = new Point(320, 70);
             lblTelefone.Size = new Size(300, 16);
-            lblTelefone.Font = new Font("Gagalin", 7F);
+            lblTelefone.Font = new Font("Arial", 7F);
             lblTelefone.ForeColor = Color.FromArgb(57, 27, 1);
             lblTelefone.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblTelefone);
@@ -1166,7 +1169,7 @@ namespace WindowsFormsAppArvoredo
             lblCepLabel.Text = "CEP/MUNICÍPIO:";
             lblCepLabel.Location = new Point(15, 90);
             lblCepLabel.Size = new Size(200, 16);
-            lblCepLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblCepLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblCepLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblCepLabel);
 
@@ -1174,7 +1177,7 @@ namespace WindowsFormsAppArvoredo
             lblCep.Text = cliente.Cep;
             lblCep.Location = new Point(320, 90);
             lblCep.Size = new Size(300, 16);
-            lblCep.Font = new Font("Gagalin", 7F);
+            lblCep.Font = new Font("Arial", 7F);
             lblCep.ForeColor = Color.FromArgb(57, 27, 1);
             lblCep.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblCep);
@@ -1183,7 +1186,7 @@ namespace WindowsFormsAppArvoredo
             lblEndLabel.Text = "ENDEREÇO:";
             lblEndLabel.Location = new Point(15, 110);
             lblEndLabel.Size = new Size(200, 16);
-            lblEndLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblEndLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblEndLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblEndLabel);
 
@@ -1191,7 +1194,7 @@ namespace WindowsFormsAppArvoredo
             lblEndereco.Text = cliente.Endereco;
             lblEndereco.Location = new Point(220, 110);
             lblEndereco.Size = new Size(400, 16);
-            lblEndereco.Font = new Font("Gagalin", 7F);
+            lblEndereco.Font = new Font("Arial", 7F);
             lblEndereco.ForeColor = Color.FromArgb(57, 27, 1);
             lblEndereco.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblEndereco);
@@ -1200,7 +1203,7 @@ namespace WindowsFormsAppArvoredo
             lblBairroLabel.Text = "BAIRRO:";
             lblBairroLabel.Location = new Point(15, 130);
             lblBairroLabel.Size = new Size(70, 16);
-            lblBairroLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblBairroLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblBairroLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblBairroLabel);
 
@@ -1208,7 +1211,7 @@ namespace WindowsFormsAppArvoredo
             lblBairro.Text = cliente.Bairro;
             lblBairro.Location = new Point(90, 130);
             lblBairro.Size = new Size(350, 16);
-            lblBairro.Font = new Font("Gagalin", 7F);
+            lblBairro.Font = new Font("Arial", 7F);
             lblBairro.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblBairro);
 
@@ -1216,7 +1219,7 @@ namespace WindowsFormsAppArvoredo
             btnDetalhes.Text = "DETALHES";
             btnDetalhes.Location = new Point(520, 120);
             btnDetalhes.Size = new Size(100, 30);
-            btnDetalhes.Font = new Font("Gagalin", 7F, FontStyle.Bold);
+            btnDetalhes.Font = new Font("Arial", 7F, FontStyle.Bold);
             btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
             btnDetalhes.ForeColor = Color.FromArgb(57, 27, 1);
             btnDetalhes.FlatStyle = FlatStyle.Flat;
@@ -1268,7 +1271,7 @@ namespace WindowsFormsAppArvoredo
             lblLoginLabel.Text = "LOGIN:";
             lblLoginLabel.Location = new Point(15, 50);
             lblLoginLabel.Size = new Size(100, 16);
-            lblLoginLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblLoginLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblLoginLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblLoginLabel);
 
@@ -1276,7 +1279,7 @@ namespace WindowsFormsAppArvoredo
             lblLogin.Text = usuario.Login;
             lblLogin.Location = new Point(320, 50);
             lblLogin.Size = new Size(300, 16);
-            lblLogin.Font = new Font("Gagalin", 7F);
+            lblLogin.Font = new Font("Arial", 7F);
             lblLogin.ForeColor = Color.FromArgb(57, 27, 1);
             lblLogin.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblLogin);
@@ -1286,7 +1289,7 @@ namespace WindowsFormsAppArvoredo
             lblEmailLabel.Text = "E-MAIL:";
             lblEmailLabel.Location = new Point(15, 70);
             lblEmailLabel.Size = new Size(100, 16);
-            lblEmailLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblEmailLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblEmailLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblEmailLabel);
 
@@ -1294,7 +1297,7 @@ namespace WindowsFormsAppArvoredo
             lblEmail.Text = usuario.Email;
             lblEmail.Location = new Point(220, 70);
             lblEmail.Size = new Size(400, 16);
-            lblEmail.Font = new Font("Gagalin", 7F);
+            lblEmail.Font = new Font("Arial", 7F);
             lblEmail.ForeColor = Color.FromArgb(57, 27, 1);
             lblEmail.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblEmail);
@@ -1304,7 +1307,7 @@ namespace WindowsFormsAppArvoredo
             lblPerfilLabel.Text = "PERFIL:";
             lblPerfilLabel.Location = new Point(15, 90);
             lblPerfilLabel.Size = new Size(100, 16);
-            lblPerfilLabel.Font = new Font("Gagalin", 7F, FontStyle.Regular);
+            lblPerfilLabel.Font = new Font("Arial", 7F, FontStyle.Regular);
             lblPerfilLabel.ForeColor = Color.FromArgb(57, 27, 1);
             card.Controls.Add(lblPerfilLabel);
 
@@ -1312,7 +1315,7 @@ namespace WindowsFormsAppArvoredo
             lblPerfil.Text = usuario.Perfil;
             lblPerfil.Location = new Point(320, 90);
             lblPerfil.Size = new Size(200, 16);
-            lblPerfil.Font = new Font("Gagalin", 7F, FontStyle.Bold);
+            lblPerfil.Font = new Font("Arial", 7F, FontStyle.Bold);
             lblPerfil.ForeColor = Color.FromArgb(57, 27, 1);
             lblPerfil.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblPerfil);
@@ -1322,7 +1325,7 @@ namespace WindowsFormsAppArvoredo
             btnDetalhes.Text = "DETALHES";
             btnDetalhes.Location = new Point(520, 85);
             btnDetalhes.Size = new Size(100, 30);
-            btnDetalhes.Font = new Font("Gagalin", 7F, FontStyle.Bold);
+            btnDetalhes.Font = new Font("Arial", 7F, FontStyle.Bold);
             btnDetalhes.BackColor = Color.FromArgb(239, 212, 172);
             btnDetalhes.ForeColor = Color.FromArgb(57, 27, 1);
             btnDetalhes.FlatStyle = FlatStyle.Flat;
@@ -1613,7 +1616,6 @@ namespace WindowsFormsAppArvoredo
                 cardPedido.Location = new Point(20, yPosition);
                 cardPedido.BackColor = Color.FromArgb(239, 212, 172);
                 cardPedido.BorderStyle = BorderStyle.FixedSingle;
-                cardPedido.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, cardPedido.Width, cardPedido.Height, 20, 20));
 
                 Label lblNumero = new Label();
                 lblNumero.Text = $"N°{pedido.Id} - {pedido.Cliente.ToUpper()}";
@@ -1666,7 +1668,6 @@ namespace WindowsFormsAppArvoredo
                 btnDetalhes.FlatAppearance.BorderSize = 1;
                 btnDetalhes.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
                 btnDetalhes.Cursor = Cursors.Hand;
-                btnDetalhes.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnDetalhes.Width, btnDetalhes.Height, 10, 10));
                 btnDetalhes.Click += (s, e) => AbrirDetalhesPedido(pedido);
                 cardPedido.Controls.Add(btnDetalhes);
 
@@ -1897,7 +1898,7 @@ namespace WindowsFormsAppArvoredo
                 btnMes.Text = mes;
                 btnMes.Location = new Point(mesX, mesY);
                 btnMes.Size = new Size(150, 60);
-                btnMes.Font = new Font("Gagalin", 10F, FontStyle.Bold);
+                btnMes.Font = new Font("Arial", 10F, FontStyle.Bold);
                 btnMes.BackColor = Color.FromArgb(198, 143, 86);
                 btnMes.ForeColor = Color.FromArgb(57, 27, 1);
                 btnMes.FlatStyle = FlatStyle.Flat;
@@ -1924,7 +1925,7 @@ namespace WindowsFormsAppArvoredo
             btnBackup.Text = "BACKUP";
             btnBackup.Location = new Point(295, 325);
             btnBackup.Size = new Size(150, 40);
-            btnBackup.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+            btnBackup.Font = new Font("Arial", 12F, FontStyle.Bold);
             btnBackup.BackColor = Color.FromArgb(144, 238, 144);
             btnBackup.ForeColor = Color.Black;
             btnBackup.FlatStyle = FlatStyle.Flat;
@@ -2006,7 +2007,7 @@ namespace WindowsFormsAppArvoredo
                 btnAno.Name = $"btnAno{ano}";
                 btnAno.Location = new Point(xPos, 0);
                 btnAno.Size = new Size(100, 40);
-                btnAno.Font = new Font("Gagalin", 12F, FontStyle.Bold);
+                btnAno.Font = new Font("Arial", 12F, FontStyle.Bold);
                 btnAno.BackColor = anoSelecionado == ano ? Color.FromArgb(198, 143, 86) : Color.White;
                 btnAno.ForeColor = anoSelecionado == ano ? Color.White : Color.FromArgb(57, 27, 1);
                 btnAno.FlatStyle = FlatStyle.Flat;
