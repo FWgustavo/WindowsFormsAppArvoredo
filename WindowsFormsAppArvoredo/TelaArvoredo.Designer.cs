@@ -63,6 +63,7 @@ namespace WindowsFormsAppArvoredo
             this.btnAtualizarEstoque = new System.Windows.Forms.Button();
             this.btnNovoProduto = new System.Windows.Forms.Button();
             this.panelHistorico = new System.Windows.Forms.Panel();
+            this.panelCaixa = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -70,6 +71,7 @@ namespace WindowsFormsAppArvoredo
             this.panel2.SuspendLayout();
             this.panelOrcamento.SuspendLayout();
             this.panelEstoque.SuspendLayout();
+            this.panelHistorico.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMenu
@@ -482,10 +484,18 @@ namespace WindowsFormsAppArvoredo
             // panelHistorico
             // 
             this.panelHistorico.BackColor = System.Drawing.Color.Transparent;
+            this.panelHistorico.Controls.Add(this.panelCaixa);
             this.panelHistorico.Location = new System.Drawing.Point(303, 73);
             this.panelHistorico.Name = "panelHistorico";
             this.panelHistorico.Size = new System.Drawing.Size(777, 585);
             this.panelHistorico.TabIndex = 0;
+            // 
+            // panelCaixa
+            // 
+            this.panelCaixa.Location = new System.Drawing.Point(1, 3);
+            this.panelCaixa.Name = "panelCaixa";
+            this.panelCaixa.Size = new System.Drawing.Size(771, 578);
+            this.panelCaixa.TabIndex = 0;
             // 
             // TelaArvoredo
             // 
@@ -514,6 +524,7 @@ namespace WindowsFormsAppArvoredo
             this.panelOrcamento.PerformLayout();
             this.panelEstoque.ResumeLayout(false);
             this.panelEstoque.PerformLayout();
+            this.panelHistorico.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -553,5 +564,6 @@ namespace WindowsFormsAppArvoredo
         private System.Windows.Forms.Panel panelCadastro;
         private Panel panelTitulos;
         private Panel panelHistorico;
+        private Panel panelCaixa;
     }
 }
