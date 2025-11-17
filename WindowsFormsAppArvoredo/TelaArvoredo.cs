@@ -1972,6 +1972,225 @@ namespace WindowsFormsAppArvoredo
 
         #endregion
 
+        #region Caixa
+
+        private void ConfigurarPanelCaixa()
+        {
+            if (panelCaixa == null)
+            {
+                panelCaixa = new Panel();
+                panelCaixa.Name = "panelCaixa";
+                panelCaixa.Location = new Point(301, 74);
+                panelCaixa.Size = new Size(783, 587);
+                panelCaixa.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                panelCaixa.BackColor = Color.Transparent;
+                panelCaixa.Visible = false;
+                this.Controls.Add(panelCaixa);
+            }
+
+            panelCaixa.Controls.Clear();
+
+            // Logo
+            PictureBox picLogo = new PictureBox();
+            picLogo.Location = new Point(20, 15);
+            picLogo.Size = new Size(80, 60);
+            picLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            try { picLogo.Image = Properties.Resources.logo1; } catch { }
+            panelCaixa.Controls.Add(picLogo);
+
+            // Título HISTÓRICO
+            Label lblHistorico = new Label();
+            lblHistorico.Text = "HISTÓRICO";
+            lblHistorico.Location = new Point(120, 15);
+            lblHistorico.Size = new Size(200, 30);
+            lblHistorico.Font = new Font("Gagalin", 14F, FontStyle.Bold);
+            lblHistorico.ForeColor = Color.FromArgb(57, 27, 1);
+            lblHistorico.BackColor = Color.Transparent;
+            panelCaixa.Controls.Add(lblHistorico);
+
+            // Botão CADASTRO
+            Button btnCadastro = new Button();
+            btnCadastro.Text = "CADASTRO";
+            btnCadastro.Location = new Point(340, 20);
+            btnCadastro.Size = new Size(130, 30);
+            btnCadastro.Font = new Font("Arial", 10F, FontStyle.Bold);
+            btnCadastro.BackColor = Color.FromArgb(239, 212, 172);
+            btnCadastro.ForeColor = Color.FromArgb(57, 27, 1);
+            btnCadastro.FlatStyle = FlatStyle.Flat;
+            btnCadastro.FlatAppearance.BorderSize = 0;
+            btnCadastro.Cursor = Cursors.Hand;
+            btnCadastro.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCadastro.Width, btnCadastro.Height, 15, 15));
+            panelCaixa.Controls.Add(btnCadastro);
+
+            // Botão CAIXA (ativo)
+            Button btnCaixaAtivo = new Button();
+            btnCaixaAtivo.Text = "CAIXA";
+            btnCaixaAtivo.Location = new Point(480, 20);
+            btnCaixaAtivo.Size = new Size(130, 30);
+            btnCaixaAtivo.Font = new Font("Arial", 10F, FontStyle.Bold);
+            btnCaixaAtivo.BackColor = Color.FromArgb(255, 140, 0);
+            btnCaixaAtivo.ForeColor = Color.White;
+            btnCaixaAtivo.FlatStyle = FlatStyle.Flat;
+            btnCaixaAtivo.FlatAppearance.BorderSize = 0;
+            btnCaixaAtivo.Cursor = Cursors.Hand;
+            btnCaixaAtivo.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCaixaAtivo.Width, btnCaixaAtivo.Height, 15, 15));
+            panelCaixa.Controls.Add(btnCaixaAtivo);
+
+            // Botão SAIR (X)
+            Button btnSairCaixa = new Button();
+            btnSairCaixa.Text = "X";
+            btnSairCaixa.Location = new Point(620, 20);
+            btnSairCaixa.Size = new Size(40, 30);
+            btnSairCaixa.Font = new Font("Arial", 12F, FontStyle.Bold);
+            btnSairCaixa.BackColor = Color.FromArgb(239, 212, 172);
+            btnSairCaixa.ForeColor = Color.FromArgb(57, 27, 1);
+            btnSairCaixa.FlatStyle = FlatStyle.Flat;
+            btnSairCaixa.FlatAppearance.BorderSize = 0;
+            btnSairCaixa.Cursor = Cursors.Hand;
+            btnSairCaixa.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSairCaixa.Width, btnSairCaixa.Height, 15, 15));
+            btnSairCaixa.Click += (s, e) => { panelCaixa.Visible = false; panelOrcamento.Visible = true; btnOrcamento_Click(null, null); };
+            panelCaixa.Controls.Add(btnSairCaixa);
+
+            // Container de transações
+            Panel containerTransacoes = new Panel();
+            containerTransacoes.Location = new Point(20, 70);
+            containerTransacoes.Size = new Size(740, 420);
+            containerTransacoes.BackColor = Color.FromArgb(239, 212, 172);
+            containerTransacoes.BorderStyle = BorderStyle.FixedSingle;
+            containerTransacoes.AutoScroll = true;
+            panelCaixa.Controls.Add(containerTransacoes);
+
+            // Cabeçalho das transações
+            Label lblCabecalho = new Label();
+            lblCabecalho.Text = "DATA           COMPROU/RECEBEU                    VALOR          D/L";
+            lblCabecalho.Location = new Point(20, 10);
+            lblCabecalho.Size = new Size(690, 20);
+            lblCabecalho.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblCabecalho.ForeColor = Color.FromArgb(57, 27, 1);
+            lblCabecalho.BackColor = Color.Transparent;
+            containerTransacoes.Controls.Add(lblCabecalho);
+
+            // Adicionar transações de exemplo
+            AdicionarTransacoesCaixa(containerTransacoes);
+
+            // Painel de ação inferior
+            Panel panelAcaoInferior = new Panel();
+            panelAcaoInferior.Location = new Point(20, 500);
+            panelAcaoInferior.Size = new Size(740, 70);
+            panelAcaoInferior.BackColor = Color.Transparent;
+            panelCaixa.Controls.Add(panelAcaoInferior);
+
+            // Label TOTAL
+            Label lblTotal = new Label();
+            lblTotal.Text = "TOTAL:";
+            lblTotal.Location = new Point(480, 15);
+            lblTotal.Size = new Size(80, 25);
+            lblTotal.Font = new Font("Arial", 14F, FontStyle.Bold);
+            lblTotal.ForeColor = Color.FromArgb(57, 27, 1);
+            lblTotal.TextAlign = ContentAlignment.MiddleRight;
+            panelAcaoInferior.Controls.Add(lblTotal);
+
+            // Valor total
+            Label lblValorTotal = new Label();
+            lblValorTotal.Text = "12.000,00";
+            lblValorTotal.Location = new Point(565, 15);
+            lblValorTotal.Size = new Size(150, 25);
+            lblValorTotal.Font = new Font("Arial", 14F, FontStyle.Bold);
+            lblValorTotal.ForeColor = Color.FromArgb(57, 27, 1);
+            lblValorTotal.TextAlign = ContentAlignment.MiddleRight;
+            panelAcaoInferior.Controls.Add(lblValorTotal);
+
+            // Botão GERAR RELATÓRIO ANUAL
+            Button btnGerarRelatorio = new Button();
+            btnGerarRelatorio.Text = "GERAR RELATÓRIO ANUAL";
+            btnGerarRelatorio.Location = new Point(250, 10);
+            btnGerarRelatorio.Size = new Size(240, 40);
+            btnGerarRelatorio.Font = new Font("Arial", 10F, FontStyle.Bold);
+            btnGerarRelatorio.BackColor = Color.FromArgb(239, 212, 172);
+            btnGerarRelatorio.ForeColor = Color.FromArgb(57, 27, 1);
+            btnGerarRelatorio.FlatStyle = FlatStyle.Flat;
+            btnGerarRelatorio.FlatAppearance.BorderSize = 2;
+            btnGerarRelatorio.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnGerarRelatorio.Cursor = Cursors.Hand;
+            btnGerarRelatorio.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnGerarRelatorio.Width, btnGerarRelatorio.Height, 20, 20));
+            btnGerarRelatorio.Click += BtnGerarRelatorioAnual_Click;
+            panelAcaoInferior.Controls.Add(btnGerarRelatorio);
+        }
+
+        private void AdicionarTransacoesCaixa(Panel container)
+        {
+            // Dados de exemplo
+            var transacoes = new[]
+            {
+                new { Data = "20/03/2025", Tipo = "COMPROU MADEIRA", Valor = "40.000,00", Status = "D" },
+                new { Data = "20/03/2025", Tipo = "RECEBEU PÁSCANO", Valor = "7.850,95", Status = "L" }
+            };
+
+            int yPos = 40;
+            foreach (var transacao in transacoes)
+            {
+                Panel itemTransacao = new Panel();
+                itemTransacao.Location = new Point(20, yPos);
+                itemTransacao.Size = new Size(690, 30);
+                itemTransacao.BackColor = Color.White;
+                itemTransacao.BorderStyle = BorderStyle.FixedSingle;
+
+                Label lblData = new Label();
+                lblData.Text = transacao.Data;
+                lblData.Location = new Point(10, 5);
+                lblData.Size = new Size(90, 20);
+                lblData.Font = new Font("Arial", 9F);
+                lblData.ForeColor = Color.FromArgb(57, 27, 1);
+                itemTransacao.Controls.Add(lblData);
+
+                Label lblTipo = new Label();
+                lblTipo.Text = transacao.Tipo;
+                lblTipo.Location = new Point(110, 5);
+                lblTipo.Size = new Size(300, 20);
+                lblTipo.Font = new Font("Arial", 9F);
+                lblTipo.ForeColor = Color.FromArgb(57, 27, 1);
+                itemTransacao.Controls.Add(lblTipo);
+
+                Label lblValor = new Label();
+                lblValor.Text = transacao.Valor;
+                lblValor.Location = new Point(420, 5);
+                lblValor.Size = new Size(150, 20);
+                lblValor.Font = new Font("Arial", 9F);
+                lblValor.ForeColor = Color.FromArgb(57, 27, 1);
+                lblValor.TextAlign = ContentAlignment.TopRight;
+                itemTransacao.Controls.Add(lblValor);
+
+                Label lblStatus = new Label();
+                lblStatus.Text = transacao.Status;
+                lblStatus.Location = new Point(580, 5);
+                lblStatus.Size = new Size(100, 20);
+                lblStatus.Font = new Font("Arial", 9F, FontStyle.Bold);
+                lblStatus.ForeColor = transacao.Status == "D" ? Color.Red : Color.Green;
+                lblStatus.TextAlign = ContentAlignment.TopRight;
+                itemTransacao.Controls.Add(lblStatus);
+
+                container.Controls.Add(itemTransacao);
+                yPos += 35;
+            }
+        }
+
+        private void BtnGerarRelatorioAnual_Click(object sender, EventArgs e)
+        {
+            // Criar e exibir o form de seleção de ano
+            using (FormSelecionarAnoRelatorio formAno = new FormSelecionarAnoRelatorio())
+            {
+                if (formAno.ShowDialog() == DialogResult.OK)
+                {
+                    int anoSelecionado = formAno.AnoSelecionado;
+                    MessageBox.Show($"Relatório anual de {anoSelecionado} será gerado!",
+                        "Gerar Relatório", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Aqui você implementaria a lógica de geração do relatório
+                }
+            }
+        }
+
+        #endregion
+
         #region Histórico
 
         private void ConfigurarPanelHistorico()
