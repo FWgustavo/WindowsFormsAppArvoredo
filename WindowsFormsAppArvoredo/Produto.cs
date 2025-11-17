@@ -13,6 +13,9 @@ namespace WindowsFormsAppArvoredo
         public string Unidade { get; set; }
         public decimal Quantidade { get; set; }
         public int QuantidadeMinima { get; set; }
+        public Boolean Acabando { get; set; }
+        public int? MadeiraId { get; set; }
+        public int? TamanhoId { get; set; }
         public decimal ValorUnitario { get; set; }
         public decimal ValorTotal => Quantidade * ValorUnitario;
         public DateTime UltimaAtualizacao { get; set; }
