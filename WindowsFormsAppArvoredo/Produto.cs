@@ -7,6 +7,7 @@ namespace WindowsFormsAppArvoredo
     /// </summary>
     public class Produto
     {
+        public int Id { get; set; }
         public int Sequencia { get; set; }
         public string Descricao { get; set; }
         public string Tipo { get; set; }

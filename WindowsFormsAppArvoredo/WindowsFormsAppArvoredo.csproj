@@ -194,6 +194,7 @@
     <Compile Include="FormSobre.Designer.cs">
       <DependentUpon>FormSobre.cs</DependentUpon>
     </Compile>
+    <Compile Include="Madeira.cs" />
     <Compile Include="Orcamento.cs" />
     <Compile Include="Produto.cs" />
     <Compile Include="ProdutoAPI.cs" />

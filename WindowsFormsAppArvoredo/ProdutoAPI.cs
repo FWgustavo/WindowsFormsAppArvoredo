@@ -22,6 +22,10 @@ namespace WindowsFormsAppArvoredo
         public bool ativo { get; set; }
         public bool acabando { get; set; }
         public int? fornecedorId { get; set; }
+
+        // Objetos relacionados (incluídos na resposta da API)
+        public MadeiraAPI madeira { get; set; }
+        public TamanhoAPI tamanho { get; set; }
     }
 
     /// <summary>
@@ -38,6 +42,7 @@ namespace WindowsFormsAppArvoredo
         public int quantidadeMin { get; set; }
         public bool ativo { get; set; }
         public int? fornecedorId { get; set; }
+
     }
 
     /// <summary>
@@ -50,6 +55,7 @@ namespace WindowsFormsAppArvoredo
         public bool ativo { get; set; }
         public int? fornecedorId { get; set; }
     }
+
 
     /// <summary>
     /// Modelo de tamanho da API

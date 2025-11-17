@@ -143,7 +143,11 @@ namespace WindowsFormsAppArvoredo
                     QuantidadeMinima = (int)numQuantidadeMinima.Value,
                     Unidade = txtUnidade.Text.Trim(),
                     ValorUnitario = numPreco.Value,
-                    UltimaAtualizacao = DateTime.Now
+                    UltimaAtualizacao = DateTime.Now,
+                  
+                    Acabando = numQuantidade.Value <= numQuantidadeMinima.Value,
+                    MadeiraId = cmbMadeira.SelectedValue as int?,
+                    TamanhoId = cmbTamanho.SelectedValue as int?
                 };
             }
 

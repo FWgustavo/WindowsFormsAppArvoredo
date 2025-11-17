@@ -20,6 +20,7 @@ namespace WindowsFormsAppArvoredo
         
         private List<Orcamento> orcamentos = new List<Orcamento>();
         private List<Produto> produtos = new List<Produto>();
+        private List<Madeira> madeira = new List<Madeira>();
         private List<Orcamento> pedidos = new List<Orcamento>();
         private List<Cliente> clientes = new List<Cliente>();
         private List<Orcamento> pedidosFinalizados = new List<Orcamento>();
@@ -54,7 +55,7 @@ namespace WindowsFormsAppArvoredo
         }
 
 
-        private void TelaArvoredo_Load(object sender, EventArgs e)
+        private async void TelaArvoredo_Load(object sender, EventArgs e)
         {
             AplicarArredondamentoBotoes();
             btnTitulos.TabStop = false;
@@ -125,7 +126,7 @@ namespace WindowsFormsAppArvoredo
             ConfigurarEstoque();
             ConfigurarPedidos();
             ConfigurarPanelTitulos();
-            CarregarProdutosDaAPIAsync();
+            await CarregarProdutosDaAPIAsync();
             CarregarDadosExemploClientes();
             ConfigurarPainelCadastro();
             ConfigurarPanelHistorico();
@@ -744,14 +745,16 @@ namespace WindowsFormsAppArvoredo
 
                     if (salvou)
                     {
-                        // Adicionar à lista local
+
+                        /*// Adicionar à lista local
                         produtos.Add(novo);
 
                         // Reindexar
                         for (int i = 0; i < produtos.Count; i++)
-                            produtos[i].Sequencia = produtos[i].Sequencia > 0 ? produtos[i].Sequencia : i + 1;
+                            produtos[i].Sequencia = produtos[i].Sequencia > 0 ? produtos[i].Sequencia : i + 1;*/
+                        await CarregarProdutosDaAPIAsync();
 
-                        AtualizarListaEstoque();
+                       // AtualizarListaEstoque();
 
                         MessageBox.Show(
                             "Produto cadastrado com sucesso!",
@@ -804,7 +807,7 @@ namespace WindowsFormsAppArvoredo
                         {
                             Sequencia = prodAPI.id,
                             Descricao = prodAPI.nome,
-                            Tipo = ObterNomeMadeira(prodAPI.madeiraId),
+                            Tipo = prodAPI.madeira?.nome ?? "Produto Genérico",
                             Quantidade = prodAPI.quantidade,
                             QuantidadeMinima = prodAPI.quantidadeMin,
                             ValorUnitario = (decimal)prodAPI.valor,
@@ -843,7 +846,9 @@ namespace WindowsFormsAppArvoredo
                     unidade = produto.Unidade,
                     quantidade = (int)produto.Quantidade,
                     quantidadeMin = produto.QuantidadeMinima,
-                    ativo = true
+                    ativo = true,
+                    madeiraId = produto.MadeiraId,
+                    tamanhoId = produto.TamanhoId,                 
                 };
 
                 if (produto.Sequencia > 0)
@@ -905,20 +910,22 @@ namespace WindowsFormsAppArvoredo
         /// <summary>
         /// Obtém o nome da madeira por ID (mock - você pode buscar da API também)
         /// </summary>
-        private string ObterNomeMadeira(int? madeiraId)
+        private  string ObterNomeMadeira(int? madeiraId)
         {
-            if (!madeiraId.HasValue) return "Sem tipo";
 
-            // Aqui você pode fazer uma chamada à API para buscar o nome real da madeira
-            // Por enquanto, retornamos tipos genéricos
-            switch (madeiraId)
-            {
-                case 1: return "Eucalipto";
-                case 2: return "Peroba";
-                case 3: return "Câmbara";
-                case 4: return "Pinnus";
-                default: return $"Madeira {madeiraId}";
-            }
+           
+             if (!madeiraId.HasValue) return "Sem tipo";
+
+             // Aqui você pode fazer uma chamada à API para buscar o nome real da madeira
+             // Por enquanto, retornamos tipos genéricos
+             switch (madeiraId)
+             {
+                 case 1: return "Eucalipto";
+                 case 2: return "Peroba";
+                 case 3: return "Câmbara";
+                 case 4: return "Pinnus";
+                 default: return $"Madeira {madeiraId}";
+             }
         }
 
 
