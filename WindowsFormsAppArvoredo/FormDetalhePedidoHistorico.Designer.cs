@@ -52,6 +52,7 @@ namespace WindowsFormsAppArvoredo
             lblEndereco.Location = new Point(100, 20);
             lblEndereco.Size = new Size(300, 16);
             lblEndereco.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblEndereco.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblEndereco);
 
             // Cabeçalho - Fone
@@ -60,6 +61,7 @@ namespace WindowsFormsAppArvoredo
             lblFone.Location = new Point(100, 40);
             lblFone.Size = new Size(220, 16);
             lblFone.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblFone.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblFone);
 
             // Data de Emissão
@@ -68,6 +70,7 @@ namespace WindowsFormsAppArvoredo
             lblDataEmissaoLabel.Location = new Point(410, 20);
             lblDataEmissaoLabel.Size = new Size(170, 16);
             lblDataEmissaoLabel.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblDataEmissaoLabel.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblDataEmissaoLabel);
 
             // Páginas
@@ -76,6 +79,7 @@ namespace WindowsFormsAppArvoredo
             lblPaginas.Location = new Point(410, 40);
             lblPaginas.Size = new Size(170, 16);
             lblPaginas.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblPaginas.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblPaginas);
 
             // Seção DADOS DO CLIENTE
@@ -84,11 +88,12 @@ namespace WindowsFormsAppArvoredo
             lblDadosCliente.Location = new Point(220, 75);
             lblDadosCliente.Size = new Size(160, 20);
             lblDadosCliente.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblDadosCliente.ForeColor = Color.FromArgb(57, 27, 1);
             lblDadosCliente.TextAlign = ContentAlignment.MiddleCenter;
             lblDadosCliente.BackColor = Color.White;
             this.Controls.Add(lblDadosCliente);
 
-            // Box dos dados do cliente
+            // Box dos dados do cliente - CORRIGIDO
             Panel boxDadosCliente = new Panel();
             boxDadosCliente.Location = new Point(30, 100);
             boxDadosCliente.Size = new Size(540, 110);
@@ -96,77 +101,94 @@ namespace WindowsFormsAppArvoredo
             boxDadosCliente.BackColor = Color.White;
             this.Controls.Add(boxDadosCliente);
 
-            // Dados do Cliente - Esquerda
-            int yCliente = 105;
+            // Dados do Cliente - DENTRO DO PANEL
+            int yCliente = 10; // Posição relativa ao panel
 
+            // COLUNA ESQUERDA
             // Cliente
             Label lblClienteLabel = new Label();
             lblClienteLabel.Text = $"CLIENTE: {pedido.Cliente}";
-            lblClienteLabel.Location = new Point(40, yCliente);
-            lblClienteLabel.Size = new Size(260, 16);
+            lblClienteLabel.Location = new Point(10, yCliente);
+            lblClienteLabel.Size = new Size(250, 16);
             lblClienteLabel.Font = new Font("Arial", 8.5F);
-            this.Controls.Add(lblClienteLabel);
+            lblClienteLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblClienteLabel.BackColor = Color.Transparent;
+            boxDadosCliente.Controls.Add(lblClienteLabel);
 
             // Endereço
             Label lblEnderecoLabel = new Label();
             lblEnderecoLabel.Text = $"ENDEREÇO: {pedido.Endereco}, {pedido.Numero}";
-            lblEnderecoLabel.Location = new Point(40, yCliente + 22);
-            lblEnderecoLabel.Size = new Size(260, 16);
+            lblEnderecoLabel.Location = new Point(10, yCliente + 22);
+            lblEnderecoLabel.Size = new Size(250, 16);
             lblEnderecoLabel.Font = new Font("Arial", 8.5F);
-            this.Controls.Add(lblEnderecoLabel);
+            lblEnderecoLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblEnderecoLabel.BackColor = Color.Transparent;
+            boxDadosCliente.Controls.Add(lblEnderecoLabel);
 
             // CEP/Município
             Label lblCepLabel = new Label();
             lblCepLabel.Text = $"CEP/MUNICÍPIO: {pedido.CEP}, {pedido.Cidade}, SP";
-            lblCepLabel.Location = new Point(40, yCliente + 44);
-            lblCepLabel.Size = new Size(260, 16);
+            lblCepLabel.Location = new Point(10, yCliente + 44);
+            lblCepLabel.Size = new Size(250, 16);
             lblCepLabel.Font = new Font("Arial", 8.5F);
-            this.Controls.Add(lblCepLabel);
+            lblCepLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblCepLabel.BackColor = Color.Transparent;
+            boxDadosCliente.Controls.Add(lblCepLabel);
 
             // Vendedor
             Label lblVendedorLabel = new Label();
             lblVendedorLabel.Text = $"VENDEDOR: {pedido.Vendedor}";
-            lblVendedorLabel.Location = new Point(40, yCliente + 66);
-            lblVendedorLabel.Size = new Size(260, 16);
+            lblVendedorLabel.Location = new Point(10, yCliente + 66);
+            lblVendedorLabel.Size = new Size(250, 16);
             lblVendedorLabel.Font = new Font("Arial", 8.5F);
-            this.Controls.Add(lblVendedorLabel);
+            lblVendedorLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblVendedorLabel.BackColor = Color.Transparent;
+            boxDadosCliente.Controls.Add(lblVendedorLabel);
 
-            // Dados do Cliente - Direita
+            // COLUNA DIREITA
             // CNPJ/CPF
             Label lblCpfLabel = new Label();
             lblCpfLabel.Text = $"CNPJ/CPF: {pedido.CPF_CNPJ}";
-            lblCpfLabel.Location = new Point(310, yCliente);
-            lblCpfLabel.Size = new Size(250, 16);
+            lblCpfLabel.Location = new Point(270, yCliente);
+            lblCpfLabel.Size = new Size(260, 16);
             lblCpfLabel.Font = new Font("Arial", 8.5F);
+            lblCpfLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblCpfLabel.BackColor = Color.Transparent;
             lblCpfLabel.TextAlign = ContentAlignment.TopLeft;
-            this.Controls.Add(lblCpfLabel);
+            boxDadosCliente.Controls.Add(lblCpfLabel);
 
             // Bairro
             Label lblBairroLabel = new Label();
-            lblBairroLabel.Text = $"BAIRRO: ID. {pedido.Bairro}";
-            lblBairroLabel.Location = new Point(310, yCliente + 22);
-            lblBairroLabel.Size = new Size(250, 16);
+            lblBairroLabel.Text = $"BAIRRO: {pedido.Bairro}";
+            lblBairroLabel.Location = new Point(270, yCliente + 22);
+            lblBairroLabel.Size = new Size(260, 16);
             lblBairroLabel.Font = new Font("Arial", 8.5F);
+            lblBairroLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblBairroLabel.BackColor = Color.Transparent;
             lblBairroLabel.TextAlign = ContentAlignment.TopLeft;
-            this.Controls.Add(lblBairroLabel);
+            boxDadosCliente.Controls.Add(lblBairroLabel);
 
             // TEL/CELL
             Label lblTelLabel = new Label();
             lblTelLabel.Text = $"TEL/CELL: {pedido.Telefone}";
-            lblTelLabel.Location = new Point(310, yCliente + 44);
-            lblTelLabel.Size = new Size(250, 16);
+            lblTelLabel.Location = new Point(270, yCliente + 44);
+            lblTelLabel.Size = new Size(260, 16);
             lblTelLabel.Font = new Font("Arial", 8.5F);
+            lblTelLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblTelLabel.BackColor = Color.Transparent;
             lblTelLabel.TextAlign = ContentAlignment.TopLeft;
-            this.Controls.Add(lblTelLabel);
+            boxDadosCliente.Controls.Add(lblTelLabel);
 
             // Fantasia
             Label lblFantasiaLabel = new Label();
-            lblFantasiaLabel.Text = "FANTASIA:";
-            lblFantasiaLabel.Location = new Point(310, yCliente + 66);
-            lblFantasiaLabel.Size = new Size(250, 16);
+            lblFantasiaLabel.Text = "FANTASIA: -";
+            lblFantasiaLabel.Location = new Point(270, yCliente + 66);
+            lblFantasiaLabel.Size = new Size(260, 16);
             lblFantasiaLabel.Font = new Font("Arial", 8.5F);
+            lblFantasiaLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            lblFantasiaLabel.BackColor = Color.Transparent;
             lblFantasiaLabel.TextAlign = ContentAlignment.TopLeft;
-            this.Controls.Add(lblFantasiaLabel);
+            boxDadosCliente.Controls.Add(lblFantasiaLabel);
 
             // Seção PRODUTOS
             Label lblProdutos = new Label();
@@ -174,11 +196,12 @@ namespace WindowsFormsAppArvoredo
             lblProdutos.Location = new Point(250, 215);
             lblProdutos.Size = new Size(100, 20);
             lblProdutos.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblProdutos.ForeColor = Color.FromArgb(57, 27, 1);
             lblProdutos.TextAlign = ContentAlignment.MiddleCenter;
             lblProdutos.BackColor = Color.White;
             this.Controls.Add(lblProdutos);
 
-            // DataGridView
+            // DataGridView (mantém o código original)
             DataGridView dgvProdutos = new DataGridView();
             dgvProdutos.Location = new Point(30, 240);
             dgvProdutos.Size = new Size(540, 180);
@@ -204,7 +227,6 @@ namespace WindowsFormsAppArvoredo
             dgvProdutos.Columns.Add("QTD", "QTD.");
             dgvProdutos.Columns.Add("VLR_UNI", "VLR. UNI.");
 
-            // Coluna de ícone impressora 1
             DataGridViewImageColumn colPrint1 = new DataGridViewImageColumn();
             colPrint1.Name = "PRINT1";
             colPrint1.HeaderText = "";
@@ -213,7 +235,6 @@ namespace WindowsFormsAppArvoredo
 
             dgvProdutos.Columns.Add("VLR_TOTAL", "VLR. TOTAL");
 
-            // Coluna de ícone impressora 2
             DataGridViewImageColumn colPrint2 = new DataGridViewImageColumn();
             colPrint2.Name = "PRINT2";
             colPrint2.HeaderText = "";
@@ -233,7 +254,6 @@ namespace WindowsFormsAppArvoredo
             dgvProdutos.Columns["VLR_UNI"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvProdutos.Columns["VLR_TOTAL"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
-            // Criar ícone de impressora simples
             Bitmap printerIcon = CreatePrinterIcon();
 
             foreach (var item in pedido.Itens)
@@ -258,6 +278,7 @@ namespace WindowsFormsAppArvoredo
             lblTotais.Location = new Point(270, 420);
             lblTotais.Size = new Size(60, 25);
             lblTotais.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblTotais.ForeColor = Color.FromArgb(57, 27, 1);
             lblTotais.TextAlign = ContentAlignment.MiddleCenter;
             lblTotais.BackColor = Color.White;
             this.Controls.Add(lblTotais);
@@ -268,6 +289,7 @@ namespace WindowsFormsAppArvoredo
             lbl4xLabel.Location = new Point(40, 425);
             lbl4xLabel.Size = new Size(120, 16);
             lbl4xLabel.Font = new Font("Arial", 8.5F);
+            lbl4xLabel.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lbl4xLabel);
 
             Label lbl4xValor = new Label();
@@ -276,6 +298,7 @@ namespace WindowsFormsAppArvoredo
             lbl4xValor.Location = new Point(420, 425);
             lbl4xValor.Size = new Size(145, 16);
             lbl4xValor.Font = new Font("Arial", 8.5F);
+            lbl4xValor.ForeColor = Color.FromArgb(57, 27, 1);
             lbl4xValor.TextAlign = ContentAlignment.TopRight;
             this.Controls.Add(lbl4xValor);
 
@@ -285,6 +308,7 @@ namespace WindowsFormsAppArvoredo
             lblDescontosLabel.Location = new Point(40, 447);
             lblDescontosLabel.Size = new Size(120, 16);
             lblDescontosLabel.Font = new Font("Arial", 8.5F);
+            lblDescontosLabel.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblDescontosLabel);
 
             Label lblDescontos = new Label();
@@ -292,6 +316,7 @@ namespace WindowsFormsAppArvoredo
             lblDescontos.Location = new Point(420, 447);
             lblDescontos.Size = new Size(145, 16);
             lblDescontos.Font = new Font("Arial", 8.5F);
+            lblDescontos.ForeColor = Color.FromArgb(57, 27, 1);
             lblDescontos.TextAlign = ContentAlignment.TopRight;
             this.Controls.Add(lblDescontos);
 
@@ -301,6 +326,7 @@ namespace WindowsFormsAppArvoredo
             lblAcrescimosLabel.Location = new Point(40, 469);
             lblAcrescimosLabel.Size = new Size(120, 16);
             lblAcrescimosLabel.Font = new Font("Arial", 8.5F);
+            lblAcrescimosLabel.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblAcrescimosLabel);
 
             Label lblAcrescimos = new Label();
@@ -308,6 +334,7 @@ namespace WindowsFormsAppArvoredo
             lblAcrescimos.Location = new Point(420, 469);
             lblAcrescimos.Size = new Size(145, 16);
             lblAcrescimos.Font = new Font("Arial", 8.5F);
+            lblAcrescimos.ForeColor = Color.FromArgb(57, 27, 1);
             lblAcrescimos.TextAlign = ContentAlignment.TopRight;
             this.Controls.Add(lblAcrescimos);
 
@@ -317,6 +344,7 @@ namespace WindowsFormsAppArvoredo
             lblTotalVistaLabel.Location = new Point(40, 491);
             lblTotalVistaLabel.Size = new Size(120, 18);
             lblTotalVistaLabel.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblTotalVistaLabel.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblTotalVistaLabel);
 
             Label lblTotalVista = new Label();
@@ -334,22 +362,8 @@ namespace WindowsFormsAppArvoredo
             lblFormaPgtoLabel.Location = new Point(40, 530);
             lblFormaPgtoLabel.Size = new Size(180, 16);
             lblFormaPgtoLabel.Font = new Font("Arial", 8.5F, FontStyle.Bold);
+            lblFormaPgtoLabel.ForeColor = Color.FromArgb(57, 27, 1);
             this.Controls.Add(lblFormaPgtoLabel);
-
-            // Botão Débito (desabilitado)
-            Button btnDebito = new Button();
-            btnDebito.Text = "DÉBITO";
-            btnDebito.Location = new Point(445, 525);
-            btnDebito.Size = new Size(120, 28);
-            btnDebito.Font = new Font("Arial", 9F, FontStyle.Bold);
-            btnDebito.BackColor = Color.White;
-            btnDebito.ForeColor = Color.Black;
-            btnDebito.FlatStyle = FlatStyle.Flat;
-            btnDebito.FlatAppearance.BorderSize = 2;
-            btnDebito.FlatAppearance.BorderColor = Color.FromArgb(255, 140, 0);
-            btnDebito.Enabled = false;
-            btnDebito.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnDebito.Width, btnDebito.Height, 15, 15));
-            this.Controls.Add(btnDebito);
 
             // Botão forma de pagamento selecionada
             Button btnFormaPgto = new Button();
@@ -365,6 +379,21 @@ namespace WindowsFormsAppArvoredo
             btnFormaPgto.Enabled = false;
             btnFormaPgto.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnFormaPgto.Width, btnFormaPgto.Height, 15, 15));
             this.Controls.Add(btnFormaPgto);
+
+            // Botão Débito (desabilitado)
+            Button btnDebito = new Button();
+            btnDebito.Text = "DÉBITO";
+            btnDebito.Location = new Point(380, 525);
+            btnDebito.Size = new Size(120, 28);
+            btnDebito.Font = new Font("Arial", 9F, FontStyle.Bold);
+            btnDebito.BackColor = Color.White;
+            btnDebito.ForeColor = Color.Black;
+            btnDebito.FlatStyle = FlatStyle.Flat;
+            btnDebito.FlatAppearance.BorderSize = 2;
+            btnDebito.FlatAppearance.BorderColor = Color.FromArgb(255, 140, 0);
+            btnDebito.Enabled = false;
+            btnDebito.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnDebito.Width, btnDebito.Height, 15, 15));
+            this.Controls.Add(btnDebito);
 
             // Botão IMPRIMIR
             Button btnImprimir = new Button();
@@ -401,7 +430,7 @@ namespace WindowsFormsAppArvoredo
             // Botão VOLTAR
             Button btnVoltar = new Button();
             btnVoltar.Text = "VOLTAR";
-            btnVoltar.Location = new Point(425, 570);
+            btnVoltar.Location = new Point(360, 570);
             btnVoltar.Size = new Size(140, 35);
             btnVoltar.Font = new Font("Arial", 10F, FontStyle.Bold);
             btnVoltar.BackColor = Color.FromArgb(200, 200, 200);
