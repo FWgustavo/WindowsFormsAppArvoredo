@@ -64,6 +64,7 @@ namespace WindowsFormsAppArvoredo
             this.btnNovoProduto = new System.Windows.Forms.Button();
             this.panelHistorico = new System.Windows.Forms.Panel();
             this.panelCaixa = new System.Windows.Forms.Panel();
+            this.panelCaixa2 = new System.Windows.Forms.Panel();
             this.panelMenu.SuspendLayout();
             this.panelLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -72,6 +73,7 @@ namespace WindowsFormsAppArvoredo
             this.panelOrcamento.SuspendLayout();
             this.panelEstoque.SuspendLayout();
             this.panelHistorico.SuspendLayout();
+            this.panelCaixa.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMenu
@@ -492,10 +494,18 @@ namespace WindowsFormsAppArvoredo
             // 
             // panelCaixa
             // 
+            this.panelCaixa.Controls.Add(this.panelCaixa2);
             this.panelCaixa.Location = new System.Drawing.Point(1, 3);
             this.panelCaixa.Name = "panelCaixa";
             this.panelCaixa.Size = new System.Drawing.Size(771, 578);
             this.panelCaixa.TabIndex = 0;
+            // 
+            // panelCaixa2
+            // 
+            this.panelCaixa2.Location = new System.Drawing.Point(2, 3);
+            this.panelCaixa2.Name = "panelCaixa2";
+            this.panelCaixa2.Size = new System.Drawing.Size(766, 570);
+            this.panelCaixa2.TabIndex = 0;
             // 
             // TelaArvoredo
             // 
@@ -525,6 +535,7 @@ namespace WindowsFormsAppArvoredo
             this.panelEstoque.ResumeLayout(false);
             this.panelEstoque.PerformLayout();
             this.panelHistorico.ResumeLayout(false);
+            this.panelCaixa.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -565,5 +576,6 @@ namespace WindowsFormsAppArvoredo
         private Panel panelTitulos;
         private Panel panelHistorico;
         private Panel panelCaixa;
+        private Panel panelCaixa2;
     }
 }
