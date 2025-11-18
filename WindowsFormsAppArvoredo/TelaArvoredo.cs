@@ -17,7 +17,7 @@ namespace WindowsFormsAppArvoredo
         private static extern IntPtr CreateRoundRectRgn(
            int nLeft, int nTop, int nRight, int nBottom,
            int nWidthEllipse, int nHeightEllipse);
-        
+
         private List<Orcamento> orcamentos = new List<Orcamento>();
         private List<Produto> produtos = new List<Produto>();
         private List<Madeira> madeira = new List<Madeira>();
@@ -32,6 +32,11 @@ namespace WindowsFormsAppArvoredo
         private string mesSelecionado = "";
         private int[] todosAnos = { 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025 };
         private int indiceAnoInicial = 0;
+
+        // VARIÁVEIS DO CAIXA
+        private DateTime dataAberturaCaixa = DateTime.Now;
+        private bool caixaAberto = false;
+        private List<TransacaoCaixa> transacoesCaixa = new List<TransacaoCaixa>();
 
         public TelaArvoredo()
         {
@@ -53,7 +58,6 @@ namespace WindowsFormsAppArvoredo
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.Text = "Sistema Arvoredo";
         }
-
 
         private async void TelaArvoredo_Load(object sender, EventArgs e)
         {
@@ -77,11 +81,11 @@ namespace WindowsFormsAppArvoredo
             btnNovoProduto.TabStop = false;
             btnNovoProduto.FlatAppearance.BorderSize = 0;
             btnAtualizarEstoque.TabStop = false;
-            btnAtualizarEstoque.FlatAppearance.BorderSize=0;
+            btnAtualizarEstoque.FlatAppearance.BorderSize = 0;
             btnRelatorioEstoque.TabStop = false;
             btnRelatorioEstoque.FlatAppearance.BorderSize = 0;
-            btnOrcamento.TabStop= false;
-            btnOrcamento.FlatAppearance.BorderSize=0;
+            btnOrcamento.TabStop = false;
+            btnOrcamento.FlatAppearance.BorderSize = 0;
             btnNewOrc.TabStop = false;
             btnNewOrc.FlatAppearance.BorderSize = 0;
 
@@ -121,6 +125,7 @@ namespace WindowsFormsAppArvoredo
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelHistorico != null) panelHistorico.Visible = false;
+            if (panelCaixa != null) panelCaixa.Visible = false;
 
             ConfigurarListViewOrcamentos();
             ConfigurarEstoque();
@@ -130,6 +135,7 @@ namespace WindowsFormsAppArvoredo
             CarregarDadosExemploClientes();
             ConfigurarPainelCadastro();
             ConfigurarPanelHistorico();
+            ConfigurarPanelCaixa();
             VincularEventos();
             panelDegrade?.Invalidate();
 
@@ -162,7 +168,6 @@ namespace WindowsFormsAppArvoredo
                 btnNovoProduto.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnNovoProduto.Width, btnNovoProduto.Height, 20, 20));
                 btnAtualizarEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAtualizarEstoque.Width, btnAtualizarEstoque.Height, 20, 20));
                 btnRelatorioEstoque.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnRelatorioEstoque.Width, btnRelatorioEstoque.Height, 20, 20));
-
             }
             catch { }
         }
@@ -230,6 +235,11 @@ namespace WindowsFormsAppArvoredo
             {
                 btnHistorico.Click -= btnHistorico_Click;
                 btnHistorico.Click += btnHistorico_Click;
+            }
+            if (btnCaixa != null)
+            {
+                btnCaixa.Click -= btnCaixa_Click;
+                btnCaixa.Click += btnCaixa_Click;
             }
         }
 
@@ -399,11 +409,6 @@ namespace WindowsFormsAppArvoredo
             listViewOrcamentos.HotTracking = false;
             listViewOrcamentos.BackColor = Color.FromArgb(239, 212, 172);
             listViewOrcamentos.ForeColor = Color.FromArgb(57, 21, 1);
-        }
-
-        private void CarregarDadosExemplo()
-        {
-            
         }
 
         private void AtualizarListViewOrcamentos()
@@ -608,15 +613,12 @@ namespace WindowsFormsAppArvoredo
             listViewEstoque.Columns.Add("Status", 100);
             listViewEstoque.Columns.Add("Ações", 80);
 
-            // DESABILITA OwnerDraw - vamos usar o desenho padrão
             listViewEstoque.OwnerDraw = false;
 
-            // Remove todos os eventos de desenho
             listViewEstoque.DrawItem -= ListViewEstoque_DrawItem;
             listViewEstoque.DrawSubItem -= ListViewEstoque_DrawSubItem;
             listViewEstoque.DrawColumnHeader -= ListViewEstoque_DrawColumnHeader;
 
-            // Configurações do ListView
             listViewEstoque.View = View.Details;
             listViewEstoque.FullRowSelect = true;
             listViewEstoque.HideSelection = false;
@@ -740,21 +742,11 @@ namespace WindowsFormsAppArvoredo
                     var novo = form.ProdutoCriado;
                     novo.UltimaAtualizacao = DateTime.Now;
 
-                    // Salvar na API
                     bool salvou = await SalvarProdutoNaAPIAsync(novo);
 
                     if (salvou)
                     {
-
-                        /*// Adicionar à lista local
-                        produtos.Add(novo);
-
-                        // Reindexar
-                        for (int i = 0; i < produtos.Count; i++)
-                            produtos[i].Sequencia = produtos[i].Sequencia > 0 ? produtos[i].Sequencia : i + 1;*/
                         await CarregarProdutosDaAPIAsync();
-
-                       // AtualizarListaEstoque();
 
                         MessageBox.Show(
                             "Produto cadastrado com sucesso!",
@@ -774,7 +766,6 @@ namespace WindowsFormsAppArvoredo
             {
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    // Salvar na API
                     bool salvou = await SalvarProdutoNaAPIAsync(produto);
 
                     if (salvou)
@@ -794,7 +785,6 @@ namespace WindowsFormsAppArvoredo
         {
             try
             {
-                // Buscar produtos da API
                 var produtosAPI = await ApiClient.GetAsync<List<ProdutoAPI>>("/produtos");
 
                 if (produtosAPI != null && produtosAPI.Count > 0)
@@ -826,15 +816,9 @@ namespace WindowsFormsAppArvoredo
                     "Aviso",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-
-                // Carrega dados de exemplo se a API falhar
-                CarregarDadosExemplo();
             }
         }
 
-        /// <summary>
-        /// Salva um produto na API
-        /// </summary>
         private async Task<bool> SalvarProdutoNaAPIAsync(Produto produto)
         {
             try
@@ -848,19 +832,17 @@ namespace WindowsFormsAppArvoredo
                     quantidadeMin = produto.QuantidadeMinima,
                     ativo = true,
                     madeiraId = produto.MadeiraId,
-                    tamanhoId = produto.TamanhoId,                 
+                    tamanhoId = produto.TamanhoId,
                 };
 
                 if (produto.Sequencia > 0)
                 {
-                    // Atualizar produto existente
                     await ApiClient.PutAsync<ProdutoAPICreate, ProdutoAPI>(
                         $"/produtos/{produto.Sequencia}",
                         produtoAPI);
                 }
                 else
                 {
-                    // Criar novo produto
                     var novoProduto = await ApiClient.PostAsync<ProdutoAPICreate, ProdutoAPI>(
                         "/produtos",
                         produtoAPI);
@@ -885,9 +867,6 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        /// <summary>
-        /// Exclui um produto da API
-        /// </summary>
         private async Task<bool> ExcluirProdutoDaAPIAsync(int produtoId)
         {
             try
@@ -907,27 +886,19 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        /// <summary>
-        /// Obtém o nome da madeira por ID (mock - você pode buscar da API também)
-        /// </summary>
-        private  string ObterNomeMadeira(int? madeiraId)
+        private string ObterNomeMadeira(int? madeiraId)
         {
+            if (!madeiraId.HasValue) return "Sem tipo";
 
-           
-             if (!madeiraId.HasValue) return "Sem tipo";
-
-             // Aqui você pode fazer uma chamada à API para buscar o nome real da madeira
-             // Por enquanto, retornamos tipos genéricos
-             switch (madeiraId)
-             {
-                 case 1: return "Eucalipto";
-                 case 2: return "Peroba";
-                 case 3: return "Câmbara";
-                 case 4: return "Pinnus";
-                 default: return $"Madeira {madeiraId}";
-             }
+            switch (madeiraId)
+            {
+                case 1: return "Eucalipto";
+                case 2: return "Peroba";
+                case 3: return "Câmbara";
+                case 4: return "Pinnus";
+                default: return $"Madeira {madeiraId}";
+            }
         }
-
 
         private async void ExcluirProduto(Produto produto)
         {
@@ -941,14 +912,12 @@ namespace WindowsFormsAppArvoredo
 
             if (result == DialogResult.Yes)
             {
-                // Excluir da API
                 bool excluiu = await ExcluirProdutoDaAPIAsync(produto.Sequencia);
 
                 if (excluiu)
                 {
                     produtos.Remove(produto);
 
-                    // Reindexar
                     for (int i = 0; i < produtos.Count; i++)
                         produtos[i].Sequencia = i + 1;
 
@@ -1004,7 +973,6 @@ namespace WindowsFormsAppArvoredo
             panelCadastro.BackColor = Color.Transparent;
             panelCadastro.Controls.Clear();
 
-            // Container principal
             Panel containerPrincipal = new Panel();
             containerPrincipal.Name = "containerPrincipal";
             containerPrincipal.Location = new Point(30, 30);
@@ -1013,7 +981,6 @@ namespace WindowsFormsAppArvoredo
             containerPrincipal.BorderStyle = BorderStyle.FixedSingle;
             panelCadastro.Controls.Add(containerPrincipal);
 
-            // Painel de abas
             Panel panelAbas = new Panel();
             panelAbas.Name = "panelAbas";
             panelAbas.Location = new Point(20, 20);
@@ -1021,7 +988,6 @@ namespace WindowsFormsAppArvoredo
             panelAbas.BackColor = Color.Transparent;
             containerPrincipal.Controls.Add(panelAbas);
 
-            // Botão aba Clientes
             Button btnAbaClientes = new Button();
             btnAbaClientes.Name = "btnAbaClientes";
             btnAbaClientes.Text = "👥 CLIENTES";
@@ -1037,7 +1003,6 @@ namespace WindowsFormsAppArvoredo
             btnAbaClientes.Click += (s, e) => TrocarAbaCadastro("clientes");
             panelAbas.Controls.Add(btnAbaClientes);
 
-            // Botão aba Usuários
             Button btnAbaUsuarios = new Button();
             btnAbaUsuarios.Name = "btnAbaUsuarios";
             btnAbaUsuarios.Text = "👤 USUÁRIOS";
@@ -1053,7 +1018,6 @@ namespace WindowsFormsAppArvoredo
             btnAbaUsuarios.Click += (s, e) => TrocarAbaCadastro("usuarios");
             panelAbas.Controls.Add(btnAbaUsuarios);
 
-            // Barra de pesquisa
             TextBox txtPesquisaCadastro = new TextBox();
             txtPesquisaCadastro.Name = "txtPesquisaCadastro";
             txtPesquisaCadastro.Location = new Point(20, 85);
@@ -1082,7 +1046,6 @@ namespace WindowsFormsAppArvoredo
             txtPesquisaCadastro.TextChanged += (s, e) => FiltrarCadastros(txtPesquisaCadastro.Text);
             containerPrincipal.Controls.Add(txtPesquisaCadastro);
 
-            // Botão pesquisar
             Button btnPesquisar = new Button();
             btnPesquisar.Location = new Point(545, 85);
             btnPesquisar.Size = new Size(35, 35);
@@ -1097,7 +1060,6 @@ namespace WindowsFormsAppArvoredo
             btnPesquisar.Click += (s, e) => FiltrarCadastros(txtPesquisaCadastro.Text);
             containerPrincipal.Controls.Add(btnPesquisar);
 
-            // Botão adicionar
             Button btnAdicionar = new Button();
             btnAdicionar.Name = "btnAdicionar";
             btnAdicionar.Location = new Point(585, 85);
@@ -1113,7 +1075,6 @@ namespace WindowsFormsAppArvoredo
             btnAdicionar.Click += btnAdicionarCadastro_Click;
             containerPrincipal.Controls.Add(btnAdicionar);
 
-            // Container de conteúdo
             Panel containerConteudo = new Panel();
             containerConteudo.Name = "containerConteudo";
             containerConteudo.Location = new Point(20, 135);
@@ -1130,7 +1091,6 @@ namespace WindowsFormsAppArvoredo
         {
             abaCadastroAtiva = aba;
 
-            // Atualizar cores dos botões de aba
             if (panelCadastro == null) return;
             Panel containerPrincipal = panelCadastro.Controls.Find("containerPrincipal", false).FirstOrDefault() as Panel;
             if (containerPrincipal == null) return;
@@ -1152,7 +1112,6 @@ namespace WindowsFormsAppArvoredo
                 }
             }
 
-            // Atualizar lista
             if (aba == "clientes")
             {
                 AtualizarListaClientes();
@@ -1421,7 +1380,6 @@ namespace WindowsFormsAppArvoredo
             card.BorderStyle = BorderStyle.FixedSingle;
             card.Margin = new Padding(0, 0, 0, 15);
 
-            // Painel do nome
             Panel panelNome = new Panel();
             panelNome.Location = new Point(0, 0);
             panelNome.Size = new Size(640, 40);
@@ -1437,7 +1395,6 @@ namespace WindowsFormsAppArvoredo
             lblNome.TextAlign = ContentAlignment.MiddleLeft;
             panelNome.Controls.Add(lblNome);
 
-            // Status (Ativo/Inativo)
             Label lblStatus = new Label();
             lblStatus.Text = usuario.Ativo ? "✅ ATIVO" : "❌ INATIVO";
             lblStatus.Location = new Point(480, 8);
@@ -1447,7 +1404,6 @@ namespace WindowsFormsAppArvoredo
             lblStatus.TextAlign = ContentAlignment.MiddleRight;
             panelNome.Controls.Add(lblStatus);
 
-            // Login
             Label lblLoginLabel = new Label();
             lblLoginLabel.Text = "LOGIN:";
             lblLoginLabel.Location = new Point(15, 50);
@@ -1465,7 +1421,6 @@ namespace WindowsFormsAppArvoredo
             lblLogin.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblLogin);
 
-            // E-mail
             Label lblEmailLabel = new Label();
             lblEmailLabel.Text = "E-MAIL:";
             lblEmailLabel.Location = new Point(15, 70);
@@ -1483,7 +1438,6 @@ namespace WindowsFormsAppArvoredo
             lblEmail.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblEmail);
 
-            // Perfil
             Label lblPerfilLabel = new Label();
             lblPerfilLabel.Text = "PERFIL:";
             lblPerfilLabel.Location = new Point(15, 90);
@@ -1501,7 +1455,6 @@ namespace WindowsFormsAppArvoredo
             lblPerfil.TextAlign = ContentAlignment.TopRight;
             card.Controls.Add(lblPerfil);
 
-            // Botão detalhes
             Button btnDetalhes = new Button();
             btnDetalhes.Text = "DETALHES";
             btnDetalhes.Location = new Point(520, 85);
@@ -1684,6 +1637,7 @@ namespace WindowsFormsAppArvoredo
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelHistorico != null) panelHistorico.Visible = false;
+            if (panelCaixa != null) panelCaixa.Visible = false;
             if (panelOrcamento != null)
             {
                 panelOrcamento.Visible = true;
@@ -1700,6 +1654,7 @@ namespace WindowsFormsAppArvoredo
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelHistorico != null) panelHistorico.Visible = false;
+            if (panelCaixa != null) panelCaixa.Visible = false;
             if (panelPedidos != null)
             {
                 panelPedidos.Visible = true;
@@ -1717,6 +1672,7 @@ namespace WindowsFormsAppArvoredo
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelHistorico != null) panelHistorico.Visible = false;
+            if (panelCaixa != null) panelCaixa.Visible = false;
             if (panelEstoque != null)
             {
                 panelEstoque.Visible = true;
@@ -1734,6 +1690,7 @@ namespace WindowsFormsAppArvoredo
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
             if (panelHistorico != null) panelHistorico.Visible = false;
+            if (panelCaixa != null) panelCaixa.Visible = false;
 
             if (panelCadastro != null)
             {
@@ -1788,7 +1745,6 @@ namespace WindowsFormsAppArvoredo
             panelTitulos.Controls.Add(lblTitulo);
 
             int yPosition = 80;
-            int cardNumber = 1;
 
             foreach (var pedido in pedidos)
             {
@@ -1854,7 +1810,6 @@ namespace WindowsFormsAppArvoredo
 
                 panelTitulos.Controls.Add(cardPedido);
                 yPosition += cardPedido.Height + 15;
-                cardNumber++;
             }
 
             if (pedidos.Count == 0)
@@ -1870,68 +1825,6 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private Panel CriarCardTitulo(Orcamento pedido, int numero)
-        {
-            Panel card = new Panel();
-            card.Size = new Size(720, 70);
-            card.BackColor = Color.FromArgb(239, 212, 172);
-            card.BorderStyle = BorderStyle.FixedSingle;
-            card.Cursor = Cursors.Hand;
-
-            card.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0,
-                card.Width, card.Height, 20, 20));
-
-            Label lblNumero = new Label();
-            lblNumero.Text = $"N°{numero} {pedido.Cliente.ToUpper()}";
-            lblNumero.Location = new Point(15, 15);
-            lblNumero.Size = new Size(500, 25);
-            lblNumero.Font = new Font("Gagalin", 12F, FontStyle.Bold);
-            lblNumero.ForeColor = Color.FromArgb(57, 27, 1);
-            lblNumero.BackColor = Color.Transparent;
-            card.Controls.Add(lblNumero);
-
-            Label lblIcone = new Label();
-            lblIcone.Text = "👆";
-            lblIcone.Location = new Point(520, 10);
-            lblIcone.Size = new Size(50, 35);
-            lblIcone.Font = new Font("Arial", 20F);
-            lblIcone.BackColor = Color.Transparent;
-            lblIcone.TextAlign = ContentAlignment.MiddleCenter;
-            card.Controls.Add(lblIcone);
-
-            Label lblValor = new Label();
-            lblValor.Text = $"valor: {pedido.TotalGeral:N2}";
-            lblValor.Location = new Point(580, 15);
-            lblValor.Size = new Size(130, 25);
-            lblValor.Font = new Font("Gagalin", 10F, FontStyle.Regular);
-            lblValor.ForeColor = Color.FromArgb(57, 27, 1);
-            lblValor.BackColor = Color.Transparent;
-            lblValor.TextAlign = ContentAlignment.MiddleRight;
-            card.Controls.Add(lblValor);
-
-            card.MouseEnter += (s, e) => {
-                card.BackColor = Color.FromArgb(220, 195, 155);
-            };
-            card.MouseLeave += (s, e) => {
-                card.BackColor = Color.FromArgb(239, 212, 172);
-            };
-
-            card.Click += (s, e) => AbrirDetalhesPedido(pedido);
-
-            foreach (Control ctrl in card.Controls)
-            {
-                ctrl.Click += (s, e) => AbrirDetalhesPedido(pedido);
-                ctrl.MouseEnter += (s, e) => {
-                    card.BackColor = Color.FromArgb(220, 195, 155);
-                };
-                ctrl.MouseLeave += (s, e) => {
-                    card.BackColor = Color.FromArgb(239, 212, 172);
-                };
-            }
-
-            return card;
-        }
-
         private void AbrirDetalhesPedido(Orcamento pedido)
         {
             using (TelaTitulos telaDetalhes = new TelaTitulos(pedido))
@@ -1940,11 +1833,9 @@ namespace WindowsFormsAppArvoredo
 
                 if (resultado == DialogResult.OK)
                 {
-                    // Adicionar ao histórico de pedidos finalizados
                     pedido.Status = "Finalizado";
                     pedidosFinalizados.Add(pedido);
 
-                    // Remover da lista de pendentes
                     pedidos.Remove(pedido);
                     AtualizarPanelTitulos();
 
@@ -1965,6 +1856,7 @@ namespace WindowsFormsAppArvoredo
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelHistorico != null) panelHistorico.Visible = false;
+            if (panelCaixa != null) panelCaixa.Visible = false;
 
             if (panelTitulos != null)
             {
@@ -1983,217 +1875,406 @@ namespace WindowsFormsAppArvoredo
 
         private void ConfigurarPanelCaixa()
         {
-            if (panelCaixa == null)
-            {
-                panelCaixa = new Panel();
-                panelCaixa.Name = "panelCaixa";
-                panelCaixa.Location = new Point(301, 74);
-                panelCaixa.Size = new Size(783, 587);
-                panelCaixa.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                panelCaixa.BackColor = Color.Transparent;
-                panelCaixa.Visible = false;
-                this.Controls.Add(panelCaixa);
-            }
+            if (panelCaixa == null) return;
 
+            panelCaixa.BackColor = Color.Transparent;
             panelCaixa.Controls.Clear();
 
-            // Logo
-            PictureBox picLogo = new PictureBox();
-            picLogo.Location = new Point(20, 15);
-            picLogo.Size = new Size(80, 60);
-            picLogo.SizeMode = PictureBoxSizeMode.Zoom;
-            try { picLogo.Image = Properties.Resources.logo1; } catch { }
-            panelCaixa.Controls.Add(picLogo);
+            // Adicionar transações de exemplo
+            CarregarTransacoesExemplo();
 
-            // Título HISTÓRICO
-            Label lblHistorico = new Label();
-            lblHistorico.Text = "HISTÓRICO";
-            lblHistorico.Location = new Point(120, 15);
-            lblHistorico.Size = new Size(200, 30);
-            lblHistorico.Font = new Font("Gagalin", 14F, FontStyle.Bold);
-            lblHistorico.ForeColor = Color.FromArgb(57, 27, 1);
-            lblHistorico.BackColor = Color.Transparent;
-            panelCaixa.Controls.Add(lblHistorico);
+            // Criar painel principal do caixa
+            CriarPainelCaixaPrincipal();
+        }
 
-            // Botão CADASTRO
-            Button btnCadastro = new Button();
-            btnCadastro.Text = "CADASTRO";
-            btnCadastro.Location = new Point(340, 20);
-            btnCadastro.Size = new Size(130, 30);
-            btnCadastro.Font = new Font("Arial", 10F, FontStyle.Bold);
-            btnCadastro.BackColor = Color.FromArgb(239, 212, 172);
-            btnCadastro.ForeColor = Color.FromArgb(57, 27, 1);
-            btnCadastro.FlatStyle = FlatStyle.Flat;
-            btnCadastro.FlatAppearance.BorderSize = 0;
-            btnCadastro.Cursor = Cursors.Hand;
-            btnCadastro.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCadastro.Width, btnCadastro.Height, 15, 15));
-            panelCaixa.Controls.Add(btnCadastro);
+        private void CarregarTransacoesExemplo()
+        {
+            if (transacoesCaixa.Count > 0) return;
 
-            // Botão CAIXA (ativo)
-            Button btnCaixaAtivo = new Button();
-            btnCaixaAtivo.Text = "CAIXA";
-            btnCaixaAtivo.Location = new Point(480, 20);
-            btnCaixaAtivo.Size = new Size(130, 30);
-            btnCaixaAtivo.Font = new Font("Arial", 10F, FontStyle.Bold);
-            btnCaixaAtivo.BackColor = Color.FromArgb(255, 140, 0);
-            btnCaixaAtivo.ForeColor = Color.White;
-            btnCaixaAtivo.FlatStyle = FlatStyle.Flat;
-            btnCaixaAtivo.FlatAppearance.BorderSize = 0;
-            btnCaixaAtivo.Cursor = Cursors.Hand;
-            btnCaixaAtivo.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnCaixaAtivo.Width, btnCaixaAtivo.Height, 15, 15));
-            panelCaixa.Controls.Add(btnCaixaAtivo);
+            transacoesCaixa.Add(new TransacaoCaixa
+            {
+                Data = new DateTime(2025, 3, 20),
+                Descricao = "COMPROU MADEIRA",
+                Valor = 40000.00m,
+                Tipo = "D"
+            });
 
-            // Botão SAIR (X)
-            Button btnSairCaixa = new Button();
-            btnSairCaixa.Text = "X";
-            btnSairCaixa.Location = new Point(620, 20);
-            btnSairCaixa.Size = new Size(40, 30);
-            btnSairCaixa.Font = new Font("Arial", 12F, FontStyle.Bold);
-            btnSairCaixa.BackColor = Color.FromArgb(239, 212, 172);
-            btnSairCaixa.ForeColor = Color.FromArgb(57, 27, 1);
-            btnSairCaixa.FlatStyle = FlatStyle.Flat;
-            btnSairCaixa.FlatAppearance.BorderSize = 0;
-            btnSairCaixa.Cursor = Cursors.Hand;
-            btnSairCaixa.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnSairCaixa.Width, btnSairCaixa.Height, 15, 15));
-            btnSairCaixa.Click += (s, e) => { panelCaixa.Visible = false; panelOrcamento.Visible = true; btnOrcamento_Click(null, null); };
-            panelCaixa.Controls.Add(btnSairCaixa);
+            transacoesCaixa.Add(new TransacaoCaixa
+            {
+                Data = new DateTime(2025, 3, 20),
+                Descricao = "RECEBEU PÁSCANO",
+                Valor = 7850.95m,
+                Tipo = "L"
+            });
+        }
+
+        private void CriarPainelCaixaPrincipal()
+        {
+            Panel containerPrincipal = new Panel();
+            containerPrincipal.Name = "containerCaixaPrincipal";
+            containerPrincipal.Location = new Point(20, 20);
+            containerPrincipal.Size = new Size(740, 540);
+            containerPrincipal.BackColor = Color.FromArgb(239, 212, 172);
+            containerPrincipal.BorderStyle = BorderStyle.FixedSingle;
+            panelCaixa.Controls.Add(containerPrincipal);
+
+            // Cabeçalho
+            Label lblAbrirCaixa = new Label();
+            lblAbrirCaixa.Text = $"ABRIR CAIXA    {dataAberturaCaixa:dd/MM/yyyy}";
+            lblAbrirCaixa.Location = new Point(20, 15);
+            lblAbrirCaixa.Size = new Size(400, 25);
+            lblAbrirCaixa.Font = new Font("Arial", 12F, FontStyle.Bold);
+            lblAbrirCaixa.ForeColor = Color.FromArgb(57, 27, 1);
+            containerPrincipal.Controls.Add(lblAbrirCaixa);
+
+            // Labels de cabeçalho
+            Label lblCaixaDiario = new Label();
+            lblCaixaDiario.Text = "CAIXA DIÁRIO";
+            lblCaixaDiario.Location = new Point(430, 15);
+            lblCaixaDiario.Size = new Size(120, 20);
+            lblCaixaDiario.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblCaixaDiario.ForeColor = Color.FromArgb(57, 27, 1);
+            lblCaixaDiario.TextAlign = ContentAlignment.TopRight;
+            containerPrincipal.Controls.Add(lblCaixaDiario);
+
+            Button btnFecharCaixa = new Button();
+            btnFecharCaixa.Text = "FECHAR CAIXA";
+            btnFecharCaixa.Location = new Point(560, 12);
+            btnFecharCaixa.Size = new Size(160, 26);
+            btnFecharCaixa.Font = new Font("Arial", 9F, FontStyle.Bold);
+            btnFecharCaixa.BackColor = Color.FromArgb(255, 140, 0);
+            btnFecharCaixa.ForeColor = Color.White;
+            btnFecharCaixa.FlatStyle = FlatStyle.Flat;
+            btnFecharCaixa.FlatAppearance.BorderSize = 0;
+            btnFecharCaixa.Cursor = Cursors.Hand;
+            btnFecharCaixa.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnFecharCaixa.Width, btnFecharCaixa.Height, 15, 15));
+            btnFecharCaixa.Click += (s, e) => FecharCaixa();
+            containerPrincipal.Controls.Add(btnFecharCaixa);
 
             // Container de transações
             Panel containerTransacoes = new Panel();
-            containerTransacoes.Location = new Point(20, 70);
-            containerTransacoes.Size = new Size(740, 420);
-            containerTransacoes.BackColor = Color.FromArgb(239, 212, 172);
+            containerTransacoes.Name = "containerTransacoes";
+            containerTransacoes.Location = new Point(20, 55);
+            containerTransacoes.Size = new Size(700, 390);
+            containerTransacoes.BackColor = Color.White;
             containerTransacoes.BorderStyle = BorderStyle.FixedSingle;
             containerTransacoes.AutoScroll = true;
-            panelCaixa.Controls.Add(containerTransacoes);
+            containerPrincipal.Controls.Add(containerTransacoes);
 
             // Cabeçalho das transações
             Label lblCabecalho = new Label();
-            lblCabecalho.Text = "DATA           COMPROU/RECEBEU                    VALOR          D/L";
-            lblCabecalho.Location = new Point(20, 10);
-            lblCabecalho.Size = new Size(690, 20);
-            lblCabecalho.Font = new Font("Arial", 9F, FontStyle.Bold);
+            lblCabecalho.Text = "        COMPROU MADEIRA                                      40.000,00        D";
+            lblCabecalho.Location = new Point(10, 10);
+            lblCabecalho.Size = new Size(680, 20);
+            lblCabecalho.Font = new Font("Arial", 9F, FontStyle.Regular);
             lblCabecalho.ForeColor = Color.FromArgb(57, 27, 1);
-            lblCabecalho.BackColor = Color.Transparent;
             containerTransacoes.Controls.Add(lblCabecalho);
 
-            // Adicionar transações de exemplo
-            AdicionarTransacoesCaixa(containerTransacoes);
+            Label lblCabecalho2 = new Label();
+            lblCabecalho2.Text = "        RECEBEU PÁSCANO                                       7.850,95        L";
+            lblCabecalho2.Location = new Point(10, 35);
+            lblCabecalho2.Size = new Size(680, 20);
+            lblCabecalho2.Font = new Font("Arial", 9F, FontStyle.Regular);
+            lblCabecalho2.ForeColor = Color.FromArgb(57, 27, 1);
+            containerTransacoes.Controls.Add(lblCabecalho2);
 
-            // Painel de ação inferior
-            Panel panelAcaoInferior = new Panel();
-            panelAcaoInferior.Location = new Point(20, 500);
-            panelAcaoInferior.Size = new Size(740, 70);
-            panelAcaoInferior.BackColor = Color.Transparent;
-            panelCaixa.Controls.Add(panelAcaoInferior);
+            // Painel inferior
+            Panel panelInferior = new Panel();
+            panelInferior.Location = new Point(20, 460);
+            panelInferior.Size = new Size(700, 60);
+            panelInferior.BackColor = Color.Transparent;
+            containerPrincipal.Controls.Add(panelInferior);
 
-            // Label TOTAL
+            // Campos de entrada
+            Label lblDigiteLabel = new Label();
+            lblDigiteLabel.Text = "DIGITE A DESPESA/LUCRO:";
+            lblDigiteLabel.Location = new Point(10, 12);
+            lblDigiteLabel.Size = new Size(180, 20);
+            lblDigiteLabel.Font = new Font("Arial", 9F, FontStyle.Regular);
+            lblDigiteLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            panelInferior.Controls.Add(lblDigiteLabel);
+
+            TextBox txtDespesaLucro = new TextBox();
+            txtDespesaLucro.Name = "txtDespesaLucro";
+            txtDespesaLucro.Location = new Point(10, 35);
+            txtDespesaLucro.Size = new Size(230, 25);
+            txtDespesaLucro.Font = new Font("Arial", 10F);
+            txtDespesaLucro.BorderStyle = BorderStyle.FixedSingle;
+            panelInferior.Controls.Add(txtDespesaLucro);
+
+            Label lblValorLabel = new Label();
+            lblValorLabel.Text = "VALOR:";
+            lblValorLabel.Location = new Point(250, 12);
+            lblValorLabel.Size = new Size(60, 20);
+            lblValorLabel.Font = new Font("Arial", 9F, FontStyle.Regular);
+            lblValorLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            panelInferior.Controls.Add(lblValorLabel);
+
+            TextBox txtValor = new TextBox();
+            txtValor.Name = "txtValor";
+            txtValor.Location = new Point(250, 35);
+            txtValor.Size = new Size(150, 25);
+            txtValor.Font = new Font("Arial", 10F);
+            txtValor.BorderStyle = BorderStyle.FixedSingle;
+            panelInferior.Controls.Add(txtValor);
+
+            Label lblDLLabel = new Label();
+            lblDLLabel.Text = "D/L";
+            lblDLLabel.Location = new Point(410, 12);
+            lblDLLabel.Size = new Size(40, 20);
+            lblDLLabel.Font = new Font("Arial", 9F, FontStyle.Regular);
+            lblDLLabel.ForeColor = Color.FromArgb(57, 27, 1);
+            panelInferior.Controls.Add(lblDLLabel);
+
+            ComboBox cmbDL = new ComboBox();
+            cmbDL.Name = "cmbDL";
+            cmbDL.Location = new Point(410, 35);
+            cmbDL.Size = new Size(60, 25);
+            cmbDL.Font = new Font("Arial", 10F);
+            cmbDL.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDL.Items.AddRange(new object[] { "D", "L" });
+            cmbDL.SelectedIndex = 0;
+            panelInferior.Controls.Add(cmbDL);
+
+            // Label Total
             Label lblTotal = new Label();
             lblTotal.Text = "TOTAL:";
-            lblTotal.Location = new Point(480, 15);
-            lblTotal.Size = new Size(80, 25);
-            lblTotal.Font = new Font("Arial", 14F, FontStyle.Bold);
+            lblTotal.Location = new Point(480, 12);
+            lblTotal.Size = new Size(80, 20);
+            lblTotal.Font = new Font("Arial", 10F, FontStyle.Bold);
             lblTotal.ForeColor = Color.FromArgb(57, 27, 1);
             lblTotal.TextAlign = ContentAlignment.MiddleRight;
-            panelAcaoInferior.Controls.Add(lblTotal);
+            panelInferior.Controls.Add(lblTotal);
 
-            // Valor total
             Label lblValorTotal = new Label();
+            lblValorTotal.Name = "lblValorTotal";
             lblValorTotal.Text = "12.000,00";
-            lblValorTotal.Location = new Point(565, 15);
-            lblValorTotal.Size = new Size(150, 25);
-            lblValorTotal.Font = new Font("Arial", 14F, FontStyle.Bold);
+            lblValorTotal.Location = new Point(565, 12);
+            lblValorTotal.Size = new Size(120, 20);
+            lblValorTotal.Font = new Font("Arial", 10F, FontStyle.Bold);
             lblValorTotal.ForeColor = Color.FromArgb(57, 27, 1);
             lblValorTotal.TextAlign = ContentAlignment.MiddleRight;
-            panelAcaoInferior.Controls.Add(lblValorTotal);
+            panelInferior.Controls.Add(lblValorTotal);
 
-            // Botão GERAR RELATÓRIO ANUAL
+            // Botão Gerar Relatório Anual
             Button btnGerarRelatorio = new Button();
             btnGerarRelatorio.Text = "GERAR RELATÓRIO ANUAL";
-            btnGerarRelatorio.Location = new Point(250, 10);
-            btnGerarRelatorio.Size = new Size(240, 40);
-            btnGerarRelatorio.Font = new Font("Arial", 10F, FontStyle.Bold);
+            btnGerarRelatorio.Location = new Point(480, 35);
+            btnGerarRelatorio.Size = new Size(205, 25);
+            btnGerarRelatorio.Font = new Font("Arial", 9F, FontStyle.Bold);
             btnGerarRelatorio.BackColor = Color.FromArgb(239, 212, 172);
             btnGerarRelatorio.ForeColor = Color.FromArgb(57, 27, 1);
             btnGerarRelatorio.FlatStyle = FlatStyle.Flat;
             btnGerarRelatorio.FlatAppearance.BorderSize = 2;
             btnGerarRelatorio.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
             btnGerarRelatorio.Cursor = Cursors.Hand;
-            btnGerarRelatorio.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnGerarRelatorio.Width, btnGerarRelatorio.Height, 20, 20));
+            btnGerarRelatorio.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnGerarRelatorio.Width, btnGerarRelatorio.Height, 15, 15));
             btnGerarRelatorio.Click += BtnGerarRelatorioAnual_Click;
-            panelAcaoInferior.Controls.Add(btnGerarRelatorio);
-        }
-
-        private void AdicionarTransacoesCaixa(Panel container)
-        {
-            // Dados de exemplo
-            var transacoes = new[]
-            {
-                new { Data = "20/03/2025", Tipo = "COMPROU MADEIRA", Valor = "40.000,00", Status = "D" },
-                new { Data = "20/03/2025", Tipo = "RECEBEU PÁSCANO", Valor = "7.850,95", Status = "L" }
-            };
-
-            int yPos = 40;
-            foreach (var transacao in transacoes)
-            {
-                Panel itemTransacao = new Panel();
-                itemTransacao.Location = new Point(20, yPos);
-                itemTransacao.Size = new Size(690, 30);
-                itemTransacao.BackColor = Color.White;
-                itemTransacao.BorderStyle = BorderStyle.FixedSingle;
-
-                Label lblData = new Label();
-                lblData.Text = transacao.Data;
-                lblData.Location = new Point(10, 5);
-                lblData.Size = new Size(90, 20);
-                lblData.Font = new Font("Arial", 9F);
-                lblData.ForeColor = Color.FromArgb(57, 27, 1);
-                itemTransacao.Controls.Add(lblData);
-
-                Label lblTipo = new Label();
-                lblTipo.Text = transacao.Tipo;
-                lblTipo.Location = new Point(110, 5);
-                lblTipo.Size = new Size(300, 20);
-                lblTipo.Font = new Font("Arial", 9F);
-                lblTipo.ForeColor = Color.FromArgb(57, 27, 1);
-                itemTransacao.Controls.Add(lblTipo);
-
-                Label lblValor = new Label();
-                lblValor.Text = transacao.Valor;
-                lblValor.Location = new Point(420, 5);
-                lblValor.Size = new Size(150, 20);
-                lblValor.Font = new Font("Arial", 9F);
-                lblValor.ForeColor = Color.FromArgb(57, 27, 1);
-                lblValor.TextAlign = ContentAlignment.TopRight;
-                itemTransacao.Controls.Add(lblValor);
-
-                Label lblStatus = new Label();
-                lblStatus.Text = transacao.Status;
-                lblStatus.Location = new Point(580, 5);
-                lblStatus.Size = new Size(100, 20);
-                lblStatus.Font = new Font("Arial", 9F, FontStyle.Bold);
-                lblStatus.ForeColor = transacao.Status == "D" ? Color.Red : Color.Green;
-                lblStatus.TextAlign = ContentAlignment.TopRight;
-                itemTransacao.Controls.Add(lblStatus);
-
-                container.Controls.Add(itemTransacao);
-                yPos += 35;
-            }
+            panelInferior.Controls.Add(btnGerarRelatorio);
         }
 
         private void BtnGerarRelatorioAnual_Click(object sender, EventArgs e)
         {
-            // Criar e exibir o form de seleção de ano
-            using (FormSelecionarAnoRelatorio formAno = new FormSelecionarAnoRelatorio())
+            // Ocultar painel principal e mostrar painel de seleção de ano
+            Panel containerPrincipal = panelCaixa.Controls.Find("containerCaixaPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal != null)
             {
-                if (formAno.ShowDialog() == DialogResult.OK)
+                containerPrincipal.Visible = false;
+            }
+
+            // Criar painel de seleção de ano (panelCaixa2)
+            CriarPanelSelecaoAno();
+        }
+
+        private void CriarPanelSelecaoAno()
+        {
+            Panel panelSelecaoAno = new Panel();
+            panelSelecaoAno.Name = "panelCaixa2";
+            panelSelecaoAno.Location = new Point(20, 20);
+            panelSelecaoAno.Size = new Size(740, 540);
+            panelSelecaoAno.BackColor = Color.FromArgb(239, 212, 172);
+            panelSelecaoAno.BorderStyle = BorderStyle.FixedSingle;
+            panelCaixa.Controls.Add(panelSelecaoAno);
+            panelSelecaoAno.BringToFront();
+
+            // Título
+            Label lblTitulo = new Label();
+            lblTitulo.Text = "SELECIONE O ANO QUE DESEJA CRIAR O RELATÓRIO";
+            lblTitulo.Location = new Point(50, 30);
+            lblTitulo.Size = new Size(640, 30);
+            lblTitulo.Font = new Font("Arial", 14F, FontStyle.Bold);
+            lblTitulo.ForeColor = Color.FromArgb(57, 27, 1);
+            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            panelSelecaoAno.Controls.Add(lblTitulo);
+
+            // Criar botões de anos - primeira linha (2016-2019)
+            int xPos = 60;
+            int yPos = 100;
+            int[] anosLinha1 = { 2016, 2017, 2018, 2019 };
+
+            foreach (int ano in anosLinha1)
+            {
+                Button btnAno = CriarBotaoAno(ano, xPos, yPos);
+                panelSelecaoAno.Controls.Add(btnAno);
+                xPos += 160;
+            }
+
+            // Segunda linha (2020-2023)
+            xPos = 60;
+            yPos = 200;
+            int[] anosLinha2 = { 2020, 2021, 2022, 2023 };
+
+            foreach (int ano in anosLinha2)
+            {
+                Button btnAno = CriarBotaoAno(ano, xPos, yPos);
+                panelSelecaoAno.Controls.Add(btnAno);
+                xPos += 160;
+            }
+
+            // Terceira linha (2024-2025)
+            xPos = 60;
+            yPos = 300;
+            int[] anosLinha3 = { 2024, 2025 };
+
+            foreach (int ano in anosLinha3)
+            {
+                Button btnAno = CriarBotaoAno(ano, xPos, yPos);
+                panelSelecaoAno.Controls.Add(btnAno);
+                xPos += 160;
+            }
+
+            // Botão Voltar (X)
+            Button btnVoltar = new Button();
+            btnVoltar.Text = "X";
+            btnVoltar.Location = new Point(680, 20);
+            btnVoltar.Size = new Size(40, 40);
+            btnVoltar.Font = new Font("Arial", 16F, FontStyle.Bold);
+            btnVoltar.BackColor = Color.FromArgb(239, 212, 172);
+            btnVoltar.ForeColor = Color.FromArgb(57, 27, 1);
+            btnVoltar.FlatStyle = FlatStyle.Flat;
+            btnVoltar.FlatAppearance.BorderSize = 2;
+            btnVoltar.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnVoltar.Cursor = Cursors.Hand;
+            btnVoltar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnVoltar.Width, btnVoltar.Height, 20, 20));
+            btnVoltar.Click += (s, e) => VoltarParaCaixaPrincipal();
+            panelSelecaoAno.Controls.Add(btnVoltar);
+        }
+
+        private Button CriarBotaoAno(int ano, int x, int y)
+        {
+            Button btnAno = new Button();
+            btnAno.Text = ano.ToString();
+            btnAno.Location = new Point(x, y);
+            btnAno.Size = new Size(140, 70);
+            btnAno.Font = new Font("Arial", 16F, FontStyle.Bold);
+            btnAno.BackColor = Color.FromArgb(198, 143, 86);
+            btnAno.ForeColor = Color.FromArgb(57, 27, 1);
+            btnAno.FlatStyle = FlatStyle.Flat;
+            btnAno.FlatAppearance.BorderSize = 0;
+            btnAno.Cursor = Cursors.Hand;
+            btnAno.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAno.Width, btnAno.Height, 20, 20));
+            btnAno.Click += (s, e) => GerarRelatorioAno(ano);
+
+            // Efeito hover
+            btnAno.MouseEnter += (s, e) =>
+            {
+                btnAno.BackColor = Color.FromArgb(180, 123, 57);
+            };
+            btnAno.MouseLeave += (s, e) =>
+            {
+                btnAno.BackColor = Color.FromArgb(198, 143, 86);
+            };
+
+            return btnAno;
+        }
+
+        private void GerarRelatorioAno(int ano)
+        {
+            MessageBox.Show(
+                $"Gerando relatório anual para o ano de {ano}...\n\n" +
+                $"Esta funcionalidade gerará um relatório completo com todas as transações do caixa do ano selecionado.",
+                "Gerar Relatório Anual",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            // Voltar para o painel principal
+            VoltarParaCaixaPrincipal();
+        }
+
+        private void VoltarParaCaixaPrincipal()
+        {
+            // Remover painel de seleção de ano
+            Panel panelSelecaoAno = panelCaixa.Controls.Find("panelCaixa2", false).FirstOrDefault() as Panel;
+            if (panelSelecaoAno != null)
+            {
+                panelCaixa.Controls.Remove(panelSelecaoAno);
+                panelSelecaoAno.Dispose();
+            }
+
+            // Mostrar painel principal novamente
+            Panel containerPrincipal = panelCaixa.Controls.Find("containerCaixaPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal != null)
+            {
+                containerPrincipal.Visible = true;
+                containerPrincipal.BringToFront();
+            }
+        }
+
+        private void FecharCaixa()
+        {
+            var result = MessageBox.Show(
+                "Tem certeza que deseja fechar o caixa?\n\n" +
+                "Esta ação irá finalizar todas as transações do dia.",
+                "Fechar Caixa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                MessageBox.Show(
+                    $"Caixa fechado com sucesso!\n\n" +
+                    $"Data de abertura: {dataAberturaCaixa:dd/MM/yyyy}\n" +
+                    $"Data de fechamento: {DateTime.Now:dd/MM/yyyy HH:mm}",
+                    "Caixa Fechado",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                // Voltar para a tela de orçamentos
+                btnOrcamento_Click(null, null);
+            }
+        }
+
+        private void btnCaixa_Click(object sender, EventArgs e)
+        {
+            if (panelOrcamento != null) panelOrcamento.Visible = false;
+            if (panelEstoque != null) panelEstoque.Visible = false;
+            if (panelPedidos != null) panelPedidos.Visible = false;
+            if (panelCadastro != null) panelCadastro.Visible = false;
+            if (panelTitulos != null) panelTitulos.Visible = false;
+            if (panelHistorico != null) panelHistorico.Visible = false;
+
+            if (panelCaixa != null)
+            {
+                panelCaixa.Visible = true;
+                panelCaixa.BringToFront();
+
+                // Garantir que apenas o painel principal está visível
+                Panel panelSelecaoAno = panelCaixa.Controls.Find("panelCaixa2", false).FirstOrDefault() as Panel;
+                if (panelSelecaoAno != null)
                 {
-                    int anoSelecionado = formAno.AnoSelecionado;
-                    MessageBox.Show($"Relatório anual de {anoSelecionado} será gerado!",
-                        "Gerar Relatório", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // Aqui você implementaria a lógica de geração do relatório
+                    panelCaixa.Controls.Remove(panelSelecaoAno);
+                    panelSelecaoAno.Dispose();
+                }
+
+                Panel containerPrincipal = panelCaixa.Controls.Find("containerCaixaPrincipal", false).FirstOrDefault() as Panel;
+                if (containerPrincipal != null)
+                {
+                    containerPrincipal.Visible = true;
+                    containerPrincipal.BringToFront();
                 }
             }
+
+            ResetarCoresBotoes();
         }
 
         #endregion
@@ -2272,7 +2353,6 @@ namespace WindowsFormsAppArvoredo
             btnSetaDirAnos.FlatStyle = FlatStyle.Flat;
             btnSetaDirAnos.FlatAppearance.BorderSize = 0;
             btnSetaDirAnos.Cursor = Cursors.Hand;
-            btnSetaDirAnos.Click += BtnSetaDirAnos_Click;
             containerAnos.Controls.Add(btnSetaDirAnos);
 
             // Container de Meses
@@ -2342,10 +2422,8 @@ namespace WindowsFormsAppArvoredo
 
         private void CarregarPedidosFinalizadosExemplo()
         {
-            // Se já existem pedidos finalizados, não adiciona exemplos
             if (pedidosFinalizados.Count > 0) return;
 
-            // Criar pedidos de exemplo para diferentes meses
             Random rand = new Random();
 
             for (int i = 1; i <= 15; i++)
@@ -2370,7 +2448,6 @@ namespace WindowsFormsAppArvoredo
                     Acrescimo = 0
                 };
 
-                // Adicionar alguns itens
                 decimal valorTotal = 0;
                 for (int j = 1; j <= 3; j++)
                 {
@@ -2441,24 +2518,6 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private void BtnSetaDirAnos_Click(object sender, EventArgs e)
-        {
-            if (indiceAnoInicial + 5 < todosAnos.Length)
-            {
-                indiceAnoInicial++;
-
-                Panel containerAnos = panelHistorico.Controls.Find("containerAnos", false).FirstOrDefault() as Panel;
-                if (containerAnos != null)
-                {
-                    Panel panelBotoesAnos = containerAnos.Controls.Find("panelBotoesAnos", false).FirstOrDefault() as Panel;
-                    if (panelBotoesAnos != null)
-                    {
-                        AtualizarBotoesAnos(panelBotoesAnos);
-                    }
-                }
-            }
-        }
-
         private void BtnAno_Click(object sender, EventArgs e)
         {
             Button btnClicado = sender as Button;
@@ -2466,7 +2525,6 @@ namespace WindowsFormsAppArvoredo
 
             anoSelecionado = (int)btnClicado.Tag;
 
-            // Atualizar cores de todos os botões de ano visíveis
             Panel containerAnos = panelHistorico.Controls.Find("containerAnos", false).FirstOrDefault() as Panel;
             if (containerAnos != null)
             {
@@ -2492,7 +2550,6 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
-            // Resetar cores de todos os botões de mês
             Panel containerMeses = panelHistorico.Controls.Find("containerMeses", false).FirstOrDefault() as Panel;
             if (containerMeses != null)
             {
@@ -2506,22 +2563,18 @@ namespace WindowsFormsAppArvoredo
                 }
             }
 
-            // Destacar botão selecionado
             btnClicado.BackColor = Color.FromArgb(144, 238, 144);
             btnClicado.ForeColor = Color.Black;
 
-            // Mostrar lista de pedidos do mês/ano selecionados
             MostrarListaPedidosMes(anoSelecionado, mesSelecionado);
         }
 
         private void MostrarListaPedidosMes(int ano, string mes)
         {
-            // Converter nome do mês para número
             string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
                       "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
             int numeroMes = Array.IndexOf(meses, mes) + 1;
 
-            // Filtrar pedidos finalizados pelo ano e mês
             var pedidosFiltrados = pedidosFinalizados.Where(p =>
                 p.DataEmissao.Year == ano &&
                 p.DataEmissao.Month == numeroMes
@@ -2534,7 +2587,6 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
-            // Abrir tela de lista de histórico
             using (FormListaHistorico formLista = new FormListaHistorico(pedidosFiltrados, mes, ano))
             {
                 formLista.ShowDialog();
@@ -2543,7 +2595,6 @@ namespace WindowsFormsAppArvoredo
 
         private void BtnBackup_Click(object sender, EventArgs e)
         {
-            // Abrir tela de backup
             using (FormBackup formBackup = new FormBackup())
             {
                 formBackup.ShowDialog();
@@ -2557,6 +2608,7 @@ namespace WindowsFormsAppArvoredo
             if (panelPedidos != null) panelPedidos.Visible = false;
             if (panelCadastro != null) panelCadastro.Visible = false;
             if (panelTitulos != null) panelTitulos.Visible = false;
+            if (panelCaixa != null) panelCaixa.Visible = false;
 
             if (panelHistorico != null)
             {
@@ -2569,4 +2621,15 @@ namespace WindowsFormsAppArvoredo
 
         #endregion
     }
+
+    // Classe auxiliar para transações do caixa
+    public class TransacaoCaixa
+    {
+        public DateTime Data { get; set; }
+        public string Descricao { get; set; }
+        public decimal Valor { get; set; }
+        public string Tipo { get; set; } // "D" para Despesa, "L" para Lucro
+    }
 }
+
+ 
