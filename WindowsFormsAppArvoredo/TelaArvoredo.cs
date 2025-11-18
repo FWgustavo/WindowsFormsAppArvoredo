@@ -103,6 +103,13 @@ namespace WindowsFormsAppArvoredo
                 this.Controls.Add(panelCadastro);
             }
 
+            // CORREÇÃO: Retirar panelCaixa de dentro do panelHistorico
+            if (panelCaixa != null && panelCaixa.Parent == panelHistorico)
+            {
+                panelHistorico.Controls.Remove(panelCaixa);
+                this.Controls.Add(panelCaixa);
+            }
+
             // Configurar posição e tamanho corretos
             if (panelTitulos != null)
             {
@@ -116,6 +123,13 @@ namespace WindowsFormsAppArvoredo
                 panelCadastro.Location = new Point(301, 74);
                 panelCadastro.Size = new Size(783, 587);
                 panelCadastro.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            }
+
+            if (panelCaixa != null)
+            {
+                panelCaixa.Location = new Point(301, 74);
+                panelCaixa.Size = new Size(783, 587);
+                panelCaixa.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
 
             // Ocultar todos os painéis primeiro
@@ -1836,11 +1850,24 @@ namespace WindowsFormsAppArvoredo
                     pedido.Status = "Finalizado";
                     pedidosFinalizados.Add(pedido);
 
+                    // ADICIONAR TRANSAÇÃO NO CAIXA
+                    TransacaoCaixa novaTransacao = new TransacaoCaixa
+                    {
+                        Data = DateTime.Now,
+                        Descricao = $"RECEBIDO DE {pedido.Cliente.ToUpper()}",
+                        Valor = pedido.TotalGeral,
+                        Tipo = "L" // Lucro
+                    };
+
+                    transacoesCaixa.Add(novaTransacao);
+
+                    // Remover dos pedidos pendentes
                     pedidos.Remove(pedido);
                     AtualizarPanelTitulos();
 
                     MessageBox.Show(
                         $"Pedido de {pedido.Cliente} finalizado com sucesso!\n" +
+                        $"Valor de {pedido.TotalGeral:C} adicionado ao caixa como Lucro.\n" +
                         $"O pedido foi salvo no histórico de {pedido.DataEmissao:MMMM/yyyy}.",
                         "Pedido Finalizado",
                         MessageBoxButtons.OK,
@@ -1889,23 +1916,8 @@ namespace WindowsFormsAppArvoredo
 
         private void CarregarTransacoesExemplo()
         {
-            if (transacoesCaixa.Count > 0) return;
-
-            transacoesCaixa.Add(new TransacaoCaixa
-            {
-                Data = new DateTime(2025, 3, 20),
-                Descricao = "COMPROU MADEIRA",
-                Valor = 40000.00m,
-                Tipo = "D"
-            });
-
-            transacoesCaixa.Add(new TransacaoCaixa
-            {
-                Data = new DateTime(2025, 3, 20),
-                Descricao = "RECEBEU PÁSCANO",
-                Valor = 7850.95m,
-                Tipo = "L"
-            });
+            // Não carrega exemplos - inicia vazio
+            transacoesCaixa.Clear();
         }
 
         private void CriarPainelCaixaPrincipal()
@@ -1961,22 +1973,8 @@ namespace WindowsFormsAppArvoredo
             containerTransacoes.AutoScroll = true;
             containerPrincipal.Controls.Add(containerTransacoes);
 
-            // Cabeçalho das transações
-            Label lblCabecalho = new Label();
-            lblCabecalho.Text = "        COMPROU MADEIRA                                      40.000,00        D";
-            lblCabecalho.Location = new Point(10, 10);
-            lblCabecalho.Size = new Size(680, 20);
-            lblCabecalho.Font = new Font("Arial", 9F, FontStyle.Regular);
-            lblCabecalho.ForeColor = Color.FromArgb(57, 27, 1);
-            containerTransacoes.Controls.Add(lblCabecalho);
-
-            Label lblCabecalho2 = new Label();
-            lblCabecalho2.Text = "        RECEBEU PÁSCANO                                       7.850,95        L";
-            lblCabecalho2.Location = new Point(10, 35);
-            lblCabecalho2.Size = new Size(680, 20);
-            lblCabecalho2.Font = new Font("Arial", 9F, FontStyle.Regular);
-            lblCabecalho2.ForeColor = Color.FromArgb(57, 27, 1);
-            containerTransacoes.Controls.Add(lblCabecalho2);
+            // Atualizar lista de transações
+            AtualizarListaTransacoes();
 
             // Painel inferior
             Panel panelInferior = new Panel();
@@ -2048,7 +2046,7 @@ namespace WindowsFormsAppArvoredo
 
             Label lblValorTotal = new Label();
             lblValorTotal.Name = "lblValorTotal";
-            lblValorTotal.Text = "12.000,00";
+            lblValorTotal.Text = CalcularTotalCaixa().ToString("N2");
             lblValorTotal.Location = new Point(565, 12);
             lblValorTotal.Size = new Size(120, 20);
             lblValorTotal.Font = new Font("Arial", 10F, FontStyle.Bold);
@@ -2056,12 +2054,29 @@ namespace WindowsFormsAppArvoredo
             lblValorTotal.TextAlign = ContentAlignment.MiddleRight;
             panelInferior.Controls.Add(lblValorTotal);
 
+            // Botão Adicionar
+            Button btnAdicionar = new Button();
+            btnAdicionar.Name = "btnAdicionar";
+            btnAdicionar.Text = "ADICIONAR";
+            btnAdicionar.Location = new Point(480, 35);
+            btnAdicionar.Size = new Size(95, 25);
+            btnAdicionar.Font = new Font("Arial", 9F, FontStyle.Bold);
+            btnAdicionar.BackColor = Color.FromArgb(144, 238, 144);
+            btnAdicionar.ForeColor = Color.Black;
+            btnAdicionar.FlatStyle = FlatStyle.Flat;
+            btnAdicionar.FlatAppearance.BorderSize = 1;
+            btnAdicionar.FlatAppearance.BorderColor = Color.FromArgb(57, 27, 1);
+            btnAdicionar.Cursor = Cursors.Hand;
+            btnAdicionar.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnAdicionar.Width, btnAdicionar.Height, 15, 15));
+            btnAdicionar.Click += BtnAdicionarTransacao_Click;
+            panelInferior.Controls.Add(btnAdicionar);
+
             // Botão Gerar Relatório Anual
             Button btnGerarRelatorio = new Button();
             btnGerarRelatorio.Text = "GERAR RELATÓRIO ANUAL";
-            btnGerarRelatorio.Location = new Point(480, 35);
-            btnGerarRelatorio.Size = new Size(205, 25);
-            btnGerarRelatorio.Font = new Font("Arial", 9F, FontStyle.Bold);
+            btnGerarRelatorio.Location = new Point(580, 35);
+            btnGerarRelatorio.Size = new Size(105, 25);
+            btnGerarRelatorio.Font = new Font("Arial", 7F, FontStyle.Bold);
             btnGerarRelatorio.BackColor = Color.FromArgb(239, 212, 172);
             btnGerarRelatorio.ForeColor = Color.FromArgb(57, 27, 1);
             btnGerarRelatorio.FlatStyle = FlatStyle.Flat;
@@ -2071,6 +2086,136 @@ namespace WindowsFormsAppArvoredo
             btnGerarRelatorio.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, btnGerarRelatorio.Width, btnGerarRelatorio.Height, 15, 15));
             btnGerarRelatorio.Click += BtnGerarRelatorioAnual_Click;
             panelInferior.Controls.Add(btnGerarRelatorio);
+        }
+
+        private void AtualizarListaTransacoes()
+        {
+            if (panelCaixa == null) return;
+
+            Panel containerPrincipal = panelCaixa.Controls.Find("containerCaixaPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal == null) return;
+
+            Panel containerTransacoes = containerPrincipal.Controls.Find("containerTransacoes", false).FirstOrDefault() as Panel;
+            if (containerTransacoes == null) return;
+
+            containerTransacoes.Controls.Clear();
+
+            int yPos = 10;
+            foreach (var transacao in transacoesCaixa)
+            {
+                Label lblTransacao = new Label();
+                lblTransacao.Text = $"        {transacao.Descricao.PadRight(50)}  {transacao.Valor.ToString("N2").PadLeft(15)}        {transacao.Tipo}";
+                lblTransacao.Location = new Point(10, yPos);
+                lblTransacao.Size = new Size(680, 20);
+                lblTransacao.Font = new Font("Arial", 9F, FontStyle.Regular);
+                lblTransacao.ForeColor = Color.FromArgb(57, 27, 1);
+                containerTransacoes.Controls.Add(lblTransacao);
+
+                yPos += 25;
+            }
+
+            if (transacoesCaixa.Count == 0)
+            {
+                Label lblVazio = new Label();
+                lblVazio.Text = "Nenhuma transação registrada ainda.";
+                lblVazio.Location = new Point(200, 180);
+                lblVazio.Size = new Size(300, 30);
+                lblVazio.Font = new Font("Arial", 11F, FontStyle.Italic);
+                lblVazio.ForeColor = Color.Gray;
+                lblVazio.TextAlign = ContentAlignment.MiddleCenter;
+                containerTransacoes.Controls.Add(lblVazio);
+            }
+        }
+
+        private decimal CalcularTotalCaixa()
+        {
+            decimal total = 0;
+            foreach (var transacao in transacoesCaixa)
+            {
+                if (transacao.Tipo == "L")
+                {
+                    total += transacao.Valor;
+                }
+                else if (transacao.Tipo == "D")
+                {
+                    total -= transacao.Valor;
+                }
+            }
+            return total;
+        }
+
+        private void AtualizarTotalCaixa()
+        {
+            if (panelCaixa == null) return;
+
+            Panel containerPrincipal = panelCaixa.Controls.Find("containerCaixaPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal == null) return;
+
+            Label lblValorTotal = containerPrincipal.Controls.Find("lblValorTotal", true).FirstOrDefault() as Label;
+            if (lblValorTotal != null)
+            {
+                decimal total = CalcularTotalCaixa();
+                lblValorTotal.Text = total.ToString("N2");
+                lblValorTotal.ForeColor = total >= 0 ? Color.FromArgb(0, 128, 0) : Color.Red;
+            }
+        }
+
+        private void BtnAdicionarTransacao_Click(object sender, EventArgs e)
+        {
+            if (panelCaixa == null) return;
+
+            Panel containerPrincipal = panelCaixa.Controls.Find("containerCaixaPrincipal", false).FirstOrDefault() as Panel;
+            if (containerPrincipal == null) return;
+
+            TextBox txtDespesaLucro = containerPrincipal.Controls.Find("txtDespesaLucro", true).FirstOrDefault() as TextBox;
+            TextBox txtValor = containerPrincipal.Controls.Find("txtValor", true).FirstOrDefault() as TextBox;
+            ComboBox cmbDL = containerPrincipal.Controls.Find("cmbDL", true).FirstOrDefault() as ComboBox;
+
+            if (txtDespesaLucro == null || txtValor == null || cmbDL == null) return;
+
+            // Validações
+            if (string.IsNullOrWhiteSpace(txtDespesaLucro.Text))
+            {
+                MessageBox.Show("Por favor, informe a descrição da transação.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtDespesaLucro.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtValor.Text))
+            {
+                MessageBox.Show("Por favor, informe o valor da transação.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtValor.Focus();
+                return;
+            }
+
+            if (!decimal.TryParse(txtValor.Text.Replace(".", "").Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal valor) || valor <= 0)
+            {
+                MessageBox.Show("Por favor, informe um valor válido maior que zero.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtValor.Focus();
+                return;
+            }
+
+            // Adicionar transação
+            TransacaoCaixa novaTransacao = new TransacaoCaixa
+            {
+                Data = DateTime.Now,
+                Descricao = txtDespesaLucro.Text.ToUpper(),
+                Valor = valor,
+                Tipo = cmbDL.SelectedItem.ToString()
+            };
+
+            transacoesCaixa.Add(novaTransacao);
+
+            // Limpar campos
+            txtDespesaLucro.Clear();
+            txtValor.Clear();
+            cmbDL.SelectedIndex = 0;
+
+            // Atualizar lista e total
+            AtualizarListaTransacoes();
+            AtualizarTotalCaixa();
+
+            MessageBox.Show("Transação adicionada com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void BtnGerarRelatorioAnual_Click(object sender, EventArgs e)
@@ -2353,6 +2498,7 @@ namespace WindowsFormsAppArvoredo
             btnSetaDirAnos.FlatStyle = FlatStyle.Flat;
             btnSetaDirAnos.FlatAppearance.BorderSize = 0;
             btnSetaDirAnos.Cursor = Cursors.Hand;
+            btnSetaDirAnos.Click += BtnSetaDirAnos_Click;
             containerAnos.Controls.Add(btnSetaDirAnos);
 
             // Container de Meses
@@ -2366,7 +2512,7 @@ namespace WindowsFormsAppArvoredo
 
             // Criar botões de meses
             string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                      "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
+              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
 
             int mesX = 30;
             int mesY = 30;
@@ -2518,6 +2664,25 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
+        private void BtnSetaDirAnos_Click(object sender, EventArgs e)
+        {
+            // Verifica se ainda há anos à direita para mostrar
+            if (indiceAnoInicial + 5 < todosAnos.Length)
+            {
+                indiceAnoInicial++;
+
+                Panel containerAnos = panelHistorico.Controls.Find("containerAnos", false).FirstOrDefault() as Panel;
+                if (containerAnos != null)
+                {
+                    Panel panelBotoesAnos = containerAnos.Controls.Find("panelBotoesAnos", false).FirstOrDefault() as Panel;
+                    if (panelBotoesAnos != null)
+                    {
+                        AtualizarBotoesAnos(panelBotoesAnos);
+                    }
+                }
+            }
+        }
+
         private void BtnAno_Click(object sender, EventArgs e)
         {
             Button btnClicado = sender as Button;
@@ -2572,7 +2737,7 @@ namespace WindowsFormsAppArvoredo
         private void MostrarListaPedidosMes(int ano, string mes)
         {
             string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                      "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
+              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
             int numeroMes = Array.IndexOf(meses, mes) + 1;
 
             var pedidosFiltrados = pedidosFinalizados.Where(p =>
