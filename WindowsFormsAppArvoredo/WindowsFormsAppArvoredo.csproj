@@ -122,6 +122,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormRelatorioAnual.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRelatorioAnual.Designer.cs">
+      <DependentUpon>FormRelatorioAnual.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormSelecionarAnoRelatorio.cs">
       <SubType>Form</SubType>
     </Compile>

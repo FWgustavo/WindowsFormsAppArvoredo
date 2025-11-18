@@ -2692,12 +2692,24 @@ namespace WindowsFormsAppArvoredo
 
         private void GerarRelatorioAno(int ano)
         {
-            MessageBox.Show(
-                $"Gerando relatório anual para o ano de {ano}...\n\n" +
-                $"Esta funcionalidade gerará um relatório completo com todas as transações do caixa do ano selecionado.",
-                "Gerar Relatório Anual",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+            // Filtrar pedidos finalizados do ano selecionado
+            var pedidosAno = pedidosFinalizados.Where(p => p.DataEmissao.Year == ano).ToList();
+
+            if (pedidosAno.Count == 0)
+            {
+                MessageBox.Show(
+                    $"Nenhum pedido finalizado encontrado para o ano {ano}.",
+                    "Relatório Anual",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            // Abrir formulário de relatório
+            using (FormRelatorioAnual formRelatorio = new FormRelatorioAnual(pedidosAno, ano))
+            {
+                formRelatorio.ShowDialog();
+            }
 
             // Voltar para o painel principal
             VoltarParaCaixaPrincipal();
