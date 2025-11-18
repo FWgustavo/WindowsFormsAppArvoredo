@@ -263,6 +263,9 @@
     <EmbeddedResource Include="TelaOrcamento.resx">
       <DependentUpon>TelaOrcamento.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TelaTitulos.resx">
+      <DependentUpon>TelaTitulos.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
