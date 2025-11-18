@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MySqlX.XDevAPI;
 
 namespace WindowsFormsAppArvoredo
 {
@@ -59,6 +58,18 @@ namespace WindowsFormsAppArvoredo
             this.Text = "Sistema Arvoredo";
         }
 
+
+        // ============================================
+        // ADICIONAR ESTAS PROPRIEDADES À CLASSE TelaArvoredo
+        // ============================================
+
+        private int usuarioIdAtual = 1; // ID do usuário logado - deve vir do sistema de login
+        private bool usandoAPI = true;  // Flag para controlar se usa API ou dados locais
+
+        // ============================================
+        // SUBSTITUIR O MÉTODO TelaArvoredo_Load EXISTENTE
+        // ============================================
+
         private async void TelaArvoredo_Load(object sender, EventArgs e)
         {
             AplicarArredondamentoBotoes();
@@ -89,28 +100,26 @@ namespace WindowsFormsAppArvoredo
             btnNewOrc.TabStop = false;
             btnNewOrc.FlatAppearance.BorderSize = 0;
 
-            // CORREÇÃO: Retirar panelTitulos de dentro do panelOrcamento
+            // Correções de painéis (mantém código original)
             if (panelTitulos != null && panelTitulos.Parent == panelOrcamento)
             {
                 panelOrcamento.Controls.Remove(panelTitulos);
                 this.Controls.Add(panelTitulos);
             }
 
-            // CORREÇÃO: Retirar panelCadastro de dentro do panel2
             if (panelCadastro != null && panelCadastro.Parent == panel2)
             {
                 panel2.Controls.Remove(panelCadastro);
                 this.Controls.Add(panelCadastro);
             }
 
-            // CORREÇÃO: Retirar panelCaixa de dentro do panelHistorico
             if (panelCaixa != null && panelCaixa.Parent == panelHistorico)
             {
                 panelHistorico.Controls.Remove(panelCaixa);
                 this.Controls.Add(panelCaixa);
             }
 
-            // Configurar posição e tamanho corretos
+            // Configurar posições e tamanhos
             if (panelTitulos != null)
             {
                 panelTitulos.Location = new Point(301, 74);
@@ -132,7 +141,7 @@ namespace WindowsFormsAppArvoredo
                 panelCaixa.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
 
-            // Ocultar todos os painéis primeiro
+            // Ocultar todos os painéis
             if (panelOrcamento != null) panelOrcamento.Visible = false;
             if (panelEstoque != null) panelEstoque.Visible = false;
             if (panelPedidos != null) panelPedidos.Visible = false;
@@ -145,7 +154,10 @@ namespace WindowsFormsAppArvoredo
             ConfigurarEstoque();
             ConfigurarPedidos();
             ConfigurarPanelTitulos();
-            await CarregarProdutosDaAPIAsync();
+
+            // NOVA IMPLEMENTAÇÃO: Carrega produtos e orçamentos da API
+            await CarregarDadosIniciais();
+
             CarregarDadosExemploClientes();
             ConfigurarPainelCadastro();
             ConfigurarPanelHistorico();
@@ -153,7 +165,6 @@ namespace WindowsFormsAppArvoredo
             VincularEventos();
             panelDegrade?.Invalidate();
 
-            // MOSTRAR O PAINEL DE ORÇAMENTOS COMO PADRÃO
             btnOrcamento_Click(null, null);
         }
 
@@ -477,22 +488,81 @@ namespace WindowsFormsAppArvoredo
                 e.Graphics.DrawRectangle(pen, e.Bounds);
         }
 
-        private void listViewOrcamentos_MouseClick(object sender, MouseEventArgs e)
+        private async void listViewOrcamentos_MouseClick(object sender, MouseEventArgs e)
         {
             var hit = listViewOrcamentos.HitTest(e.Location);
             if (hit.Item != null && hit.SubItem != null)
             {
                 if (hit.Item.SubItems.IndexOf(hit.SubItem) == listViewOrcamentos.Columns.Count - 1)
                 {
-                    var result = MessageBox.Show("Tem certeza que deseja excluir este orçamento?", "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    var result = MessageBox.Show(
+                        "Tem certeza que deseja excluir este orçamento?",
+                        "Confirmar Exclusão",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+
                     if (result == DialogResult.Yes)
                     {
                         Orcamento toRemove = (Orcamento)hit.Item.Tag;
-                        orcamentos.Remove(toRemove);
-                        AtualizarListViewOrcamentos();
-                        MessageBox.Show("Orçamento excluído com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        await ExcluirOrcamentoAsync(toRemove);
                     }
                 }
+            }
+        }
+
+        // ============================================
+        // NOVO MÉTODO: Exclui orçamento
+        // ============================================
+
+        private async Task ExcluirOrcamentoAsync(Orcamento orcamento)
+        {
+            try
+            {
+                if (usandoAPI && orcamento.Id > 0)
+                {
+                    this.Cursor = Cursors.WaitCursor;
+
+                    bool sucesso = await OrcamentoService.DeletarOrcamentoAsync(orcamento.Id);
+
+                    if (sucesso)
+                    {
+                        orcamentos.Remove(orcamento);
+                        AtualizarListViewOrcamentos();
+
+                        this.Cursor = Cursors.Default;
+
+                        MessageBox.Show(
+                            "Orçamento excluído com sucesso!",
+                            "Sucesso",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                }
+                else
+                {
+                    // Modo local
+                    orcamentos.Remove(orcamento);
+                    AtualizarListViewOrcamentos();
+
+                    MessageBox.Show(
+                        "Orçamento excluído localmente!",
+                        "Sucesso",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(
+                    $"Erro ao excluir orçamento:\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
@@ -509,7 +579,202 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private void AbrirOrcamentoParaEdicao(Orcamento orcamento)
+
+        private async Task CarregarDadosIniciais()
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+
+                // Carrega produtos da API
+                await CarregarProdutosDaAPIAsync();
+
+                // Carrega orçamentos da API
+                if (usandoAPI)
+                {
+                    await CarregarOrcamentosDaAPIAsync();
+                }
+
+                this.Cursor = Cursors.Default;
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(
+                    $"Erro ao carregar dados iniciais:\n{ex.Message}\n\nContinuando com dados locais.",
+                    "Aviso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                usandoAPI = false;
+            }
+        }
+
+        // ============================================
+        // NOVO MÉTODO: Carrega orçamentos da API
+        // ============================================
+
+        private async Task CarregarOrcamentosDaAPIAsync()
+        {
+            try
+            {
+                var orcamentosCarregados = await OrcamentoService.CarregarOrcamentosAsync();
+
+                orcamentos.Clear();
+                foreach (var orc in orcamentosCarregados)
+                {
+                    orcamentos.Add(orc);
+                }
+
+                AtualizarListViewOrcamentos();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao carregar orçamentos da API: {ex.Message}");
+            }
+        }
+
+        private async Task SalvarNovoOrcamentoAsync(Orcamento novoOrcamento)
+        {
+            try
+            {
+                if (usandoAPI)
+                {
+                    this.Cursor = Cursors.WaitCursor;
+
+                    var orcamentoAPI = await OrcamentoService.CriarOrcamentoAsync(
+                        novoOrcamento,
+                        usuarioIdAtual
+                    );
+
+                    // Atualiza com ID da API
+                    novoOrcamento.Id = orcamentoAPI.id;
+                    novoOrcamento.Status = "Pendente";
+
+                    orcamentos.Add(novoOrcamento);
+                    AtualizarListViewOrcamentos();
+
+                    this.Cursor = Cursors.Default;
+
+                    MessageBox.Show(
+                        $"Orçamento #{novoOrcamento.Id} salvo com sucesso!\n\n" +
+                        $"Cliente: {novoOrcamento.Cliente}\n" +
+                        $"Total: {novoOrcamento.TotalGeral:C}\n" +
+                        $"Itens: {novoOrcamento.QuantidadeItens}",
+                        "Orçamento Salvo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+                else
+                {
+                    // Modo local (código original)
+                    novoOrcamento.Id = orcamentos.Count + 1;
+                    novoOrcamento.Status = "Pendente";
+                    orcamentos.Add(novoOrcamento);
+                    AtualizarListViewOrcamentos();
+
+                    MessageBox.Show(
+                        $"Orçamento #{novoOrcamento.Id} salvo localmente!\n\n" +
+                        $"Cliente: {novoOrcamento.Cliente}\n" +
+                        $"Total: {novoOrcamento.TotalGeral:C}\n" +
+                        $"Itens: {novoOrcamento.QuantidadeItens}",
+                        "Orçamento Salvo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(
+                    $"Erro ao salvar orçamento:\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+
+        // ============================================
+        // NOVO MÉTODO: Confirma orçamento (transforma em venda)
+        // ============================================
+
+        private async Task ConfirmarOrcamentoAsync(Orcamento novoPedido)
+        {
+            try
+            {
+                if (usandoAPI)
+                {
+                    this.Cursor = Cursors.WaitCursor;
+
+                    // Primeiro salva como orçamento
+                    var orcamentoAPI = await OrcamentoService.CriarOrcamentoAsync(
+                        novoPedido,
+                        usuarioIdAtual
+                    );
+
+                    // Depois converte para venda
+                    var vendaAPI = await OrcamentoService.ConverterOrcamentoParaVendaAsync(
+                        orcamentoAPI.id,
+                        usuarioIdAtual
+                    );
+
+                    // Adiciona aos pedidos locais
+                    novoPedido.Id = vendaAPI.id;
+                    novoPedido.Status = "Confirmado";
+                    pedidos.Add(novoPedido);
+
+                    AtualizarPanelPedidos();
+
+                    this.Cursor = Cursors.Default;
+
+                    MessageBox.Show(
+                        $"Pedido #{novoPedido.Id} criado com sucesso!\n\n" +
+                        $"Cliente: {novoPedido.Cliente}\n" +
+                        $"Total: {novoPedido.TotalGeral:C}\n" +
+                        $"Itens: {novoPedido.QuantidadeItens}",
+                        "Pedido Confirmado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+                else
+                {
+                    // Modo local (código original)
+                    novoPedido.Id = pedidos.Count + 1;
+                    novoPedido.Status = "Confirmado";
+                    pedidos.Add(novoPedido);
+                    AtualizarPanelPedidos();
+
+                    MessageBox.Show(
+                        $"Pedido #{novoPedido.Id} criado localmente!\n\n" +
+                        $"Cliente: {novoPedido.Cliente}\n" +
+                        $"Total: {novoPedido.TotalGeral:C}\n" +
+                        $"Itens: {novoPedido.QuantidadeItens}",
+                        "Pedido Confirmado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(
+                    $"Erro ao confirmar orçamento:\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+        // ============================================
+        // SUBSTITUIR O MÉTODO AbrirOrcamentoParaEdicao EXISTENTE
+        // ============================================
+
+        private async void AbrirOrcamentoParaEdicao(Orcamento orcamento)
         {
             using (var telaOrcamento = new TelaOrcamento(produtos, orcamento))
             {
@@ -519,48 +784,166 @@ namespace WindowsFormsAppArvoredo
                 {
                     if (telaOrcamento.OrcamentoConfirmado)
                     {
-                        orcamentos.Remove(orcamento);
-
-                        var pedido = telaOrcamento.OrcamentoCriado;
-                        pedido.Id = pedidos.Count + 1;
-                        pedido.Status = "Confirmado";
-                        pedidos.Add(pedido);
-
-                        AtualizarListViewOrcamentos();
-                        AtualizarPanelPedidos();
-
-                        MessageBox.Show(
-                            $"Pedido #{pedido.Id} confirmado com sucesso!\n\n" +
-                            $"Cliente: {pedido.Cliente}\n" +
-                            $"Total: {pedido.TotalGeral:C}",
-                            "Pedido Confirmado",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        // Confirmar orçamento existente
+                        await ConfirmarOrcamentoExistenteAsync(orcamento, telaOrcamento.OrcamentoCriado);
                     }
                     else if (telaOrcamento.OrcamentoSalvo)
                     {
-                        var orcamentoAtualizado = telaOrcamento.OrcamentoCriado;
-
-                        int index = orcamentos.IndexOf(orcamento);
-                        if (index >= 0)
-                        {
-                            orcamentoAtualizado.Id = orcamento.Id;
-                            orcamentos[index] = orcamentoAtualizado;
-                        }
-
-                        AtualizarListViewOrcamentos();
-
-                        MessageBox.Show(
-                            "Orçamento atualizado com sucesso!",
-                            "Orçamento Salvo",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        // Atualizar orçamento existente
+                        await AtualizarOrcamentoExistenteAsync(orcamento, telaOrcamento.OrcamentoCriado);
                     }
                 }
             }
         }
 
-        private void btnNewOrc_Click(object sender, EventArgs e)
+        // ============================================
+        // NOVO MÉTODO: Atualiza orçamento existente
+        // ============================================
+
+        private async Task AtualizarOrcamentoExistenteAsync(Orcamento orcamentoOriginal, Orcamento orcamentoAtualizado)
+        {
+            try
+            {
+                if (usandoAPI)
+                {
+                    this.Cursor = Cursors.WaitCursor;
+
+                    await OrcamentoService.AtualizarOrcamentoAsync(
+                        orcamentoOriginal.Id,
+                        orcamentoAtualizado
+                    );
+
+                    // Atualiza localmente
+                    int index = orcamentos.IndexOf(orcamentoOriginal);
+                    if (index >= 0)
+                    {
+                        orcamentoAtualizado.Id = orcamentoOriginal.Id;
+                        orcamentos[index] = orcamentoAtualizado;
+                    }
+
+                    AtualizarListViewOrcamentos();
+
+                    this.Cursor = Cursors.Default;
+
+                    MessageBox.Show(
+                        "Orçamento atualizado com sucesso!",
+                        "Orçamento Salvo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+                else
+                {
+                    // Modo local (código original)
+                    int index = orcamentos.IndexOf(orcamentoOriginal);
+                    if (index >= 0)
+                    {
+                        orcamentoAtualizado.Id = orcamentoOriginal.Id;
+                        orcamentos[index] = orcamentoAtualizado;
+                    }
+                    AtualizarListViewOrcamentos();
+
+                    MessageBox.Show(
+                        "Orçamento atualizado localmente!",
+                        "Orçamento Salvo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(
+                    $"Erro ao atualizar orçamento:\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+
+        // ============================================
+        // NOVO MÉTODO: Confirma orçamento existente
+        // ============================================
+
+        private async Task ConfirmarOrcamentoExistenteAsync(Orcamento orcamentoOriginal, Orcamento pedidoAtualizado)
+        {
+            try
+            {
+                if (usandoAPI)
+                {
+                    this.Cursor = Cursors.WaitCursor;
+
+                    // Converte o orçamento existente para venda
+                    var vendaAPI = await OrcamentoService.ConverterOrcamentoParaVendaAsync(
+                        orcamentoOriginal.Id,
+                        usuarioIdAtual
+                    );
+
+                    // Remove dos orçamentos
+                    orcamentos.Remove(orcamentoOriginal);
+
+                    // Adiciona aos pedidos
+                    pedidoAtualizado.Id = vendaAPI.id;
+                    pedidoAtualizado.Status = "Confirmado";
+                    pedidos.Add(pedidoAtualizado);
+
+                    // Deleta o orçamento original
+                    await OrcamentoService.DeletarOrcamentoAsync(orcamentoOriginal.Id);
+
+                    AtualizarListViewOrcamentos();
+                    AtualizarPanelPedidos();
+
+                    this.Cursor = Cursors.Default;
+
+                    MessageBox.Show(
+                        $"Pedido #{pedidoAtualizado.Id} confirmado com sucesso!\n\n" +
+                        $"Cliente: {pedidoAtualizado.Cliente}\n" +
+                        $"Total: {pedidoAtualizado.TotalGeral:C}",
+                        "Pedido Confirmado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+                else
+                {
+                    // Modo local (código original)
+                    orcamentos.Remove(orcamentoOriginal);
+                    pedidoAtualizado.Id = pedidos.Count + 1;
+                    pedidoAtualizado.Status = "Confirmado";
+                    pedidos.Add(pedidoAtualizado);
+
+                    AtualizarListViewOrcamentos();
+                    AtualizarPanelPedidos();
+
+                    MessageBox.Show(
+                        $"Pedido #{pedidoAtualizado.Id} confirmado localmente!\n\n" +
+                        $"Cliente: {pedidoAtualizado.Cliente}\n" +
+                        $"Total: {pedidoAtualizado.TotalGeral:C}",
+                        "Pedido Confirmado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(
+                    $"Erro ao confirmar orçamento:\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+
+        // ============================================
+        // SUBSTITUIR O MÉTODO btnNewOrc_Click EXISTENTE
+        // ============================================
+
+        private async void btnNewOrc_Click(object sender, EventArgs e)
         {
             using (var telaOrcamento = new TelaOrcamento(produtos))
             {
@@ -570,39 +953,13 @@ namespace WindowsFormsAppArvoredo
                 {
                     if (telaOrcamento.OrcamentoConfirmado)
                     {
-                        var novoPedido = telaOrcamento.OrcamentoCriado;
-                        novoPedido.Id = pedidos.Count + 1;
-                        novoPedido.Status = "Confirmado";
-                        pedidos.Add(novoPedido);
-
-                        AtualizarPanelPedidos();
-
-                        MessageBox.Show(
-                            $"Pedido #{novoPedido.Id} criado com sucesso!\n\n" +
-                            $"Cliente: {novoPedido.Cliente}\n" +
-                            $"Total: {novoPedido.TotalGeral:C}\n" +
-                            $"Itens: {novoPedido.QuantidadeItens}",
-                            "Pedido Confirmado",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        // Orçamento confirmado - converte para pedido/venda
+                        await ConfirmarOrcamentoAsync(telaOrcamento.OrcamentoCriado);
                     }
                     else if (telaOrcamento.OrcamentoSalvo)
                     {
-                        var novoOrcamento = telaOrcamento.OrcamentoCriado;
-                        novoOrcamento.Id = orcamentos.Count + 1;
-                        novoOrcamento.Status = "Pendente";
-                        orcamentos.Add(novoOrcamento);
-
-                        AtualizarListViewOrcamentos();
-
-                        MessageBox.Show(
-                            $"Orçamento #{novoOrcamento.Id} salvo com sucesso!\n\n" +
-                            $"Cliente: {novoOrcamento.Cliente}\n" +
-                            $"Total: {novoOrcamento.TotalGeral:C}\n" +
-                            $"Itens: {novoOrcamento.QuantidadeItens}",
-                            "Orçamento Salvo",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        // Orçamento salvo como pendente
+                        await SalvarNovoOrcamentoAsync(telaOrcamento.OrcamentoCriado);
                     }
                 }
             }
@@ -2797,4 +3154,3 @@ namespace WindowsFormsAppArvoredo
     }
 }
 
- 
