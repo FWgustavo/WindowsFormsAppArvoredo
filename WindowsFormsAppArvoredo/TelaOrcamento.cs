@@ -832,7 +832,7 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private void BtnConfirmar_Click(object sender, EventArgs e)
+        private async void BtnConfirmar_Click(object sender, EventArgs e)
         {
             if (!ValidarCampos())
                 return;
@@ -849,7 +849,8 @@ namespace WindowsFormsAppArvoredo
                 "Deseja confirmar este orçamento?\n\n" +
                 $"Cliente: {txtCliente.Text}\n" +
                 $"Produtos: {dgvProdutos.Rows.Count}\n" +
-                $"Total: {txtTotalVista.Text}",
+                $"Total: {txtTotalVista.Text}\n\n" +
+                "Esta ação irá criar uma venda e atualizar o estoque.",
                 "Confirmar Orçamento",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
@@ -859,18 +860,70 @@ namespace WindowsFormsAppArvoredo
 
             try
             {
-                OrcamentoCriado = CriarOrcamentoDoFormulario();
+                this.Cursor = Cursors.WaitCursor;
+
+                // Desabilita o botão durante o processo
+                btnConfirmar.Enabled = false;
+                btnSalvar.Enabled = false;
+
+                VendaAPIResponse vendaCriada = null;
+
+                if (modoEdicao && orcamentoEmEdicao != null && orcamentoEmEdicao.Id > 0)
+                {
+                    // CENÁRIO 1: Orçamento já existe na API - converte diretamente
+                    vendaCriada = await VendaService.ConverterOrcamentoParaVendaAsync(
+                        orcamentoEmEdicao.Id,
+                        1 // TODO: Usar ID do usuário logado
+                    );
+
+                    // Após converter, deleta o orçamento
+                    await OrcamentoService.DeletarOrcamentoAsync(orcamentoEmEdicao.Id);
+                }
+                else
+                {
+                    // CENÁRIO 2: Novo orçamento - cria venda diretamente
+                    OrcamentoCriado = CriarOrcamentoDoFormulario();
+
+                    vendaCriada = await VendaService.CriarVendaDiretaAsync(
+                        OrcamentoCriado,
+                        1 // TODO: Usar ID do usuário logado
+                    );
+                }
+
+                this.Cursor = Cursors.Default;
+
+                // Atualiza o orçamento criado com os dados da venda
+                if (OrcamentoCriado == null)
+                {
+                    OrcamentoCriado = CriarOrcamentoDoFormulario();
+                }
+
+                OrcamentoCriado.Id = vendaCriada.id;
                 OrcamentoCriado.Status = "Confirmado";
                 OrcamentoConfirmado = true;
                 OrcamentoSalvo = false;
+
+                MessageBox.Show(
+                    $"Venda #{vendaCriada.id} criada com sucesso!\n\n" +
+                    $"Cliente: {txtCliente.Text}\n" +
+                    $"Total: {txtTotalVista.Text}\n\n" +
+                    "O estoque foi atualizado automaticamente.",
+                    "Venda Confirmada",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
             {
+                this.Cursor = Cursors.Default;
+                btnConfirmar.Enabled = true;
+                btnSalvar.Enabled = true;
+
                 MessageBox.Show(
-                    $"Erro ao confirmar orçamento:\n\n{ex.Message}",
+                    $"Erro ao confirmar orçamento:\n\n{ex.Message}\n\n" +
+                    "O orçamento não foi convertido em venda.",
                     "Erro",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

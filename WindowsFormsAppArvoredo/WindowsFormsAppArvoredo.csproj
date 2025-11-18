@@ -228,6 +228,7 @@
       <DependentUpon>TelaTitulos.cs</DependentUpon>
     </Compile>
     <Compile Include="UsuarioService.cs" />
+    <Compile Include="VendaService.cs" />
     <Compile Include="ViaCepService.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

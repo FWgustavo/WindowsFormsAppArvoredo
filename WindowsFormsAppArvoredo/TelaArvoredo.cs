@@ -717,15 +717,9 @@ namespace WindowsFormsAppArvoredo
                 {
                     this.Cursor = Cursors.WaitCursor;
 
-                    // Primeiro salva como orçamento
-                    var orcamentoAPI = await OrcamentoService.CriarOrcamentoAsync(
+                    // Cria venda diretamente (a API já diminui o estoque)
+                    var vendaAPI = await VendaService.CriarVendaDiretaAsync(
                         novoPedido,
-                        usuarioIdAtual
-                    );
-
-                    // Depois converte para venda
-                    var vendaAPI = await OrcamentoService.ConverterOrcamentoParaVendaAsync(
-                        orcamentoAPI.id,
                         usuarioIdAtual
                     );
 
@@ -742,7 +736,8 @@ namespace WindowsFormsAppArvoredo
                         $"Pedido #{novoPedido.Id} criado com sucesso!\n\n" +
                         $"Cliente: {novoPedido.Cliente}\n" +
                         $"Total: {novoPedido.TotalGeral:C}\n" +
-                        $"Itens: {novoPedido.QuantidadeItens}",
+                        $"Itens: {novoPedido.QuantidadeItens}\n\n" +
+                        "O estoque foi atualizado automaticamente.",
                         "Pedido Confirmado",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information
@@ -883,8 +878,8 @@ namespace WindowsFormsAppArvoredo
                 {
                     this.Cursor = Cursors.WaitCursor;
 
-                    // Converte o orçamento existente para venda
-                    var vendaAPI = await OrcamentoService.ConverterOrcamentoParaVendaAsync(
+                    // Converte o orçamento existente para venda usando o endpoint específico
+                    var vendaAPI = await VendaService.ConverterOrcamentoParaVendaAsync(
                         orcamentoOriginal.Id,
                         usuarioIdAtual
                     );
@@ -908,7 +903,8 @@ namespace WindowsFormsAppArvoredo
                     MessageBox.Show(
                         $"Pedido #{pedidoAtualizado.Id} confirmado com sucesso!\n\n" +
                         $"Cliente: {pedidoAtualizado.Cliente}\n" +
-                        $"Total: {pedidoAtualizado.TotalGeral:C}",
+                        $"Total: {pedidoAtualizado.TotalGeral:C}\n\n" +
+                        "O estoque foi atualizado automaticamente.",
                         "Pedido Confirmado",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information
