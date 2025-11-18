@@ -374,23 +374,6 @@ namespace WindowsFormsAppArvoredo
         public EstoqueMadeiraAPI estoqueMadeira { get; set; }
     }
 
-    public class UsuarioAPI
-    {
-        public int id { get; set; }
-        public string nome { get; set; }
-        public string login { get; set; }
-        public string email { get; set; }
-    }
-
-    public class ClienteAPI
-    {
-        public int id { get; set; }
-        public string nome { get; set; }
-        public string email { get; set; }
-        public string cpf { get; set; }
-        public string telefone { get; set; }
-    }
-
     public class PecaAPI
     {
         public string id { get; set; }

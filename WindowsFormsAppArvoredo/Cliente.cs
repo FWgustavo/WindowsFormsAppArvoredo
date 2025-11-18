@@ -13,6 +13,7 @@ namespace WindowsFormsAppArvoredo
         public string Bairro { get; set; }
         public string Municipio { get; set; }
         public string Email { get; set; }
+        public string Numero { get; set; }
         public DateTime DataCadastro { get; set; }
 
         public Cliente()

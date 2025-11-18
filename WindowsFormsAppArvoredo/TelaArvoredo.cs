@@ -595,6 +595,10 @@ namespace WindowsFormsAppArvoredo
                     await CarregarOrcamentosDaAPIAsync();
                 }
 
+                await CarregarClientesDaAPIAsync();
+
+                await CarregarUsuariosDaAPIAsync();
+
                 this.Cursor = Cursors.Default;
             }
             catch (Exception ex)
@@ -607,6 +611,10 @@ namespace WindowsFormsAppArvoredo
                     MessageBoxIcon.Warning
                 );
                 usandoAPI = false;
+
+                // Carrega dados de exemplo se API falhar
+                CarregarDadosExemploClientes();
+                CarregarDadosExemploUsuarios();
             }
         }
 
@@ -1458,6 +1466,57 @@ namespace WindowsFormsAppArvoredo
             TrocarAbaCadastro("clientes");
         }
 
+        //Carrega dados dos clientes
+        private async Task CarregarClientesDaAPIAsync()
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+
+                var clientesCarregados = await ClienteService.CarregarClientesAsync();
+
+                clientes.Clear();
+                foreach (var cliente in clientesCarregados)
+                {
+                    clientes.Add(cliente);
+                }
+
+                this.Cursor = Cursors.Default;
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                // Se falhar, continua com dados locais
+                System.Diagnostics.Debug.WriteLine($"Erro ao carregar clientes: {ex.Message}");
+            }
+        }
+
+        //Carregar dados dos usuarios
+        private async Task CarregarUsuariosDaAPIAsync()
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+
+                var usuariosCarregados = await UsuarioService.CarregarUsuariosAsync();
+
+                usuarios.Clear();
+                foreach (var usuario in usuariosCarregados)
+                {
+                    usuarios.Add(usuario);
+                }
+
+                this.Cursor = Cursors.Default;
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                // Se falhar, continua com dados locais
+                System.Diagnostics.Debug.WriteLine($"Erro ao carregar usuários: {ex.Message}");
+            }
+        }
+
+
         private void TrocarAbaCadastro(string aba)
         {
             abaCadastroAtiva = aba;
@@ -1517,9 +1576,65 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private void btnAdicionarClienteDireto_Click(object sender, EventArgs e)
+        private async void btnAdicionarClienteDireto_Click(object sender, EventArgs e)
         {
             using (FormCadastroCliente formCadastro = new FormCadastroCliente())
+            {
+                if (formCadastro.ShowDialog() == DialogResult.OK)
+                {
+                    var novoCliente = formCadastro.ClienteCriado;
+
+                    try
+                    {
+                        if (usandoAPI)
+                        {
+                            this.Cursor = Cursors.WaitCursor;
+
+                            // Salva na API
+                            var clienteSalvo = await ClienteService.CriarClienteAsync(novoCliente);
+
+                            // Atualiza ID local
+                            novoCliente.Id = clienteSalvo.Id;
+                            clientes.Add(novoCliente);
+
+                            this.Cursor = Cursors.Default;
+
+                            AtualizarListaClientes();
+                            MessageBox.Show(
+                                "Cliente cadastrado com sucesso na API!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                        else
+                        {
+                            // Modo local
+                            novoCliente.Id = clientes.Count + 1;
+                            clientes.Add(novoCliente);
+                            AtualizarListaClientes();
+
+                            MessageBox.Show(
+                                "Cliente cadastrado localmente!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Cursor = Cursors.Default;
+                        MessageBox.Show(
+                            $"Erro ao cadastrar cliente:\n{ex.Message}",
+                            "Erro",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                }
+            }
+            /*using (FormCadastroCliente formCadastro = new FormCadastroCliente())
             {
                 if (formCadastro.ShowDialog() == DialogResult.OK)
                 {
@@ -1529,22 +1644,80 @@ namespace WindowsFormsAppArvoredo
                     AtualizarListaClientes();
                     MessageBox.Show("Cliente cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
+            }*/
         }
 
-        private void btnAdicionarUsuarioDireto_Click(object sender, EventArgs e)
+        private async void btnAdicionarUsuarioDireto_Click(object sender, EventArgs e)
         {
             using (FormCadastroUsuario formCadastro = new FormCadastroUsuario())
             {
                 if (formCadastro.ShowDialog() == DialogResult.OK)
                 {
                     var novoUsuario = formCadastro.UsuarioCriado;
-                    novoUsuario.Id = usuarios.Count + 1;
-                    usuarios.Add(novoUsuario);
-                    AtualizarListaUsuarios();
-                    MessageBox.Show("Usuário cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    try
+                    {
+                        if (usandoAPI)
+                        {
+                            this.Cursor = Cursors.WaitCursor;
+
+                            // Salva na API
+                            var usuarioSalvo = await UsuarioService.CriarUsuarioAsync(novoUsuario);
+
+                            // Atualiza ID local
+                            novoUsuario.Id = usuarioSalvo.Id;
+                            usuarios.Add(novoUsuario);
+
+                            this.Cursor = Cursors.Default;
+
+                            AtualizarListaUsuarios();
+                            MessageBox.Show(
+                                $"Usuário cadastrado com sucesso na API!\n\n" +
+                                $"Perfil: {novoUsuario.Perfil}\n" +
+                                $"Nível de Acesso: {ObterNivelAcessoTexto(novoUsuario.Perfil)}",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                        else
+                        {
+                            // Modo local
+                            novoUsuario.Id = usuarios.Count + 1;
+                            usuarios.Add(novoUsuario);
+                            AtualizarListaUsuarios();
+
+                            MessageBox.Show(
+                                "Usuário cadastrado localmente!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Cursor = Cursors.Default;
+                        MessageBox.Show(
+                            $"Erro ao cadastrar usuário:\n{ex.Message}",
+                            "Erro",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
                 }
             }
+            /* using (FormCadastroUsuario formCadastro = new FormCadastroUsuario())
+             {
+                 if (formCadastro.ShowDialog() == DialogResult.OK)
+                 {
+                     var novoUsuario = formCadastro.UsuarioCriado;
+                     novoUsuario.Id = usuarios.Count + 1;
+                     usuarios.Add(novoUsuario);
+                     AtualizarListaUsuarios();
+                     MessageBox.Show("Usuário cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                 }
+             }*/
         }
 
         private void AtualizarListaClientes(List<Cliente> clientesFiltrados = null)
@@ -1877,27 +2050,154 @@ namespace WindowsFormsAppArvoredo
             AtualizarListaUsuarios(usuariosFiltrados);
         }
 
-        private void AbrirDetalhesCliente(Cliente cliente)
+        private async void AbrirDetalhesCliente(Cliente cliente)
         {
             using (FormCadastroCliente formDetalhes = new FormCadastroCliente(cliente))
             {
                 if (formDetalhes.ShowDialog() == DialogResult.OK)
                 {
                     var clienteAtualizado = formDetalhes.ClienteCriado;
-                    int index = clientes.FindIndex(c => c.Id == cliente.Id);
-                    if (index >= 0)
+                    clienteAtualizado.Id = cliente.Id;
+
+                    try
                     {
-                        clientes[index] = clienteAtualizado;
-                        AtualizarListaClientes();
-                        MessageBox.Show("Cliente atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (usandoAPI)
+                        {
+                            this.Cursor = Cursors.WaitCursor;
+
+                            // Atualiza na API
+                            await ClienteService.AtualizarClienteAsync(clienteAtualizado);
+
+                            // Atualiza localmente
+                            int index = clientes.FindIndex(c => c.Id == cliente.Id);
+                            if (index >= 0)
+                            {
+                                clientes[index] = clienteAtualizado;
+                            }
+
+                            this.Cursor = Cursors.Default;
+
+                            AtualizarListaClientes();
+                            MessageBox.Show(
+                                "Cliente atualizado com sucesso!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                        else
+                        {
+                            // Modo local
+                            int index = clientes.FindIndex(c => c.Id == cliente.Id);
+                            if (index >= 0)
+                            {
+                                clientes[index] = clienteAtualizado;
+                            }
+
+                            AtualizarListaClientes();
+                            MessageBox.Show(
+                                "Cliente atualizado localmente!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Cursor = Cursors.Default;
+                        MessageBox.Show(
+                            $"Erro ao atualizar cliente:\n{ex.Message}",
+                            "Erro",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
                     }
                 }
             }
+            /* using (FormCadastroCliente formDetalhes = new FormCadastroCliente(cliente))
+             {
+                 if (formDetalhes.ShowDialog() == DialogResult.OK)
+                 {
+                     var clienteAtualizado = formDetalhes.ClienteCriado;
+                     int index = clientes.FindIndex(c => c.Id == cliente.Id);
+
+                     if (index >= 0)
+                     {
+                         clientes[index] = clienteAtualizado;
+                         AtualizarListaClientes();
+                         MessageBox.Show("Cliente atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                     }
+                 }
+             }*/
         }
 
-        private void AbrirDetalhesUsuario(Usuario usuario)
+        private async void AbrirDetalhesUsuario(Usuario usuario)
         {
             using (FormCadastroUsuario formDetalhes = new FormCadastroUsuario(usuario))
+            {
+                if (formDetalhes.ShowDialog() == DialogResult.OK)
+                {
+                    var usuarioAtualizado = formDetalhes.UsuarioCriado;
+                    usuarioAtualizado.Id = usuario.Id;
+
+                    try
+                    {
+                        if (usandoAPI)
+                        {
+                            this.Cursor = Cursors.WaitCursor;
+
+                            // Atualiza na API
+                            await UsuarioService.AtualizarUsuarioAsync(usuarioAtualizado);
+
+                            // Atualiza localmente
+                            int index = usuarios.FindIndex(u => u.Id == usuario.Id);
+                            if (index >= 0)
+                            {
+                                usuarios[index] = usuarioAtualizado;
+                            }
+
+                            this.Cursor = Cursors.Default;
+
+                            AtualizarListaUsuarios();
+                            MessageBox.Show(
+                                "Usuário atualizado com sucesso!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                        else
+                        {
+                            // Modo local
+                            int index = usuarios.FindIndex(u => u.Id == usuario.Id);
+                            if (index >= 0)
+                            {
+                                usuarios[index] = usuarioAtualizado;
+                            }
+
+                            AtualizarListaUsuarios();
+                            MessageBox.Show(
+                                "Usuário atualizado localmente!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Cursor = Cursors.Default;
+                        MessageBox.Show(
+                            $"Erro ao atualizar usuário:\n{ex.Message}",
+                            "Erro",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                }
+            }
+            /*using (FormCadastroUsuario formDetalhes = new FormCadastroUsuario(usuario))
             {
                 if (formDetalhes.ShowDialog() == DialogResult.OK)
                 {
@@ -1910,6 +2210,24 @@ namespace WindowsFormsAppArvoredo
                         MessageBox.Show("Usuário atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
+            }*/
+        }
+
+        private string ObterNivelAcessoTexto(string perfil)
+        {
+            switch (perfil?.ToUpper())
+            {
+                case "ADMIN":
+                case "ADMINISTRADOR":
+                    return "3 (Administrador)";
+
+                case "VENDEDOR":
+                    return "2 (Vendedor)";
+
+                case "USUARIO":
+                case "MOBILE":
+                default:
+                    return "1 (Usuário/Mobile)";
             }
         }
 

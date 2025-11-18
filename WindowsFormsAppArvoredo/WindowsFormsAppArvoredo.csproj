@@ -115,6 +115,7 @@
   <ItemGroup>
     <Compile Include="ApiClient.cs" />
     <Compile Include="Cliente.cs" />
+    <Compile Include="ClienteService.cs" />
     <Compile Include="EnderecoViaCep.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -226,6 +227,7 @@
     <Compile Include="TelaTitulos.Designer.cs">
       <DependentUpon>TelaTitulos.cs</DependentUpon>
     </Compile>
+    <Compile Include="UsuarioService.cs" />
     <Compile Include="ViaCepService.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
