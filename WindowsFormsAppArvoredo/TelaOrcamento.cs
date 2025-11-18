@@ -740,17 +740,57 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        private void BtnExcluir_Click(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show("Deseja realmente excluir este orçamento?",
-                "Confirmar Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (result == DialogResult.Yes)
+        private async void BtnExcluir_Click(object sender, EventArgs e)
+        {
+            // Se estiver em modo edição e o orçamento já foi salvo na API
+            if (modoEdicao && orcamentoEmEdicao != null && orcamentoEmEdicao.Id > 0)
             {
-                LimparFormulario();
-                MessageBox.Show("Orçamento excluído!", "Excluir",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
+                DialogResult result = MessageBox.Show(
+                    $"Deseja realmente excluir o orçamento #{orcamentoEmEdicao.Id}?\n\n" +
+                    $"Cliente: {orcamentoEmEdicao.Cliente}\n" +
+                    $"Total: {orcamentoEmEdicao.TotalGeral:C}",
+                    "Confirmar Exclusão",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        this.Cursor = Cursors.WaitCursor;
+
+                        // Chama a API para excluir o orçamento
+                        bool sucesso = await OrcamentoService.DeletarOrcamentoAsync(orcamentoEmEdicao.Id);
+
+                        this.Cursor = Cursors.Default;
+
+                        if (sucesso)
+                        {
+                            MessageBox.Show(
+                                "Orçamento excluído com sucesso!",
+                                "Exclusão Confirmada",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+
+                            // Define DialogResult como OK para notificar TelaArvoredo
+                            OrcamentoCriado = null;
+                            OrcamentoSalvo = false;
+                            OrcamentoConfirmado = false;
+                            this.DialogResult = DialogResult.OK;
+                            this.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Cursor = Cursors.Default;
+                        MessageBox.Show(
+                            $"Erro ao excluir orçamento:\n\n{ex.Message}",
+                            "Erro",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+                }
             }
         }
 
