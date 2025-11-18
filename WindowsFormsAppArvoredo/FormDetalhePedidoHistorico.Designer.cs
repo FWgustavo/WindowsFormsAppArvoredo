@@ -81,7 +81,7 @@ namespace WindowsFormsAppArvoredo
             // Seção DADOS DO CLIENTE
             Label lblDadosCliente = new Label();
             lblDadosCliente.Text = "DADOS DO CLIENTE";
-            lblDadosCliente.Location = new Point(220, 85);
+            lblDadosCliente.Location = new Point(220, 75);
             lblDadosCliente.Size = new Size(160, 20);
             lblDadosCliente.Font = new Font("Arial", 9F, FontStyle.Bold);
             lblDadosCliente.TextAlign = ContentAlignment.MiddleCenter;
@@ -90,7 +90,7 @@ namespace WindowsFormsAppArvoredo
 
             // Box dos dados do cliente
             Panel boxDadosCliente = new Panel();
-            boxDadosCliente.Location = new Point(30, 95);
+            boxDadosCliente.Location = new Point(30, 100);
             boxDadosCliente.Size = new Size(540, 110);
             boxDadosCliente.BorderStyle = BorderStyle.FixedSingle;
             boxDadosCliente.BackColor = Color.White;
@@ -180,7 +180,7 @@ namespace WindowsFormsAppArvoredo
 
             // DataGridView
             DataGridView dgvProdutos = new DataGridView();
-            dgvProdutos.Location = new Point(30, 220);
+            dgvProdutos.Location = new Point(30, 240);
             dgvProdutos.Size = new Size(540, 180);
             dgvProdutos.AllowUserToAddRows = false;
             dgvProdutos.AllowUserToDeleteRows = false;
@@ -255,8 +255,8 @@ namespace WindowsFormsAppArvoredo
             // Seção TOTAIS
             Label lblTotais = new Label();
             lblTotais.Text = "TOTAIS";
-            lblTotais.Location = new Point(270, 410);
-            lblTotais.Size = new Size(60, 20);
+            lblTotais.Location = new Point(270, 420);
+            lblTotais.Size = new Size(60, 25);
             lblTotais.Font = new Font("Arial", 9F, FontStyle.Bold);
             lblTotais.TextAlign = ContentAlignment.MiddleCenter;
             lblTotais.BackColor = Color.White;
