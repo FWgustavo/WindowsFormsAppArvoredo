@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WindowsFormsAppArvoredo
@@ -30,16 +31,16 @@ namespace WindowsFormsAppArvoredo
                     rua = orcamento.Endereco,
                     numero = orcamento.Numero,
                     telefone = orcamento.Telefone,
-                    forma = orcamento.FormaPagamento,
+                    forma = orcamento.FormaPagamento ?? "Dinheiro",
                     valorTotal = (double)orcamento.TotalGeral,
                     pago = false,
-                    vendaE = orcamento.Itens.ConvertAll(item => new VendaEAPICreate
+                    vendaE = orcamento.Itens.Select(item => new VendaEAPICreate
                     {
                         produtoId = item.ProdutoOrigem?.Id,
                         quantidade = (int)item.Quantidade,
                         valorVenda = (double)item.ValorUnitario,
                         valorTotal = (double)item.ValorTotal
-                    })
+                    }).ToList()
                 };
 
                 var response = await ApiClient.PostAsync<VendaAPICreate, VendaAPIResponse>(
@@ -206,6 +207,12 @@ namespace WindowsFormsAppArvoredo
         public int quantidade { get; set; }
         public double valorVenda { get; set; }
         public double valorTotal { get; set; }
+    }
+
+    public class VendaFromOrcamentoCreate
+    {
+        public int usuarioId { get; set; }
+        public bool pago { get; set; }
     }
 
     #endregion

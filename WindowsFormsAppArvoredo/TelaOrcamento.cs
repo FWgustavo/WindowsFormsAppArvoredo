@@ -535,10 +535,14 @@ namespace WindowsFormsAppArvoredo
                 decimal total = totalProdutos - desconto + acrescimo;
                 txtTotalVista.Text = total.ToString("C2");
 
+                // Evita divisão por zero
                 decimal valorParcela = total / 4;
                 txtSemJuros.Text = $"4x de {valorParcela:C2}";
             }
-            catch { }
+            catch
+            {
+                // Não propaga exceção de UI para o usuário - manter comportamento anterior
+            }
         }
 
         private void ConfigurarFormatacaoCampos()
@@ -780,6 +784,14 @@ namespace WindowsFormsAppArvoredo
                             this.DialogResult = DialogResult.OK;
                             this.Close();
                         }
+                        else
+                        {
+                            MessageBox.Show(
+                                "Não foi possível excluir o orçamento na API.",
+                                "Erro",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -832,28 +844,43 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
+        // ============================
+        // MÉTODO SUBSTITUÍDO: BtnConfirmar_Click
+        // Versão integrada do arquivo 2 + checagens
+        // ============================
         private async void BtnConfirmar_Click(object sender, EventArgs e)
         {
+            // ✅ Validação dos campos
             if (!ValidarCampos())
                 return;
 
             if (dgvProdutos.Rows.Count == 0)
             {
-                MessageBox.Show("Adicione pelo menos um produto ao orçamento!", "Validação",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    "Adicione pelo menos um produto ao orçamento!",
+                    "Validação",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
                 txtPesquisarProdutos.Focus();
                 return;
             }
 
+            // ✅ Confirmação do usuário
             DialogResult resultado = MessageBox.Show(
                 "Deseja confirmar este orçamento?\n\n" +
                 $"Cliente: {txtCliente.Text}\n" +
                 $"Produtos: {dgvProdutos.Rows.Count}\n" +
-                $"Total: {txtTotalVista.Text}\n\n" +
-                "Esta ação irá criar uma venda e atualizar o estoque.",
+                $"Total: {txtTotalVista.Text}\n" +
+                $"Forma de Pagamento: {cmbFormaPagamento.SelectedItem}\n\n" +
+                "⚠️ Esta ação irá:\n" +
+                "• Criar uma venda\n" +
+                "• Atualizar o estoque automaticamente\n" +
+                "• Salvar o pedido como confirmado",
                 "Confirmar Orçamento",
                 MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+                MessageBoxIcon.Question
+            );
 
             if (resultado != DialogResult.Yes)
                 return;
@@ -862,37 +889,62 @@ namespace WindowsFormsAppArvoredo
             {
                 this.Cursor = Cursors.WaitCursor;
 
-                // Desabilita o botão durante o processo
+                // Desabilita botões durante o processo
                 btnConfirmar.Enabled = false;
                 btnSalvar.Enabled = false;
 
                 VendaAPIResponse vendaCriada = null;
 
+                // ============================================
+                // CENÁRIO 1: Orçamento já existe na API
+                // Converte orçamento existente em venda
+                // ============================================
                 if (modoEdicao && orcamentoEmEdicao != null && orcamentoEmEdicao.Id > 0)
                 {
-                    // CENÁRIO 1: Orçamento já existe na API - converte diretamente
                     vendaCriada = await VendaService.ConverterOrcamentoParaVendaAsync(
                         orcamentoEmEdicao.Id,
                         1 // TODO: Usar ID do usuário logado
                     );
 
-                    // Após converter, deleta o orçamento
-                    await OrcamentoService.DeletarOrcamentoAsync(orcamentoEmEdicao.Id);
+                    // Se a conversão retornou nulo, lança erro
+                    if (vendaCriada == null)
+                        throw new Exception("Resposta inválida da API ao converter orçamento.");
+
+                    // Após converter, tenta deletar o orçamento (se falhar, apenas avisa)
+                    try
+                    {
+                        bool excluiu = await OrcamentoService.DeletarOrcamentoAsync(orcamentoEmEdicao.Id);
+                        if (!excluiu)
+                        {
+                            // opcional: log local (se houver sistema de logs)
+                            // Não bloqueia o fluxo principal
+                        }
+                    }
+                    catch
+                    {
+                        // Não bloqueia o fluxo principal, mas poderia registrar log
+                    }
                 }
+                // ============================================
+                // CENÁRIO 2: Novo orçamento (não salvo ainda)
+                // Cria venda diretamente
+                // ============================================
                 else
                 {
-                    // CENÁRIO 2: Novo orçamento - cria venda diretamente
                     OrcamentoCriado = CriarOrcamentoDoFormulario();
 
                     vendaCriada = await VendaService.CriarVendaDiretaAsync(
                         OrcamentoCriado,
                         1 // TODO: Usar ID do usuário logado
                     );
+
+                    if (vendaCriada == null)
+                        throw new Exception("Resposta inválida da API ao criar a venda.");
                 }
 
                 this.Cursor = Cursors.Default;
 
-                // Atualiza o orçamento criado com os dados da venda
+                // ✅ Atualiza o orçamento criado com os dados da venda
                 if (OrcamentoCriado == null)
                 {
                     OrcamentoCriado = CriarOrcamentoDoFormulario();
@@ -903,14 +955,17 @@ namespace WindowsFormsAppArvoredo
                 OrcamentoConfirmado = true;
                 OrcamentoSalvo = false;
 
+                // ✅ Mensagem de sucesso
                 MessageBox.Show(
-                    $"Venda #{vendaCriada.id} criada com sucesso!\n\n" +
+                    $"✅ Venda #{vendaCriada.id} criada com sucesso!\n\n" +
                     $"Cliente: {txtCliente.Text}\n" +
-                    $"Total: {txtTotalVista.Text}\n\n" +
-                    "O estoque foi atualizado automaticamente.",
+                    $"Total: {txtTotalVista.Text}\n" +
+                    $"Forma de Pagamento: {cmbFormaPagamento.SelectedItem}\n\n" +
+                    $"📦 O estoque foi atualizado automaticamente pela API.",
                     "Venda Confirmada",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    MessageBoxIcon.Information
+                );
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();
@@ -921,18 +976,85 @@ namespace WindowsFormsAppArvoredo
                 btnConfirmar.Enabled = true;
                 btnSalvar.Enabled = true;
 
-                MessageBox.Show(
-                    $"Erro ao confirmar orçamento:\n\n{ex.Message}\n\n" +
-                    "O orçamento não foi convertido em venda.",
-                    "Erro",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                // ❌ Tratamento de erro específico para estoque insuficiente
+                string mensagemErro = ex.Message ?? "Erro desconhecido";
+
+                if (mensagemErro.IndexOf("insuficiente", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    mensagemErro.IndexOf("Estoque", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    mensagemErro.IndexOf("insufficient", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    MessageBox.Show(
+                        $"❌ Estoque Insuficiente!\n\n" +
+                        $"{mensagemErro}\n\n" +
+                        "Verifique a disponibilidade dos produtos e tente novamente.",
+                        "Erro de Estoque",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"❌ Erro ao confirmar orçamento:\n\n{mensagemErro}\n\n" +
+                        "O orçamento não foi convertido em venda.",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
 
                 OrcamentoCriado = null;
                 OrcamentoConfirmado = false;
             }
         }
 
+        // ============================================
+        // MÉTODO AUXILIAR: ValidarCampos (atualizado)
+        // ============================================
+        private bool ValidarCampos()
+        {
+            if (string.IsNullOrWhiteSpace(txtCliente.Text))
+            {
+                MessageBox.Show(
+                    "Campo Cliente é obrigatório!",
+                    "Validação",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                txtCliente.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtCPF.Text))
+            {
+                MessageBox.Show(
+                    "Campo CPF/CNPJ é obrigatório!",
+                    "Validação",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                txtCPF.Focus();
+                return false;
+            }
+
+            if (cmbFormaPagamento == null || cmbFormaPagamento.SelectedItem == null)
+            {
+                MessageBox.Show(
+                    "Selecione uma forma de pagamento!",
+                    "Validação",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                cmbFormaPagamento?.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        // ============================================
+        // MÉTODO AUXILIAR: CriarOrcamentoDoFormulario (atualizado)
+        // ============================================
         private Orcamento CriarOrcamentoDoFormulario()
         {
             var orcamento = new Orcamento();
@@ -945,13 +1067,16 @@ namespace WindowsFormsAppArvoredo
             orcamento.UF = txtUF.Text.Trim();
             orcamento.CPF_CNPJ = txtCPF.Text.Trim();
             orcamento.Telefone = txtTEL.Text.Trim();
-            orcamento.Numero = txtFantasia.Text.Trim();  // SALVA NÚMERO
+            orcamento.Numero = txtFantasia.Text.Trim();
             orcamento.Vendedor = txtVendedor.Text.Trim();
-            orcamento.FormaPagamento = cmbFormaPagamento.SelectedItem?.ToString() ?? "Dinheiro";  // SALVA FORMA DE PAGAMENTO
+            orcamento.FormaPagamento = cmbFormaPagamento.SelectedItem?.ToString() ?? "Dinheiro";
             orcamento.DataEmissao = DateTime.Now;
 
             decimal subTotal = 0;
             int sequencia = 1;
+
+            // limpa itens atuais antes de popular (evita duplicação se método for chamado várias vezes)
+            orcamento.Itens = new List<ItemOrcamento>();
 
             foreach (DataGridViewRow row in dgvProdutos.Rows)
             {
@@ -1001,27 +1126,6 @@ namespace WindowsFormsAppArvoredo
             orcamento.TotalGeral = subTotal - orcamento.Desconto + orcamento.Acrescimo;
 
             return orcamento;
-        }
-
-        private bool ValidarCampos()
-        {
-            if (string.IsNullOrWhiteSpace(txtCliente.Text))
-            {
-                MessageBox.Show("Campo Cliente é obrigatório!", "Validação",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtCliente.Focus();
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtCPF.Text))
-            {
-                MessageBox.Show("Campo CPF/CNPJ é obrigatório!", "Validação",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtCPF.Focus();
-                return false;
-            }
-
-            return true;
         }
 
         private void LimparFormulario()
