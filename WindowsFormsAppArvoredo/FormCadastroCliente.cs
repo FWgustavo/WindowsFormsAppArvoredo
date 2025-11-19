@@ -29,6 +29,7 @@ namespace WindowsFormsAppArvoredo
             txtCep.Text = cliente.Cep;
             txtEndereco.Text = cliente.Endereco;
             txtBairro.Text = cliente.Bairro;
+            txtEmail.Text = cliente.Email;
         }
 
         private void btnCadastrar_Click(object sender, EventArgs e)
@@ -44,7 +45,8 @@ namespace WindowsFormsAppArvoredo
                 Telefone = txtTelefone.Text.Trim(),
                 Cep = txtCep.Text.Trim(),
                 Endereco = txtEndereco.Text.Trim(),
-                Bairro = txtBairro.Text.Trim()
+                Bairro = txtBairro.Text.Trim(),
+                Email = txtEmail.Text.Trim()
             };
 
             this.DialogResult = DialogResult.OK;
@@ -84,6 +86,7 @@ namespace WindowsFormsAppArvoredo
             txtEndereco.Clear();
             txtBairro.Clear();
             txtNome.Focus();
+            txtEmail.Clear();
         }
     }
 }

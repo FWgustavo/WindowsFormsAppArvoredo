@@ -18,21 +18,23 @@
         private void InitializeComponent()
         {
             this.panelPrincipal = new System.Windows.Forms.Panel();
-            this.lblTitulo = new System.Windows.Forms.Label();
-            this.txtNome = new System.Windows.Forms.TextBox();
-            this.lblNome = new System.Windows.Forms.Label();
-            this.txtCpfCnpj = new System.Windows.Forms.TextBox();
-            this.lblCpfCnpj = new System.Windows.Forms.Label();
-            this.txtTelefone = new System.Windows.Forms.TextBox();
-            this.lblTelefone = new System.Windows.Forms.Label();
-            this.txtCep = new System.Windows.Forms.TextBox();
-            this.lblCep = new System.Windows.Forms.Label();
-            this.txtEndereco = new System.Windows.Forms.TextBox();
-            this.lblEndereco = new System.Windows.Forms.Label();
+            this.btnCadastrar = new System.Windows.Forms.Button();
+            this.btnExcluir = new System.Windows.Forms.Button();
             this.txtBairro = new System.Windows.Forms.TextBox();
             this.lblBairro = new System.Windows.Forms.Label();
-            this.btnExcluir = new System.Windows.Forms.Button();
-            this.btnCadastrar = new System.Windows.Forms.Button();
+            this.txtEndereco = new System.Windows.Forms.TextBox();
+            this.lblEndereco = new System.Windows.Forms.Label();
+            this.txtCep = new System.Windows.Forms.TextBox();
+            this.lblCep = new System.Windows.Forms.Label();
+            this.txtTelefone = new System.Windows.Forms.TextBox();
+            this.lblTelefone = new System.Windows.Forms.Label();
+            this.txtCpfCnpj = new System.Windows.Forms.TextBox();
+            this.lblCpfCnpj = new System.Windows.Forms.Label();
+            this.txtNome = new System.Windows.Forms.TextBox();
+            this.lblNome = new System.Windows.Forms.Label();
+            this.lblTitulo = new System.Windows.Forms.Label();
+            this.lblEmail = new System.Windows.Forms.Label();
+            this.txtEmail = new System.Windows.Forms.TextBox();
             this.panelPrincipal.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -40,6 +42,8 @@
             // 
             this.panelPrincipal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.panelPrincipal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelPrincipal.Controls.Add(this.txtEmail);
+            this.panelPrincipal.Controls.Add(this.lblEmail);
             this.panelPrincipal.Controls.Add(this.btnCadastrar);
             this.panelPrincipal.Controls.Add(this.btnExcluir);
             this.panelPrincipal.Controls.Add(this.txtBairro);
@@ -57,14 +61,164 @@
             this.panelPrincipal.Controls.Add(this.lblTitulo);
             this.panelPrincipal.Location = new System.Drawing.Point(20, 20);
             this.panelPrincipal.Name = "panelPrincipal";
-            this.panelPrincipal.Size = new System.Drawing.Size(700, 480);
+            this.panelPrincipal.Size = new System.Drawing.Size(700, 594);
             this.panelPrincipal.TabIndex = 0;
+            // 
+            // btnCadastrar
+            // 
+            this.btnCadastrar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
+            this.btnCadastrar.FlatAppearance.BorderSize = 0;
+            this.btnCadastrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCadastrar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.btnCadastrar.ForeColor = System.Drawing.Color.Black;
+            this.btnCadastrar.Location = new System.Drawing.Point(450, 524);
+            this.btnCadastrar.Name = "btnCadastrar";
+            this.btnCadastrar.Size = new System.Drawing.Size(200, 35);
+            this.btnCadastrar.TabIndex = 14;
+            this.btnCadastrar.Text = "CADASTRAR";
+            this.btnCadastrar.UseVisualStyleBackColor = false;
+            this.btnCadastrar.Click += new System.EventHandler(this.btnCadastrar_Click);
+            // 
+            // btnExcluir
+            // 
+            this.btnExcluir.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.btnExcluir.FlatAppearance.BorderSize = 0;
+            this.btnExcluir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExcluir.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+            this.btnExcluir.ForeColor = System.Drawing.Color.White;
+            this.btnExcluir.Location = new System.Drawing.Point(73, 524);
+            this.btnExcluir.Name = "btnExcluir";
+            this.btnExcluir.Size = new System.Drawing.Size(200, 35);
+            this.btnExcluir.TabIndex = 13;
+            this.btnExcluir.Text = "EXCLUIR";
+            this.btnExcluir.UseVisualStyleBackColor = false;
+            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
+            // 
+            // txtBairro
+            // 
+            this.txtBairro.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtBairro.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txtBairro.Location = new System.Drawing.Point(73, 461);
+            this.txtBairro.Name = "txtBairro";
+            this.txtBairro.Size = new System.Drawing.Size(560, 23);
+            this.txtBairro.TabIndex = 12;
+            // 
+            // lblBairro
+            // 
+            this.lblBairro.AutoSize = true;
+            this.lblBairro.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblBairro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblBairro.Location = new System.Drawing.Point(70, 441);
+            this.lblBairro.Name = "lblBairro";
+            this.lblBairro.Size = new System.Drawing.Size(75, 18);
+            this.lblBairro.TabIndex = 11;
+            this.lblBairro.Text = "BAIRRO:";
+            // 
+            // txtEndereco
+            // 
+            this.txtEndereco.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtEndereco.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txtEndereco.Location = new System.Drawing.Point(73, 406);
+            this.txtEndereco.Name = "txtEndereco";
+            this.txtEndereco.Size = new System.Drawing.Size(560, 23);
+            this.txtEndereco.TabIndex = 10;
+            // 
+            // lblEndereco
+            // 
+            this.lblEndereco.AutoSize = true;
+            this.lblEndereco.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblEndereco.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblEndereco.Location = new System.Drawing.Point(70, 386);
+            this.lblEndereco.Name = "lblEndereco";
+            this.lblEndereco.Size = new System.Drawing.Size(107, 18);
+            this.lblEndereco.TabIndex = 9;
+            this.lblEndereco.Text = "ENDEREÇO:";
+            // 
+            // txtCep
+            // 
+            this.txtCep.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCep.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txtCep.Location = new System.Drawing.Point(73, 351);
+            this.txtCep.Name = "txtCep";
+            this.txtCep.Size = new System.Drawing.Size(560, 23);
+            this.txtCep.TabIndex = 8;
+            // 
+            // lblCep
+            // 
+            this.lblCep.AutoSize = true;
+            this.lblCep.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblCep.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblCep.Location = new System.Drawing.Point(70, 331);
+            this.lblCep.Name = "lblCep";
+            this.lblCep.Size = new System.Drawing.Size(138, 18);
+            this.lblCep.TabIndex = 7;
+            this.lblCep.Text = "CEP/MUNICÍPIO:";
+            // 
+            // txtTelefone
+            // 
+            this.txtTelefone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTelefone.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txtTelefone.Location = new System.Drawing.Point(73, 296);
+            this.txtTelefone.Name = "txtTelefone";
+            this.txtTelefone.Size = new System.Drawing.Size(560, 23);
+            this.txtTelefone.TabIndex = 6;
+            // 
+            // lblTelefone
+            // 
+            this.lblTelefone.AutoSize = true;
+            this.lblTelefone.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTelefone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblTelefone.Location = new System.Drawing.Point(70, 276);
+            this.lblTelefone.Name = "lblTelefone";
+            this.lblTelefone.Size = new System.Drawing.Size(146, 18);
+            this.lblTelefone.TabIndex = 5;
+            this.lblTelefone.Text = "TELEFONE/CELL:";
+            // 
+            // txtCpfCnpj
+            // 
+            this.txtCpfCnpj.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCpfCnpj.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txtCpfCnpj.Location = new System.Drawing.Point(73, 185);
+            this.txtCpfCnpj.Name = "txtCpfCnpj";
+            this.txtCpfCnpj.Size = new System.Drawing.Size(560, 23);
+            this.txtCpfCnpj.TabIndex = 4;
+            // 
+            // lblCpfCnpj
+            // 
+            this.lblCpfCnpj.AutoSize = true;
+            this.lblCpfCnpj.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblCpfCnpj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblCpfCnpj.Location = new System.Drawing.Point(70, 165);
+            this.lblCpfCnpj.Name = "lblCpfCnpj";
+            this.lblCpfCnpj.Size = new System.Drawing.Size(95, 18);
+            this.lblCpfCnpj.TabIndex = 3;
+            this.lblCpfCnpj.Text = "CPF/CNPJ:";
+            // 
+            // txtNome
+            // 
+            this.txtNome.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNome.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txtNome.Location = new System.Drawing.Point(73, 130);
+            this.txtNome.Name = "txtNome";
+            this.txtNome.Size = new System.Drawing.Size(560, 23);
+            this.txtNome.TabIndex = 2;
+            // 
+            // lblNome
+            // 
+            this.lblNome.AutoSize = true;
+            this.lblNome.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblNome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
+            this.lblNome.Location = new System.Drawing.Point(70, 110);
+            this.lblNome.Name = "lblNome";
+            this.lblNome.Size = new System.Drawing.Size(63, 18);
+            this.lblNome.TabIndex = 1;
+            this.lblNome.Text = "NOME:";
             // 
             // lblTitulo
             // 
             this.lblTitulo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(212)))), ((int)(((byte)(172)))));
             this.lblTitulo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblTitulo.Font = new System.Drawing.Font("Gagalin", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
             this.lblTitulo.Location = new System.Drawing.Point(50, 30);
             this.lblTitulo.Name = "lblTitulo";
@@ -73,162 +227,28 @@
             this.lblTitulo.Text = "CADASTRAR CLIENTE";
             this.lblTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblNome
+            // lblEmail
             // 
-            this.lblNome.AutoSize = true;
-            this.lblNome.Font = new System.Drawing.Font("Gagalin", 11F, System.Drawing.FontStyle.Bold);
-            this.lblNome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.lblNome.Location = new System.Drawing.Point(70, 110);
-            this.lblNome.Name = "lblNome";
-            this.lblNome.Size = new System.Drawing.Size(60, 18);
-            this.lblNome.TabIndex = 1;
-            this.lblNome.Text = "NOME:";
+            this.lblEmail.AutoSize = true;
+            this.lblEmail.Location = new System.Drawing.Point(70, 220);
+            this.lblEmail.Name = "lblEmail";
+            this.lblEmail.Size = new System.Drawing.Size(35, 13);
+            this.lblEmail.TabIndex = 15;
+            this.lblEmail.Text = "Email:";
             // 
-            // txtNome
+            // txtEmail
             // 
-            this.txtNome.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtNome.Font = new System.Drawing.Font("Gagalin", 10F);
-            this.txtNome.Location = new System.Drawing.Point(73, 130);
-            this.txtNome.Name = "txtNome";
-            this.txtNome.Size = new System.Drawing.Size(560, 24);
-            this.txtNome.TabIndex = 2;
-            // 
-            // lblCpfCnpj
-            // 
-            this.lblCpfCnpj.AutoSize = true;
-            this.lblCpfCnpj.Font = new System.Drawing.Font("Gagalin", 11F, System.Drawing.FontStyle.Bold);
-            this.lblCpfCnpj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.lblCpfCnpj.Location = new System.Drawing.Point(70, 165);
-            this.lblCpfCnpj.Name = "lblCpfCnpj";
-            this.lblCpfCnpj.Size = new System.Drawing.Size(93, 18);
-            this.lblCpfCnpj.TabIndex = 3;
-            this.lblCpfCnpj.Text = "CPF/CNPJ:";
-            // 
-            // txtCpfCnpj
-            // 
-            this.txtCpfCnpj.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtCpfCnpj.Font = new System.Drawing.Font("Gagalin", 10F);
-            this.txtCpfCnpj.Location = new System.Drawing.Point(73, 185);
-            this.txtCpfCnpj.Name = "txtCpfCnpj";
-            this.txtCpfCnpj.Size = new System.Drawing.Size(560, 24);
-            this.txtCpfCnpj.TabIndex = 4;
-            // 
-            // lblTelefone
-            // 
-            this.lblTelefone.AutoSize = true;
-            this.lblTelefone.Font = new System.Drawing.Font("Gagalin", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTelefone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.lblTelefone.Location = new System.Drawing.Point(70, 220);
-            this.lblTelefone.Name = "lblTelefone";
-            this.lblTelefone.Size = new System.Drawing.Size(134, 18);
-            this.lblTelefone.TabIndex = 5;
-            this.lblTelefone.Text = "TELEFONE/CELL:";
-            // 
-            // txtTelefone
-            // 
-            this.txtTelefone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtTelefone.Font = new System.Drawing.Font("Gagalin", 10F);
-            this.txtTelefone.Location = new System.Drawing.Point(73, 240);
-            this.txtTelefone.Name = "txtTelefone";
-            this.txtTelefone.Size = new System.Drawing.Size(560, 24);
-            this.txtTelefone.TabIndex = 6;
-            // 
-            // lblCep
-            // 
-            this.lblCep.AutoSize = true;
-            this.lblCep.Font = new System.Drawing.Font("Gagalin", 11F, System.Drawing.FontStyle.Bold);
-            this.lblCep.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.lblCep.Location = new System.Drawing.Point(70, 275);
-            this.lblCep.Name = "lblCep";
-            this.lblCep.Size = new System.Drawing.Size(130, 18);
-            this.lblCep.TabIndex = 7;
-            this.lblCep.Text = "CEP/MUNICÍPIO:";
-            // 
-            // txtCep
-            // 
-            this.txtCep.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtCep.Font = new System.Drawing.Font("Gagalin", 10F);
-            this.txtCep.Location = new System.Drawing.Point(73, 295);
-            this.txtCep.Name = "txtCep";
-            this.txtCep.Size = new System.Drawing.Size(560, 24);
-            this.txtCep.TabIndex = 8;
-            // 
-            // lblEndereco
-            // 
-            this.lblEndereco.AutoSize = true;
-            this.lblEndereco.Font = new System.Drawing.Font("Gagalin", 11F, System.Drawing.FontStyle.Bold);
-            this.lblEndereco.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.lblEndereco.Location = new System.Drawing.Point(70, 330);
-            this.lblEndereco.Name = "lblEndereco";
-            this.lblEndereco.Size = new System.Drawing.Size(95, 18);
-            this.lblEndereco.TabIndex = 9;
-            this.lblEndereco.Text = "ENDEREÇO:";
-            // 
-            // txtEndereco
-            // 
-            this.txtEndereco.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEndereco.Font = new System.Drawing.Font("Gagalin", 10F);
-            this.txtEndereco.Location = new System.Drawing.Point(73, 350);
-            this.txtEndereco.Name = "txtEndereco";
-            this.txtEndereco.Size = new System.Drawing.Size(560, 24);
-            this.txtEndereco.TabIndex = 10;
-            // 
-            // lblBairro
-            // 
-            this.lblBairro.AutoSize = true;
-            this.lblBairro.Font = new System.Drawing.Font("Gagalin", 11F, System.Drawing.FontStyle.Bold);
-            this.lblBairro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(27)))), ((int)(((byte)(1)))));
-            this.lblBairro.Location = new System.Drawing.Point(70, 385);
-            this.lblBairro.Name = "lblBairro";
-            this.lblBairro.Size = new System.Drawing.Size(73, 18);
-            this.lblBairro.TabIndex = 11;
-            this.lblBairro.Text = "BAIRRO:";
-            // 
-            // txtBairro
-            // 
-            this.txtBairro.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtBairro.Font = new System.Drawing.Font("Gagalin", 10F);
-            this.txtBairro.Location = new System.Drawing.Point(73, 405);
-            this.txtBairro.Name = "txtBairro";
-            this.txtBairro.Size = new System.Drawing.Size(560, 24);
-            this.txtBairro.TabIndex = 12;
-            // 
-            // btnExcluir
-            // 
-            this.btnExcluir.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnExcluir.FlatAppearance.BorderSize = 0;
-            this.btnExcluir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExcluir.Font = new System.Drawing.Font("Gagalin", 12F, System.Drawing.FontStyle.Bold);
-            this.btnExcluir.ForeColor = System.Drawing.Color.White;
-            this.btnExcluir.Location = new System.Drawing.Point(73, 440);
-            this.btnExcluir.Name = "btnExcluir";
-            this.btnExcluir.Size = new System.Drawing.Size(200, 35);
-            this.btnExcluir.TabIndex = 13;
-            this.btnExcluir.Text = "EXCLUIR";
-            this.btnExcluir.UseVisualStyleBackColor = false;
-            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
-            // 
-            // btnCadastrar
-            // 
-            this.btnCadastrar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(144)))), ((int)(((byte)(238)))), ((int)(((byte)(144)))));
-            this.btnCadastrar.FlatAppearance.BorderSize = 0;
-            this.btnCadastrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCadastrar.Font = new System.Drawing.Font("Gagalin", 12F, System.Drawing.FontStyle.Bold);
-            this.btnCadastrar.ForeColor = System.Drawing.Color.Black;
-            this.btnCadastrar.Location = new System.Drawing.Point(433, 440);
-            this.btnCadastrar.Name = "btnCadastrar";
-            this.btnCadastrar.Size = new System.Drawing.Size(200, 35);
-            this.btnCadastrar.TabIndex = 14;
-            this.btnCadastrar.Text = "CADASTRAR";
-            this.btnCadastrar.UseVisualStyleBackColor = false;
-            this.btnCadastrar.Click += new System.EventHandler(this.btnCadastrar_Click);
+            this.txtEmail.Location = new System.Drawing.Point(73, 237);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(560, 20);
+            this.txtEmail.TabIndex = 16;
             // 
             // FormCadastroCliente
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(230)))), ((int)(((byte)(194)))));
-            this.ClientSize = new System.Drawing.Size(744, 521);
+            this.ClientSize = new System.Drawing.Size(744, 633);
             this.Controls.Add(this.panelPrincipal);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -239,6 +259,7 @@
             this.panelPrincipal.ResumeLayout(false);
             this.panelPrincipal.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -259,5 +280,7 @@
         private System.Windows.Forms.TextBox txtBairro;
         private System.Windows.Forms.Button btnExcluir;
         private System.Windows.Forms.Button btnCadastrar;
+        private System.Windows.Forms.TextBox txtEmail;
+        private System.Windows.Forms.Label lblEmail;
     }
 }

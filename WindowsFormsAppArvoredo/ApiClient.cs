@@ -117,7 +117,7 @@ namespace WindowsFormsAppArvoredo
                     }
                     catch
                     {
-                        throw new Exception($"Erro na requisição POST: HTTP {(int)response.StatusCode}");
+                        throw new Exception(responseContent);
                     }
                 }
 
