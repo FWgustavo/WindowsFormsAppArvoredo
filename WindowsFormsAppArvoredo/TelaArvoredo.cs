@@ -155,6 +155,8 @@ namespace WindowsFormsAppArvoredo
             ConfigurarEstoque();
             ConfigurarPedidos();
             ConfigurarPanelTitulos();
+            CarregarVendasDaAPIAsync();
+
 
             // NOVA IMPLEMENTAÇÃO: Carrega produtos e orçamentos da API
             await CarregarDadosIniciais();
@@ -318,6 +320,43 @@ namespace WindowsFormsAppArvoredo
 
         #region Pedidos
 
+        private async Task CarregarVendasDaAPIAsync()
+        {
+            try
+            {
+                var vendasCarregadas = await VendaService.CarregarVendasAsync();
+
+                pedidos.Clear();
+                foreach (var venda in vendasCarregadas)
+                {
+                    try
+                    {
+                        var pedido = VendaService.ConverterVendaParaOrcamento(venda);
+                        pedidos.Add(pedido);
+                        System.Diagnostics.Debug.WriteLine($"[PEDIDO] ✓ Venda #{venda.id} - {venda.nome}");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[PEDIDO] ❌ Erro ao converter venda #{venda.id}: {ex.Message}");
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[PEDIDO] ✓ {pedidos.Count} pedido(s) carregado(s) com sucesso\n");
+
+                // Atualiza a exibição
+                AtualizarPanelPedidos();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[PEDIDO] ❌ Erro ao carregar vendas: {ex.Message}\n");
+                MessageBox.Show(
+                    $"Erro ao carregar pedidos:\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
 
 
         private void ConfigurarPedidos()
@@ -425,7 +464,7 @@ namespace WindowsFormsAppArvoredo
             // 30000 = 30 segundos
             // 60000 = 1 minuto
             // 300000 = 5 minutos
-            timerRefresh.Interval = 10000; // 30 segundos
+            timerRefresh.Interval = 60000; // 60 segundos
 
             // Evento que dispara a cada intervalo
             timerRefresh.Tick += TimerRefresh_Tick;
@@ -446,6 +485,9 @@ namespace WindowsFormsAppArvoredo
             CarregarProdutosDaAPIAsync();
             CarregarOrcamentosDaAPIAsync();
 
+            // 🆕 ADICIONE ESTA LINHA:
+            // Recarrega vendas (pedidos) periodicamente
+            await CarregarVendasDaAPIAsync();
         }
 
         private void ConfigurarListViewOrcamentos()
@@ -630,6 +672,13 @@ namespace WindowsFormsAppArvoredo
                 if (usandoAPI)
                 {
                     await CarregarOrcamentosDaAPIAsync();
+                }
+
+                // 🆕 ADICIONE ESTA LINHA:
+                // Carrega vendas (pedidos) da API
+                if (usandoAPI)
+                {
+                    await CarregarVendasDaAPIAsync();
                 }
 
                 await CarregarClientesDaAPIAsync();
