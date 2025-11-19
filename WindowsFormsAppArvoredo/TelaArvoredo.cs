@@ -72,6 +72,7 @@ namespace WindowsFormsAppArvoredo
 
         private async void TelaArvoredo_Load(object sender, EventArgs e)
         {
+            ConfigurarTimer();
             AplicarArredondamentoBotoes();
             btnTitulos.TabStop = false;
             btnTitulos.FlatAppearance.BorderSize = 0;
@@ -317,6 +318,8 @@ namespace WindowsFormsAppArvoredo
 
         #region Pedidos
 
+
+
         private void ConfigurarPedidos()
         {
             if (panelPedidos == null) return;
@@ -410,6 +413,40 @@ namespace WindowsFormsAppArvoredo
         #endregion
 
         #region Orçamentos
+
+        private System.Windows.Forms.Timer timerRefresh;
+        private bool _isLoading = false;
+
+        private void ConfigurarTimer()
+        {
+            timerRefresh = new System.Windows.Forms.Timer();
+
+            // Define intervalo de atualização (em milissegundos)
+            // 30000 = 30 segundos
+            // 60000 = 1 minuto
+            // 300000 = 5 minutos
+            timerRefresh.Interval = 10000; // 30 segundos
+
+            // Evento que dispara a cada intervalo
+            timerRefresh.Tick += TimerRefresh_Tick;
+
+            // Inicia o timer
+            timerRefresh.Start();
+        }
+
+        /// <summary>
+        /// Evento disparado pelo Timer
+        /// </summary>
+        private async void TimerRefresh_Tick(object sender, EventArgs e)
+        {
+            // Evita múltiplas requisições simultâneas
+            if (_isLoading)
+                return;
+
+            CarregarProdutosDaAPIAsync();
+            CarregarOrcamentosDaAPIAsync();
+
+        }
 
         private void ConfigurarListViewOrcamentos()
         {

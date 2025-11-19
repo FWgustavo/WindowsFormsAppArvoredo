@@ -1,17 +1,22 @@
-﻿using System;
+﻿// ============================================
+// ARQUIVO: WindowsFormsAppArvoredo/ApiClient.cs
+// ============================================
+
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace WindowsFormsAppArvoredo
 {
     public class ApiClient
     {
         private static readonly HttpClient client = new HttpClient();
-        private static string baseUrl = "https://arvoredoapi.vercel.app"; 
-        private static string apiKey = "68e553e6f1c4fffd11c95840"; 
+        private static string baseUrl = "https://arvoredoapi.vercel.app";
+        private static string apiKey = "68e553e6f1c4fffd11c95840";
 
         static ApiClient()
         {
@@ -29,17 +34,13 @@ namespace WindowsFormsAppArvoredo
         {
             apiKey = key;
 
-            // Remove header anterior se existir
             if (client.DefaultRequestHeaders.Contains("x-api-key"))
-            {
                 client.DefaultRequestHeaders.Remove("x-api-key");
-            }
 
-            // Adiciona novo header
             client.DefaultRequestHeaders.Add("x-api-key", apiKey);
         }
 
-        // Teste de conexão com a API
+        // Teste de conexão
         public static async Task<bool> TestarConexaoAsync()
         {
             try
@@ -49,7 +50,7 @@ namespace WindowsFormsAppArvoredo
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Erro ao testar conexão: {ex.Message}");
+                Debug.WriteLine($"Erro ao testar conexão: {ex.Message}");
                 return false;
             }
         }
@@ -75,42 +76,91 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        // POST genérico
+        // POST genérico com DEBUG
         public static async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(data);
+                var json = JsonConvert.SerializeObject(data, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
+
+                // DEBUG request
+                Debug.WriteLine($"\n{"=".PadRight(60, '=')}");
+                Debug.WriteLine($"📤 POST REQUEST: {endpoint}");
+                Debug.WriteLine($"URL Completa: {baseUrl}{endpoint}");
+                Debug.WriteLine($"Headers: x-api-key={apiKey}");
+                Debug.WriteLine($"JSON Enviado:\n{FormatarJSON(json)}");
+                Debug.WriteLine($"{"=".PadRight(60, '=')}");
+
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await client.PostAsync($"{baseUrl}{endpoint}", content);
-                response.EnsureSuccessStatusCode();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
+
+                // DEBUG response
+                Debug.WriteLine($"\n{"=".PadRight(60, '=')}");
+                Debug.WriteLine($"📥 RESPOSTA: {(int)response.StatusCode} {response.StatusCode}");
+                Debug.WriteLine($"JSON Recebido:\n{FormatarJSON(responseContent)}");
+                Debug.WriteLine($"{"=".PadRight(60, '=')}\n");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    try
+                    {
+                        dynamic errorResponse = JsonConvert.DeserializeObject(responseContent);
+                        string errorMessage = errorResponse?.message ?? errorResponse?.error ?? responseContent;
+
+                        throw new Exception($"Erro {(int)response.StatusCode}: {errorMessage}");
+                    }
+                    catch
+                    {
+                        throw new Exception($"Erro na requisição POST: HTTP {(int)response.StatusCode}");
+                    }
+                }
+
                 return JsonConvert.DeserializeObject<TResponse>(responseContent);
             }
             catch (HttpRequestException ex)
             {
+                Debug.WriteLine($"❌ HTTP EXCEPTION: {ex.Message}");
                 throw new Exception($"Erro na requisição POST: {ex.Message}");
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"❌ EXCEPTION: {ex.Message}");
                 throw new Exception($"Erro ao processar resposta: {ex.Message}");
             }
         }
 
-        // PUT genérico
+        // PUT genérico com DEBUG
         public static async Task<TResponse> PutAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(data);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var json = JsonConvert.SerializeObject(data, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
 
+                Debug.WriteLine($"\n{"=".PadRight(60, '=')}");
+                Debug.WriteLine($"📤 PUT REQUEST: {endpoint}");
+                Debug.WriteLine($"JSON Enviado:\n{FormatarJSON(json)}");
+                Debug.WriteLine($"{"=".PadRight(60, '=')}");
+
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await client.PutAsync($"{baseUrl}{endpoint}", content);
-                response.EnsureSuccessStatusCode();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"📥 RESPOSTA: {(int)response.StatusCode}");
+                Debug.WriteLine($"JSON:\n{FormatarJSON(responseContent)}");
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Erro na requisição PUT: HTTP {(int)response.StatusCode}");
+
                 return JsonConvert.DeserializeObject<TResponse>(responseContent);
             }
             catch (HttpRequestException ex)
@@ -133,15 +183,23 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
-        // Método auxiliar para obter informações da API
-        public static string ObterUrlBase()
-        {
-            return baseUrl;
-        }
+        // Helpers
+        public static string ObterUrlBase() => baseUrl;
 
-        public static bool TemApiKey()
+        public static bool TemApiKey() => !string.IsNullOrEmpty(apiKey);
+
+        // FORMATADOR DE JSON PARA DEBUG
+        private static string FormatarJSON(string json)
         {
-            return !string.IsNullOrEmpty(apiKey);
+            try
+            {
+                dynamic parsedJson = JsonConvert.DeserializeObject(json);
+                return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+            }
+            catch
+            {
+                return json;
+            }
         }
     }
 }
