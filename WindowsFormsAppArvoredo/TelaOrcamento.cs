@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mysqlx.Crud;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -813,6 +814,7 @@ namespace WindowsFormsAppArvoredo
                 OrcamentoCriado = CriarOrcamentoDoFormulario();
                 OrcamentoCriado.Status = "Pendente";
 
+                // Define que foi SALVO (vai para ListView de orçamentos)
                 OrcamentoSalvo = true;
                 OrcamentoConfirmado = false;
 
@@ -833,6 +835,10 @@ namespace WindowsFormsAppArvoredo
             }
         }
 
+        // ============================================
+        // SUBSTITUIR o método BtnConfirmar_Click no TelaOrcamento.cs
+        // ============================================
+
         private async void BtnConfirmar_Click(object sender, EventArgs e)
         {
             if (!ValidarCampos())
@@ -846,108 +852,122 @@ namespace WindowsFormsAppArvoredo
                 return;
             }
 
+            // Mensagem diferente dependendo se é novo ou edição
+            string mensagem = modoEdicao
+                ? $"Deseja CONFIRMAR este orçamento e transformá-lo em VENDA?\n\n" +
+                  $"Cliente: {txtCliente.Text}\n" +
+                  $"Produtos: {dgvProdutos.Rows.Count}\n" +
+                  $"Total: {txtTotalVista.Text}\n\n" +
+                  $"O orçamento será removido da lista e adicionado como PEDIDO."
+                : $"Deseja criar este orçamento diretamente como VENDA?\n\n" +
+                  $"Cliente: {txtCliente.Text}\n" +
+                  $"Produtos: {dgvProdutos.Rows.Count}\n" +
+                  $"Total: {txtTotalVista.Text}\n\n" +
+                  $"⚠️ O orçamento NÃO será salvo na lista de orçamentos.\n" +
+                  $"Ele irá direto para a lista de PEDIDOS.";
+
             DialogResult resultado = MessageBox.Show(
-                "Deseja confirmar este orçamento?\n\n" +
-                $"Cliente: {txtCliente.Text}\n" +
-                $"Produtos: {dgvProdutos.Rows.Count}\n" +
-                $"Total: {txtTotalVista.Text}",
-                "Confirmar Orçamento",
+                mensagem,
+                modoEdicao ? "Confirmar Orçamento" : "Criar Venda Direta",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
             if (resultado != DialogResult.Yes)
                 return;
 
-            OrcamentoAPIResponse orcamentoAPIResponse = null;
-
             try
             {
                 this.Cursor = Cursors.WaitCursor;
                 btnConfirmar.Enabled = false;
+                btnSalvar.Enabled = false;
 
                 // Criar orçamento localmente
                 OrcamentoCriado = CriarOrcamentoDoFormulario();
                 OrcamentoCriado.Status = "Confirmado";
 
                 int usuarioIdAtual = 1;
+                int orcamentoIdParaConverter = 0;
 
                 // ============================================
-                // ETAPA 1: Salvar orçamento na API
+                // ETAPA 1: Determinar qual orçamento converter
                 // ============================================
 
-                System.Diagnostics.Debug.WriteLine("\n[TELA] ========== ETAPA 1: CRIANDO ORÇAMENTO ==========");
+                if (modoEdicao && orcamentoEmEdicao != null && orcamentoEmEdicao.Id > 0)
+                {
+                    // MODO EDIÇÃO: Usar o ID do orçamento existente
+                    orcamentoIdParaConverter = orcamentoEmEdicao.Id;
+                    System.Diagnostics.Debug.WriteLine($"[TELA] Modo Edição: Usando orçamento existente #{orcamentoIdParaConverter}");
+                }
+                else
+                {
+                    // MODO NOVO: Criar orçamento primeiro
+                    System.Diagnostics.Debug.WriteLine("[TELA] Modo Novo: Criando orçamento temporário...");
 
-                orcamentoAPIResponse = await OrcamentoService.CriarOrcamentoAsync(
-                    OrcamentoCriado,
+                    var orcamentoAPI = await OrcamentoService.CriarOrcamentoAsync(
+                        OrcamentoCriado,
+                        usuarioIdAtual
+                    );
+
+                    if (orcamentoAPI == null || orcamentoAPI.id <= 0)
+                    {
+                        throw new Exception("Falha ao criar orçamento na API.");
+                    }
+
+                    orcamentoIdParaConverter = orcamentoAPI.id;
+                    System.Diagnostics.Debug.WriteLine($"[TELA] ✓ Orçamento temporário criado: #{orcamentoIdParaConverter}");
+                }
+
+                // ============================================
+                // ETAPA 2: Converter para venda (UMA ÚNICA VEZ)
+                // ============================================
+
+                System.Diagnostics.Debug.WriteLine($"[TELA] Convertendo orçamento #{orcamentoIdParaConverter} para venda...");
+
+                var vendaAPIResponse = await OrcamentoService.ConverterOrcamentoParaVendaAsync(
+                    orcamentoIdParaConverter,
                     usuarioIdAtual
                 );
 
-                if (orcamentoAPIResponse == null || orcamentoAPIResponse.id <= 0)
+                if (vendaAPIResponse == null)
                 {
-                    throw new Exception("Falha ao salvar orçamento na API. ID inválido.");
+                    throw new Exception("Falha ao converter orçamento em venda. Resposta inválida da API.");
                 }
 
-                OrcamentoCriado.Id = orcamentoAPIResponse.id;
-                System.Diagnostics.Debug.WriteLine($"[TELA] ✓ Orçamento criado com sucesso: ID {OrcamentoCriado.Id}");
+                System.Diagnostics.Debug.WriteLine($"[TELA] ✓ Venda criada/processada: #{vendaAPIResponse.id}");
 
                 // ============================================
-                // ETAPA 2: Converter orçamento em venda
+                // ETAPA 3: Excluir orçamento (se necessário)
                 // ============================================
-
-                System.Diagnostics.Debug.WriteLine("\n[TELA] ========== ETAPA 2: CONVERTENDO PARA VENDA ==========");
-
-                VendaAPIResponse vendaAPIResponse = null;
 
                 try
                 {
-                    vendaAPIResponse = await OrcamentoService.ConverterOrcamentoParaVendaAsync(
-                        OrcamentoCriado.Id,
-                        usuarioIdAtual
-                    );
+                    System.Diagnostics.Debug.WriteLine($"[TELA] Excluindo orçamento #{orcamentoIdParaConverter}...");
+                    await OrcamentoService.ExcluirOrcamentoAsync(orcamentoIdParaConverter);
+                    System.Diagnostics.Debug.WriteLine("[TELA] ✓ Orçamento excluído");
                 }
-                catch (Exception ex)
+                catch (Exception exExc)
                 {
-                    // Se a conversão falhar, o orçamento já foi criado
-                    // Mostrar mensagem mais clara
-                    System.Diagnostics.Debug.WriteLine($"[TELA] ❌ Erro ao converter: {ex.Message}");
-
-                    throw new Exception(
-                        $"❌ ERRO NA CONVERSÃO\n\n" +
-                        $"O orçamento #{OrcamentoCriado.Id} foi criado com sucesso,\n" +
-                        $"mas houve erro ao converter para venda:\n\n" +
-                        $"{ex.Message}\n\n" +
-                        $"Você pode:\n" +
-                        $"1. Tentar confirmar o orçamento novamente\n" +
-                        $"2. Editar o orçamento e remover itens problemáticos\n" +
-                        $"3. Contatar o suporte"
-                    );
+                    // Ignora erro de exclusão - pode já ter sido excluído automaticamente
+                    System.Diagnostics.Debug.WriteLine($"[TELA] ⚠ Não foi possível excluir orçamento: {exExc.Message}");
                 }
 
-                if (vendaAPIResponse == null || vendaAPIResponse.id <= 0)
-                {
-                    throw new Exception("Falha ao converter orçamento em venda. ID inválido.");
-                }
+                // ============================================
+                // ETAPA 4: Finalizar
+                // ============================================
 
                 OrcamentoCriado.Id = vendaAPIResponse.id;
                 OrcamentoCriado.Status = "Convertido em Venda";
 
                 this.Cursor = Cursors.Default;
                 btnConfirmar.Enabled = true;
-
-                // ============================================
-                // ETAPA 3: Mostrar sucesso
-                // ============================================
-
-                System.Diagnostics.Debug.WriteLine("\n[TELA] ========== ETAPA 3: SUCESSO! ==========\n");
+                btnSalvar.Enabled = true;
 
                 MessageBox.Show(
-                    $"✓ Orçamento confirmado e convertido em venda com sucesso!\n\n" +
+                    $"✓ Venda criada com sucesso!\n\n" +
                     $"Venda ID: #{vendaAPIResponse.id}\n" +
                     $"Cliente: {OrcamentoCriado.Cliente}\n" +
-                    $"Total: {OrcamentoCriado.TotalGeral:C}\n" +
-                    $"Data: {vendaAPIResponse.dataCriacao:dd/MM/yyyy HH:mm}\n" +
-                    $"Pagamento: {(vendaAPIResponse.pago ? "Pago" : "Pendente")}",
-                    "Sucesso na Conversão",
+                    $"Total: {OrcamentoCriado.TotalGeral:C}",
+                    "Sucesso",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
 
@@ -961,32 +981,21 @@ namespace WindowsFormsAppArvoredo
             {
                 this.Cursor = Cursors.Default;
                 btnConfirmar.Enabled = true;
+                btnSalvar.Enabled = true;
 
-                System.Diagnostics.Debug.WriteLine($"\n[TELA] ❌ ERRO GERAL: {ex.Message}\n");
+                System.Diagnostics.Debug.WriteLine($"\n[TELA] ❌ ERRO: {ex.Message}\n");
 
-                // Se orçamento foi criado mas conversão falhou, mostrar mensagem especial
-                if (orcamentoAPIResponse != null && orcamentoAPIResponse.id > 0)
-                {
-                    MessageBox.Show(
-                        ex.Message,
-                        "Erro Parcial - Orçamento Criado",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                }
-                else
-                {
-                    MessageBox.Show(
-                        $"❌ Erro ao confirmar orçamento:\n\n{ex.Message}",
-                        "Erro na Confirmação",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-
-                }
+                MessageBox.Show(
+                    $"❌ Erro ao processar:\n\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
 
                 OrcamentoCriado = null;
                 OrcamentoConfirmado = false;
             }
         }
+
 
         /// <summary>
         /// Trata erros específicos da API ao converter orçamento

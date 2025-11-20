@@ -166,88 +166,59 @@ namespace WindowsFormsAppArvoredo
         // ---------------------------------------------------------
         // CONVERTER PARA VENDA
         // ---------------------------------------------------------
+        // ============================================
+        // SUBSTITUIR o método ConverterOrcamentoParaVendaAsync no OrcamentoService.cs
+        // ============================================
+
         public static async Task<VendaAPIResponse> ConverterOrcamentoParaVendaAsync(int orcamentoId, int usuarioId)
         {
-            // LISTA DE FORMAS A SEREM TESTADAS
-            var formasTeste = new List<string>
-    {
-        "Dinheiro",   // 1 - mais seguro
-        "",           // 2 - string vazia
-        null          // 3 - nulo
-    };
-
-            Exception ultimoErro = null;
-
-            // =============================
-            // 1) TENTA ENVIAR COM A PROPRIEDADE "forma"
-            // =============================
-            foreach (var forma in formasTeste)
-            {
-                try
-                {
-                    System.Diagnostics.Debug.WriteLine($"[FORMA-TESTE] Tentando forma: '{forma ?? "NULL"}'");
-
-                    var vendaCreate = new VendaFromOrcamentoCreate
-                    {
-                        usuarioId = usuarioId,
-                        pago = false,
-                        forma = forma
-                    };
-
-                    var response = await ApiClient.PostAsync<VendaFromOrcamentoCreate, VendaAPIResponse>(
-                        $"/vendas/from-orcamento/{orcamentoId}",
-                        vendaCreate
-                    );
-
-                    if (response != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[FORMA-TESTE] ✓ Aceitou forma '{forma ?? "NULL"}'");
-                        return response;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"[FORMA-TESTE] ❌ Erro usando forma '{forma ?? "NULL"}': {ex.Message}");
-                    ultimoErro = ex;
-                }
-            }
-
-            // =============================
-            // 2) ÚLTIMA TENTATIVA: REMOVER O CAMPO forma DO JSON
-            // =============================
-
             try
             {
-                System.Diagnostics.Debug.WriteLine("[FORMA-TESTE] Última tentativa: enviar sem o campo 'forma'");
+                System.Diagnostics.Debug.WriteLine($"[CONVERTER] Convertendo orçamento #{orcamentoId} para venda...");
 
-                // Criar objeto ANÔNIMO (sem propriedade forma!)
-                var vendaSemForma = new
+                // Tenta com forma de pagamento padrão
+                var vendaCreate = new VendaFromOrcamentoCreate
                 {
                     usuarioId = usuarioId,
-                    pago = false
+                    pago = false,
+                    forma = "Dinheiro"
                 };
 
-                var response = await ApiClient.PostAsync<object, VendaAPIResponse>(
+                var response = await ApiClient.PostAsync<VendaFromOrcamentoCreate, VendaAPIResponse>(
                     $"/vendas/from-orcamento/{orcamentoId}",
-                    vendaSemForma
+                    vendaCreate
                 );
 
-                if (response != null)
+                if (response != null && response.id > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("[FORMA-TESTE] ✓ API aceitou sem 'forma'");
+                    System.Diagnostics.Debug.WriteLine($"[CONVERTER] ✓ Venda criada com sucesso: ID #{response.id}");
                     return response;
                 }
+
+                throw new Exception("Resposta inválida da API ao converter orçamento.");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[FORMA-TESTE] ❌ Também falhou sem 'forma': {ex.Message}");
-                ultimoErro = ex;
-            }
+                // Verifica se o erro é "já foi convertido" - isso significa sucesso anterior
+                if (ex.Message.Contains("ja foi convertido") ||
+                    ex.Message.Contains("já foi convertido") ||
+                    ex.Message.Contains("Orcamento ja foi convertido"))
+                {
+                    System.Diagnostics.Debug.WriteLine($"[CONVERTER] ⚠ Orçamento #{orcamentoId} já foi convertido anteriormente");
 
-            // =============================
-            // TODAS AS TENTATIVAS FALHARAM
-            // =============================
-            throw new Exception("Nenhuma forma de pagamento foi aceita pela API.\nÚltimo erro: " + ultimoErro?.Message);
+                    // Retorna um objeto indicando que a conversão já ocorreu
+                    // O ID será 0 mas o chamador deve tratar isso
+                    return new VendaAPIResponse
+                    {
+                        id = orcamentoId, // Usa o mesmo ID como referência
+                        pago = false,
+                        dataCriacao = DateTime.Now
+                    };
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[CONVERTER] ❌ Erro: {ex.Message}");
+                throw new Exception($"Erro ao converter orçamento para venda: {ex.Message}");
+            }
         }
 
 
@@ -447,6 +418,28 @@ namespace WindowsFormsAppArvoredo
             {
                 System.Diagnostics.Debug.WriteLine($"[CONVERTER] ❌ Erro ao converter orçamento: {ex.Message}");
                 throw new Exception($"Erro ao converter orçamento: {ex.Message}");
+            }
+        }
+
+        public static async Task<bool> ExcluirOrcamentoAsync(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                    throw new ArgumentException("ID do orçamento inválido.");
+
+                System.Diagnostics.Debug.WriteLine($"[API] Solicitando exclusão do orçamento #{id}...");
+
+                bool sucesso = await ApiClient.DeleteAsync($"/orcamentos/{id}");
+
+                if (!sucesso)
+                    System.Diagnostics.Debug.WriteLine($"[API] ⚠ A API não confirmou a exclusão do orçamento #{id}");
+
+                return sucesso;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao excluir orçamento #{id}: {ex.Message}");
             }
         }
 
