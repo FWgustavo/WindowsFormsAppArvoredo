@@ -22,10 +22,14 @@ namespace WindowsFormsAppArvoredo
         private Label lblCidade;
         private Label lblUF;
 
+        // Flag para indicar se a venda foi paga com sucesso
+        public bool VendaPaga { get; private set; }
+
         public TelaTitulos(Orcamento pedido)
         {
             InitializeComponent();
             pedidoSelecionado = pedido;
+            VendaPaga = false;
         }
 
         private void TelaTitulos_Load(object sender, EventArgs e)
@@ -60,6 +64,7 @@ namespace WindowsFormsAppArvoredo
             lblCidade.Size = new Size(60, 20);
             lblCidade.Font = new Font("Microsoft Sans Serif", 10F);
             this.Controls.Add(lblCidade);
+
             lblUF = new Label();
             lblUF.Text = "UF:";
             lblUF.Location = new Point(450, 240);
@@ -77,8 +82,6 @@ namespace WindowsFormsAppArvoredo
             btnFinalizarPedido.Region = Region.FromHrgn(CreateRoundRectRgn(
                 0, 0, btnFinalizarPedido.Width, btnFinalizarPedido.Height, 20, 20));
         }
-
-        
 
         private void CriarGridProdutos()
         {
@@ -202,34 +205,71 @@ namespace WindowsFormsAppArvoredo
             this.Controls.Add(txtTotalVista);
         }
 
-        private void BtnFinalizarPedido_Click(object sender, EventArgs e)
+        private async void BtnFinalizarPedido_Click(object sender, EventArgs e)
         {
             DialogResult resultado = MessageBox.Show(
                 $"Confirmar finalização do pedido?\n\n" +
                 $"Cliente: {pedidoSelecionado.Cliente}\n" +
                 $"Total: {pedidoSelecionado.TotalGeral:C}\n" +
                 $"Forma de Pagamento: {pedidoSelecionado.FormaPagamento}\n\n" +
-                $"O pedido será marcado como finalizado e salvo no histórico.",
+                $"O pedido será marcado como PAGO e removido dos títulos pendentes.",
                 "Finalizar Pedido",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
             if (resultado == DialogResult.Yes)
             {
-                // Marcar pedido como finalizado
-                pedidoSelecionado.Status = "Finalizado";
-                pedidoSelecionado.DataEmissao = DateTime.Now; // Atualiza para data atual
+                try
+                {
+                    this.Cursor = Cursors.WaitCursor;
+                    btnFinalizarPedido.Enabled = false;
 
-                MessageBox.Show(
-                    $"Pedido finalizado com sucesso!\n\n" +
-                    $"O pedido foi salvo no histórico de {pedidoSelecionado.DataEmissao:MMMM/yyyy}.",
-                    "Sucesso",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    // Chama a API para marcar a venda como paga
+                    var vendaAtualizada = await VendaService.MarcarComoPagaAsync(pedidoSelecionado.Id);
 
-                // Retornar OK para remover da lista de pendentes
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                    this.Cursor = Cursors.Default;
+                    btnFinalizarPedido.Enabled = true;
+
+                    if (vendaAtualizada != null)
+                    {
+                        // Atualiza o status local
+                        pedidoSelecionado.Status = "Pago";
+                        VendaPaga = true;
+
+                        MessageBox.Show(
+                            $"✓ Pedido finalizado com sucesso!\n\n" +
+                            $"Cliente: {pedidoSelecionado.Cliente}\n" +
+                            $"Valor: {pedidoSelecionado.TotalGeral:C}\n" +
+                            $"Data de Pagamento: {DateTime.Now:dd/MM/yyyy}\n\n" +
+                            $"O pedido foi marcado como PAGO e será removido dos títulos pendentes.",
+                            "Sucesso",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+
+                        // Retornar OK para remover da lista de pendentes
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "Não foi possível finalizar o pedido. Tente novamente.",
+                            "Erro",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
+                    btnFinalizarPedido.Enabled = true;
+
+                    MessageBox.Show(
+                        $"Erro ao finalizar pedido:\n\n{ex.Message}",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
             }
         }
     }

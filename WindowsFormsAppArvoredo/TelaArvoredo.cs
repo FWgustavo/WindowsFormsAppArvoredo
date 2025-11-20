@@ -331,9 +331,16 @@ namespace WindowsFormsAppArvoredo
                 {
                     try
                     {
+                        // Filtra apenas vendas NÃO PAGAS para exibir nos títulos pendentes
+                        if (venda.pago)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[PEDIDO] ⏭ Venda #{venda.id} já está paga, ignorando...");
+                            continue;
+                        }
+
                         var pedido = VendaService.ConverterVendaParaOrcamento(venda);
                         pedidos.Add(pedido);
-                        System.Diagnostics.Debug.WriteLine($"[PEDIDO] ✓ Venda #{venda.id} - {venda.nome}");
+                        System.Diagnostics.Debug.WriteLine($"[PEDIDO] ✓ Venda #{venda.id} - {venda.nome} (Pendente)");
                     }
                     catch (Exception ex)
                     {
@@ -341,7 +348,7 @@ namespace WindowsFormsAppArvoredo
                     }
                 }
 
-                System.Diagnostics.Debug.WriteLine($"[PEDIDO] ✓ {pedidos.Count} pedido(s) carregado(s) com sucesso\n");
+                System.Diagnostics.Debug.WriteLine($"[PEDIDO] ✓ {pedidos.Count} pedido(s) pendente(s) carregado(s) com sucesso\n");
 
                 // Atualiza a exibição
                 AtualizarPanelPedidos();
@@ -2665,9 +2672,10 @@ namespace WindowsFormsAppArvoredo
             {
                 var resultado = telaDetalhes.ShowDialog();
 
-                if (resultado == DialogResult.OK)
+                if (resultado == DialogResult.OK && telaDetalhes.VendaPaga)
                 {
-                    pedido.Status = "Finalizado";
+                    // A venda foi marcada como paga na API
+                    pedido.Status = "Pago";
                     pedidosFinalizados.Add(pedido);
 
                     // ADICIONAR TRANSAÇÃO NO CAIXA
@@ -2681,9 +2689,12 @@ namespace WindowsFormsAppArvoredo
 
                     transacoesCaixa.Add(novaTransacao);
 
-                    // Remover dos pedidos pendentes
+                    // Remover dos pedidos pendentes (títulos)
                     pedidos.Remove(pedido);
+
+                    // Atualiza as telas
                     AtualizarPanelTitulos();
+                    AtualizarPanelPedidos();
 
                     MessageBox.Show(
                         $"Pedido de {pedido.Cliente} finalizado com sucesso!\n" +

@@ -92,6 +92,25 @@ namespace WindowsFormsAppArvoredo
             public string cpf { get; set; }
         }
 
+        // Modelo para atualização de venda
+        public class VendaAPIUpdate
+        {
+            public string descricao { get; set; }
+            public int? clienteId { get; set; }
+            public string nome { get; set; }
+            public string cpf { get; set; }
+            public string cep { get; set; }
+            public string cidade { get; set; }
+            public string estado { get; set; }
+            public string bairro { get; set; }
+            public string rua { get; set; }
+            public string numero { get; set; }
+            public string telefone { get; set; }
+            public string forma { get; set; }
+            public string dataPagamento { get; set; }
+            public bool pago { get; set; }
+        }
+
         // ---------------------------------------------------------
         // CARREGAR VENDAS DA API
         // ---------------------------------------------------------
@@ -101,7 +120,6 @@ namespace WindowsFormsAppArvoredo
             {
                 System.Diagnostics.Debug.WriteLine("\n[VENDA] Iniciando carregamento de vendas...");
 
-                // Busca todas as vendas da API
                 var vendasAPI = await ApiClient.GetAsync<List<VendaAPIResponse>>("/vendas");
 
                 if (vendasAPI == null || vendasAPI.Count == 0)
@@ -118,6 +136,68 @@ namespace WindowsFormsAppArvoredo
             {
                 System.Diagnostics.Debug.WriteLine($"[VENDA] ❌ Erro ao carregar vendas: {ex.Message}\n");
                 throw new Exception($"Erro ao carregar vendas da API: {ex.Message}");
+            }
+        }
+
+        // ---------------------------------------------------------
+        // MARCAR VENDA COMO PAGA
+        // ---------------------------------------------------------
+        public static async Task<VendaAPIResponse> MarcarComoPagaAsync(int vendaId)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"[VENDA] Marcando venda #{vendaId} como paga...");
+
+                var vendaUpdate = new VendaAPIUpdate
+                {
+                    pago = true,
+                    dataPagamento = DateTime.Now.ToString("yyyy-MM-dd")
+                };
+
+                var response = await ApiClient.PutAsync<VendaAPIUpdate, VendaAPIResponse>(
+                    $"/vendas/{vendaId}",
+                    vendaUpdate
+                );
+
+                if (response != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[VENDA] ✓ Venda #{vendaId} marcada como paga");
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[VENDA] ❌ Erro ao marcar venda como paga: {ex.Message}");
+                throw new Exception($"Erro ao marcar venda como paga: {ex.Message}");
+            }
+        }
+
+        // ---------------------------------------------------------
+        // ATUALIZAR VENDA
+        // ---------------------------------------------------------
+        public static async Task<VendaAPIResponse> AtualizarVendaAsync(int vendaId, VendaAPIUpdate vendaUpdate)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"[VENDA] Atualizando venda #{vendaId}...");
+
+                var response = await ApiClient.PutAsync<VendaAPIUpdate, VendaAPIResponse>(
+                    $"/vendas/{vendaId}",
+                    vendaUpdate
+                );
+
+                if (response != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[VENDA] ✓ Venda #{vendaId} atualizada com sucesso");
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[VENDA] ❌ Erro ao atualizar venda: {ex.Message}");
+                throw new Exception($"Erro ao atualizar venda: {ex.Message}");
             }
         }
 
@@ -170,7 +250,6 @@ namespace WindowsFormsAppArvoredo
                                 ValorTotal = (decimal)itemAPI.valorTotal
                             };
 
-                            // Mantém referência ao produto se disponível
                             if (itemAPI.produto != null)
                             {
                                 item.ProdutoOrigem = new Produto
