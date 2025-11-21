@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WindowsFormsAppArvoredo
@@ -276,6 +277,59 @@ namespace WindowsFormsAppArvoredo
             {
                 System.Diagnostics.Debug.WriteLine($"[VENDA] ❌ Erro ao converter venda: {ex.Message}");
                 throw new Exception($"Erro ao converter venda: {ex.Message}");
+            }
+        }
+
+        public static async Task<List<Orcamento>> BuscarVendasPagasPorMesAnoAsync(int mes, int ano)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"\n[HISTÓRICO] Buscando vendas pagas de {mes:00}/{ano}...");
+
+                // Monta query string com filtros
+                string query = $"/vendas?pago=true";
+
+                // Busca todas as vendas pagas
+                var vendasAPI = await ApiClient.GetAsync<List<VendaAPIResponse>>(query);
+
+                if (vendasAPI == null || vendasAPI.Count == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("[HISTÓRICO] Nenhuma venda paga encontrada");
+                    return new List<Orcamento>();
+                }
+
+                // Filtra localmente por mês/ano da data de criação
+                var vendasDoMes = vendasAPI
+                    .Where(v => v.dataCriacao.Month == mes && v.dataCriacao.Year == ano)
+                    .ToList();
+
+                System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] {vendasDoMes.Count} venda(s) paga(s) encontrada(s) em {mes:00}/{ano}");
+
+                // Converte para Orcamento (para usar nas telas existentes)
+                var pedidosFinalizados = new List<Orcamento>();
+
+                foreach (var vendaAPI in vendasDoMes)
+                {
+                    try
+                    {
+                        var pedido = ConverterVendaParaOrcamento(vendaAPI);
+                        pedidosFinalizados.Add(pedido);
+                        System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] ✓ Venda #{vendaAPI.id} - {vendaAPI.nome} - {vendaAPI.valorTotal:C}");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] ❌ Erro ao converter venda #{vendaAPI.id}: {ex.Message}");
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] ✓ Total carregado: {pedidosFinalizados.Count} venda(s)\n");
+
+                return pedidosFinalizados;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] ❌ Erro ao buscar vendas: {ex.Message}\n");
+                throw new Exception($"Erro ao buscar vendas do histórico: {ex.Message}");
             }
         }
     }

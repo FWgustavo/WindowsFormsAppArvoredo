@@ -3406,7 +3406,7 @@ namespace WindowsFormsAppArvoredo
             containerMeses.Controls.Add(btnBackup);
 
             // Carregar alguns pedidos de exemplo para teste
-            CarregarPedidosFinalizadosExemplo();
+            //CarregarPedidosFinalizadosExemplo();
         }
 
         private void CarregarPedidosFinalizadosExemplo()
@@ -3577,27 +3577,53 @@ namespace WindowsFormsAppArvoredo
             MostrarListaPedidosMes(anoSelecionado, mesSelecionado);
         }
 
-        private void MostrarListaPedidosMes(int ano, string mes)
+        private async void MostrarListaPedidosMes(int ano, string mes)
         {
-            string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-              "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
-            int numeroMes = Array.IndexOf(meses, mes) + 1;
-
-            var pedidosFiltrados = pedidosFinalizados.Where(p =>
-                p.DataEmissao.Year == ano &&
-                p.DataEmissao.Month == numeroMes
-            ).ToList();
-
-            if (pedidosFiltrados.Count == 0)
+            try
             {
-                MessageBox.Show($"Nenhum pedido finalizado encontrado para {mes}/{ano}.",
-                    "Histórico", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                this.Cursor = Cursors.WaitCursor;
+
+                string[] meses = { "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+                "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO" };
+
+                int numeroMes = Array.IndexOf(meses, mes) + 1;
+
+                System.Diagnostics.Debug.WriteLine($"\n[HISTÓRICO] Usuário selecionou: {mes}/{ano} (mês {numeroMes})");
+
+                // 🔹 BUSCA VENDAS PAGAS DA API
+                var pedidosFiltrados = await VendaService.BuscarVendasPagasPorMesAnoAsync(numeroMes, ano);
+
+                this.Cursor = Cursors.Default;
+
+                if (pedidosFiltrados == null || pedidosFiltrados.Count == 0)
+                {
+                    MessageBox.Show(
+                        $"Nenhuma venda finalizada encontrada para {mes}/{ano}.",
+                        "Histórico",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] Abrindo FormListaHistorico com {pedidosFiltrados.Count} venda(s)");
+
+                // 🔹 ABRE O FORMULÁRIO COM OS PEDIDOS
+                using (FormListaHistorico formLista = new FormListaHistorico(pedidosFiltrados, mes, ano))
+                {
+                    formLista.ShowDialog();
+                }
             }
-
-            using (FormListaHistorico formLista = new FormListaHistorico(pedidosFiltrados, mes, ano))
+            catch (Exception ex)
             {
-                formLista.ShowDialog();
+                this.Cursor = Cursors.Default;
+
+                System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] ❌ Erro: {ex.Message}");
+
+                MessageBox.Show(
+                    $"Erro ao carregar histórico:\n\n{ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
