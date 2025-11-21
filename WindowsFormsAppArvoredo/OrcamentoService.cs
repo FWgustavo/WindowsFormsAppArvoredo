@@ -379,12 +379,66 @@ namespace WindowsFormsAppArvoredo
                     {
                         try
                         {
+                            // 🔹 PRIORIZA NOME DO PRODUTO/PEÇA/MADEIRA
+                            string descricao = "Produto não identificado";
+                            string unidade = "un";
+                            decimal valorUnitario = 0;
+                            Produto produtoOrigem = null;
+
+                            // 1️⃣ Tenta pegar do PRODUTO
+                            if (itemAPI.produto != null && !string.IsNullOrEmpty(itemAPI.produto.nome))
+                            {
+                                descricao = itemAPI.produto.nome;
+                                unidade = itemAPI.produto.unidade ?? "un";
+                                valorUnitario = (decimal)itemAPI.produto.valor;
+
+                                // Mantém referência ao produto
+                                produtoOrigem = new Produto
+                                {
+                                    Id = itemAPI.produto.id,
+                                    Descricao = itemAPI.produto.nome,
+                                    Unidade = itemAPI.produto.unidade ?? "un",
+                                    ValorUnitario = (decimal)itemAPI.produto.valor,
+                                    MadeiraId = itemAPI.produto.madeiraId,
+                                    TamanhoId = itemAPI.produto.tamanhoId
+                                };
+                            }
+                            // 2️⃣ Se não for produto, tenta PEÇA
+                            else if (itemAPI.peca != null && !string.IsNullOrEmpty(itemAPI.peca.nome))
+                            {
+                                descricao = itemAPI.peca.nome;
+                                unidade = itemAPI.peca.unidade ?? "un";
+                                valorUnitario = (decimal)itemAPI.peca.valor;
+                            }
+                            // 3️⃣ Se não for peça, tenta MADEIRA DO ESTOQUE
+                            else if (itemAPI.estoqueMadeira?.madeira != null &&
+                                     !string.IsNullOrEmpty(itemAPI.estoqueMadeira.madeira.nome))
+                            {
+                                descricao = itemAPI.estoqueMadeira.madeira.nome;
+
+                                // Adiciona tamanho se disponível
+                                if (itemAPI.estoqueMadeira.tamanho != null &&
+                                    !string.IsNullOrEmpty(itemAPI.estoqueMadeira.tamanho.nome))
+                                {
+                                    descricao += $" - {itemAPI.estoqueMadeira.tamanho.nome}";
+                                }
+
+                                unidade = "m³"; // ou outra unidade padrão para madeira
+                                valorUnitario = (decimal)(itemAPI.valorVenda ?? 0);
+                            }
+                            // 4️⃣ FALLBACK: usa o valorVenda como referência
+                            else
+                            {
+                                descricao = $"Item #{sequencia}";
+                                valorUnitario = (decimal)(itemAPI.valorVenda ?? 0);
+                            }
+
                             var item = new ItemOrcamento
                             {
                                 Sequencia = sequencia++,
-                                Descricao = itemAPI.produto?.nome ??
-                                           itemAPI.peca?.nome ??
-                                           itemAPI.estoqueMadeira?.madeira?.nome ?? "Produto",
+                                Descricao = itemAPI.produto?.nome ??        // ← USAR .nome
+                                itemAPI.peca?.nome ??
+                                itemAPI.estoqueMadeira?.madeira?.nome ?? "Produto",
                                 Unidade = itemAPI.produto?.unidade ?? "un",
                                 Quantidade = itemAPI.quantidade ?? 0,
                                 ValorUnitario = (decimal)(itemAPI.valorVenda ?? 0),
@@ -397,13 +451,18 @@ namespace WindowsFormsAppArvoredo
                                 item.ProdutoOrigem = new Produto
                                 {
                                     Id = itemAPI.produto.id,
-                                    Descricao = itemAPI.produto.nome,
+                                    Descricao = itemAPI.produto.nome,  // ← USAR .nome aqui também
                                     Unidade = itemAPI.produto.unidade,
                                     ValorUnitario = (decimal)itemAPI.produto.valor
                                 };
                             }
 
                             orcamento.Itens.Add(item);
+
+                            System.Diagnostics.Debug.WriteLine(
+                                $"[CONVERTER] ✓ Item #{item.Sequencia}: {item.Descricao} - " +
+                                $"{item.Quantidade} {item.Unidade} x {item.ValorUnitario:C} = {item.ValorTotal:C}"
+                            );
                         }
                         catch (Exception ex)
                         {

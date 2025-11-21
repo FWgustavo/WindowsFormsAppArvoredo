@@ -209,6 +209,8 @@ namespace WindowsFormsAppArvoredo
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine($"\n[DEBUG] Convertendo venda #{vendaAPI.id}");
+                System.Diagnostics.Debug.WriteLine($"[DEBUG] Total de itens: {vendaAPI.vendaE?.Count ?? 0}");
                 var orcamento = new Orcamento
                 {
                     Id = vendaAPI.id,
@@ -239,12 +241,17 @@ namespace WindowsFormsAppArvoredo
                     {
                         try
                         {
+                            System.Diagnostics.Debug.WriteLine($"\n[DEBUG] Item #{sequencia}:");
+                            System.Diagnostics.Debug.WriteLine($"  - produto?.nome: {itemAPI.produto?.nome ?? "NULL"}");
+                            System.Diagnostics.Debug.WriteLine($"  - peca?.nome: {itemAPI.peca?.nome ?? "NULL"}");
+                            System.Diagnostics.Debug.WriteLine($"  - estoqueMadeira?.madeira?.nome: {itemAPI.estoqueMadeira?.madeira?.nome ?? "NULL"}");
+
                             var item = new ItemOrcamento
                             {
                                 Sequencia = sequencia++,
                                 Descricao = itemAPI.produto?.nome ??
-                                           itemAPI.peca?.nome ??
-                                           itemAPI.estoqueMadeira?.madeira?.nome ?? "Produto",
+                                   itemAPI.peca?.nome ??
+                                   itemAPI.estoqueMadeira?.madeira?.nome ?? "Produto",
                                 Unidade = itemAPI.produto?.unidade ?? "un",
                                 Quantidade = itemAPI.quantidade ?? 0,
                                 ValorUnitario = (decimal)(itemAPI.valorVenda ?? 0),
@@ -256,7 +263,7 @@ namespace WindowsFormsAppArvoredo
                                 item.ProdutoOrigem = new Produto
                                 {
                                     Id = itemAPI.produto.id,
-                                    Descricao = itemAPI.produto.nome,
+                                    Descricao = itemAPI.produto.nome,  // ← GARANTIR QUE ESTÁ USANDO .nome
                                     Unidade = itemAPI.produto.unidade,
                                     ValorUnitario = (decimal)itemAPI.produto.valor
                                 };
@@ -331,6 +338,35 @@ namespace WindowsFormsAppArvoredo
                 System.Diagnostics.Debug.WriteLine($"[HISTÓRICO] ❌ Erro ao buscar vendas: {ex.Message}\n");
                 throw new Exception($"Erro ao buscar vendas do histórico: {ex.Message}");
             }
+        }
+        // Adicionar este método dentro da classe VendaService
+        private static string ObterDescricaoItem(VendaEAPI itemAPI)
+        {
+            // Prioridade: Produto > Madeira com Tamanho > Peça > Fallback
+
+            if (itemAPI.produto != null && !string.IsNullOrEmpty(itemAPI.produto.nome))
+            {
+                return itemAPI.produto.nome;
+            }
+
+            if (itemAPI.estoqueMadeira != null)
+            {
+                string nomeMadeira = itemAPI.estoqueMadeira.madeira?.nome ?? "Madeira";
+                string nomeTamanho = itemAPI.estoqueMadeira.tamanho?.nome ?? "";
+
+                if (!string.IsNullOrEmpty(nomeTamanho))
+                {
+                    return $"{nomeMadeira} {nomeTamanho}";
+                }
+                return nomeMadeira;
+            }
+
+            if (itemAPI.peca != null && !string.IsNullOrEmpty(itemAPI.peca.nome))
+            {
+                return itemAPI.peca.nome;
+            }
+
+            return "Produto sem descrição";
         }
     }
 }
