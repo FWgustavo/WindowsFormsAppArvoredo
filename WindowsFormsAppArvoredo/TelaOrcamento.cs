@@ -86,6 +86,8 @@ namespace WindowsFormsAppArvoredo
             txtPesquisarProdutos.KeyDown += TxtPesquisarProdutos_KeyDown;
             this.Controls.Add(txtPesquisarProdutos);
 
+
+
             listBoxSugestoes = new ListBox();
             listBoxSugestoes.Location = new Point(200, 346);
             listBoxSugestoes.Size = new Size(500, 100);

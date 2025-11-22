@@ -31,6 +31,7 @@ namespace WindowsFormsAppArvoredo
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TelaArvoredo));
             this.panelMenu = new System.Windows.Forms.Panel();
             this.btnEstoque = new System.Windows.Forms.Button();
             this.panelEspacamento3 = new System.Windows.Forms.Panel();
@@ -521,6 +522,7 @@ namespace WindowsFormsAppArvoredo
             this.Controls.Add(this.panelMenu);
             this.Controls.Add(this.panelPedidos);
             this.Controls.Add(this.panelEstoque);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TelaArvoredo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TelaArvoredo";
